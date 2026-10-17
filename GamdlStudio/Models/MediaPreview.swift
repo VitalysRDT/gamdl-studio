@@ -39,7 +39,7 @@ struct MediaPreview: Hashable, Sendable, Codable {
         var parts = [kind.label]
         if let releaseYear { parts.append(String(releaseYear)) }
         if let genre { parts.append(genre) }
-        if let trackCount, kind != .song { parts.append(Formatters.count(trackCount, "titre")) }
+        if let trackCount, kind != .song { parts.append(String(localized: "\(trackCount) titres")) }
         if let total = totalDurationMs {
             parts.append(kind == .song ? Formatters.duration(milliseconds: total) : Formatters.longDuration(milliseconds: total))
         }

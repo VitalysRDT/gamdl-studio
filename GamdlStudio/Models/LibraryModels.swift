@@ -34,9 +34,9 @@ struct LibraryAlbum: Hashable, Sendable, Identifiable {
 
     var subtitle: String {
         switch category {
-        case .compilation: "Compilation"
-        case .playlist: artist.map { "Playlist · \($0)" } ?? "Playlist"
-        case .album: artist ?? "Artiste inconnu"
+        case .compilation: String(localized: "Compilation")
+        case .playlist: artist.map { String(localized: "Playlist · \($0)") } ?? String(localized: "Playlist")
+        case .album: artist ?? String(localized: "Artiste inconnu")
         }
     }
 
@@ -53,10 +53,10 @@ enum LibrarySort: String, CaseIterable, Identifiable {
     var id: String { rawValue }
     var label: String {
         switch self {
-        case .recent: "Ajouts récents"
-        case .artist: "Artiste"
-        case .title: "Titre"
-        case .size: "Taille"
+        case .recent: String(localized: "Ajouts récents")
+        case .artist: String(localized: "Artiste")
+        case .title: String(localized: "Titre")
+        case .size: String(localized: "Taille")
         }
     }
 

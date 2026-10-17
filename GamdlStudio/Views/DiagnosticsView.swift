@@ -85,10 +85,10 @@ struct DiagnosticsView: View {
                 .foregroundStyle(report.isReady ? .green : .orange)
                 .symbolEffect(.bounce, value: report.checkedAt)
             VStack(alignment: .leading, spacing: 4) {
-                Text(report.isReady ? "Prêt à télécharger" : "Il reste à régler")
+                (report.isReady ? Text("Prêt à télécharger") : Text("Il reste à régler"))
                     .font(.title2.bold())
-                Text(report.isReady ? "gamdl, ffmpeg et ta session Apple Music sont opérationnels."
-                                    : report.problems.joined(separator: " · "))
+                (report.isReady ? Text("gamdl, ffmpeg et ta session Apple Music sont opérationnels.")
+                                : Text(verbatim: report.problems.joined(separator: " · ")))
                     .foregroundStyle(.secondary)
             }
             Spacer()
@@ -105,7 +105,7 @@ struct DiagnosticsView: View {
                 statusDot(tool.isAvailable)
             }
             if let path = tool.path {
-                Text(tool.version.map { "Version \($0)" } ?? "Version inconnue").font(.headline)
+                (tool.version.map { Text("Version \($0)") } ?? Text("Version inconnue")).font(.headline)
                 Text(path.displayPath).font(.caption.monospaced()).foregroundStyle(.secondary).textSelection(.enabled).lineLimit(1).truncationMode(.middle)
             } else {
                 Text("Introuvable").font(.headline).foregroundStyle(.red)
@@ -132,7 +132,7 @@ struct DiagnosticsView: View {
                 let days = Calendar.current.dateComponents([.day], from: .now, to: expires).day ?? 0
                 ProgressCapsule(value: min(Double(days) / 365, 1), isActive: false, height: 6,
                                 tint: AnyShapeStyle(days < 14 ? Color.orange : Color.green))
-                Text(days < 14 ? "Expire dans \(days) jours : pense à réexporter les cookies." : "Encore \(days) jours de validité.")
+                (days < 14 ? Text("Expire dans \(days) jours : pense à réexporter les cookies.") : Text("Encore \(days) jours de validité."))
                     .font(.caption).foregroundStyle(.secondary)
             }
             Text(model.settings.cookiesURL.displayPath).font(.caption.monospaced()).foregroundStyle(.tertiary).textSelection(.enabled)
@@ -197,7 +197,7 @@ struct DiagnosticsView: View {
             Text(model.settings.outputURL.displayPath).font(.callout.monospaced()).textSelection(.enabled)
             HStack(spacing: 14) {
                 if let free = report.freeSpace { Label("\(Formatters.bytes(free)) libres", systemImage: "chart.pie") }
-                Label("\(Formatters.count(model.library.albums.count, "album")), \(Formatters.bytes(model.library.totalSize))", systemImage: "music.note.list")
+                Label("\(model.library.albums.count) albums, \(Formatters.bytes(model.library.totalSize))", systemImage: "music.note.list")
                 if !report.outputExists { Label("Sera créé au premier téléchargement", systemImage: "plus.circle") }
             }
             .font(.caption).foregroundStyle(.secondary)
@@ -212,7 +212,7 @@ struct DiagnosticsView: View {
         .glassCard()
     }
 
-    private func step(_ n: Int, _ text: String) -> some View {
+    private func step(_ n: Int, _ text: LocalizedStringKey) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
             Text("\(n)").font(.caption.bold()).frame(width: 18, height: 18).background(.brand.opacity(0.2), in: .circle)
             Text(text).font(.callout)
@@ -231,7 +231,7 @@ struct DiagnosticsView: View {
         do {
             let status = try CookieInspector.install(from: url, to: model.settings.cookiesURL)
             importError = nil
-            model.show(.init(symbol: "key.fill", message: "Cookies installés · \(status.title)"))
+            model.show(.init(symbol: "key.fill", message: String(localized: "Cookies installés · \(status.title)")))
             Task { await model.runDiagnostics() }
         } catch {
             importError = error.localizedDescription
@@ -263,7 +263,7 @@ private struct UpgradeSheet: View {
                 if result == nil { ProgressView().controlSize(.small) }
             }
             ScrollView {
-                Text(output.isEmpty ? "pipx upgrade gamdl…" : output)
+                Text(verbatim: output.isEmpty ? "pipx upgrade gamdl…" : output)
                     .font(.system(size: 11, design: .monospaced))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .textSelection(.enabled)
@@ -272,12 +272,12 @@ private struct UpgradeSheet: View {
             .background(.black.opacity(0.3), in: .rect(cornerRadius: 12))
             HStack {
                 if let result {
-                    Label(result.succeeded ? "Terminé" : "Échec (code \(result.exitCode))",
+                    Label(result.succeeded ? String(localized: "Terminé") : String(localized: "Échec (code \(result.exitCode))"),
                           systemImage: result.succeeded ? "checkmark.circle.fill" : "xmark.octagon.fill")
                         .foregroundStyle(result.succeeded ? .green : .red)
                 }
                 Spacer()
-                Button(result == nil ? "Patienter…" : "Fermer") { dismiss() }
+                Button(result == nil ? String(localized: "Patienter…") : String(localized: "Fermer")) { dismiss() }
                     .keyboardShortcut(.defaultAction)
                     .disabled(result == nil)
             }

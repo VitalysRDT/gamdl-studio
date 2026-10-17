@@ -14,9 +14,9 @@ struct LibraryView: View {
         var id: String { rawValue }
         var label: String {
             switch self {
-            case .all: "Tout"
-            case .albums: "Albums"
-            case .compilations: "Compilations"
+            case .all: String(localized: "Tout")
+            case .albums: String(localized: "Albums")
+            case .compilations: String(localized: "Compilations")
             }
         }
     }
@@ -132,7 +132,11 @@ struct LibraryView: View {
                     if model.library.isScanning && model.library.albums.isEmpty {
                         Text("Lecture du dossier…")
                     } else {
-                        Text("\(Formatters.count(model.library.albums.count, "album")) · \(Formatters.count(model.library.trackCount, "titre")) · \(Formatters.bytes(model.library.totalSize))")
+                        Text(verbatim: [
+                            String(localized: "\(model.library.albums.count) albums"),
+                            String(localized: "\(model.library.trackCount) titres"),
+                            Formatters.bytes(model.library.totalSize),
+                        ].joined(separator: " · "))
                     }
                 }
                 .foregroundStyle(.secondary)
@@ -242,13 +246,17 @@ private struct AlbumDetailView: View {
                     ArtworkView(source: album.artworkSource, size: 240, cornerRadius: 18, maxPixel: 800)
                         .shadow(color: .black.opacity(0.4), radius: 30, y: 18)
                     VStack(alignment: .leading, spacing: 10) {
-                        Pill(text: album.category == .compilation ? "Compilation" : "Album", color: .brand)
+                        Pill(text: album.category == .compilation ? String(localized: "Compilation") : String(localized: "Album"), color: .brand)
                         Text(album.title)
                             .font(.system(size: 34, weight: .bold, design: .rounded))
                             .lineLimit(3)
                             .textSelection(.enabled)
                         Text(album.subtitle).font(.title2.weight(.medium)).foregroundStyle(.brandGradient)
-                        Text("\(Formatters.count(album.tracks.count, "titre")) · \(Formatters.bytes(album.totalSize)) · ajouté \(Formatters.relative(album.modifiedAt))")
+                        Text(verbatim: [
+                            String(localized: "\(album.tracks.count) titres"),
+                            Formatters.bytes(album.totalSize),
+                            String(localized: "ajouté \(Formatters.relative(album.modifiedAt))"),
+                        ].joined(separator: " · "))
                             .foregroundStyle(.secondary)
                         HStack(spacing: 10) {
                             if let first = album.tracks.first {
@@ -306,7 +314,7 @@ private struct TrackRow: View {
                 } else if hovering || isCurrent {
                     Image(systemName: "play.fill").foregroundStyle(.brand)
                 } else {
-                    Text(track.trackNumber.map(String.init) ?? "·")
+                    Text(verbatim: track.trackNumber.map(String.init) ?? "·")
                         .font(.callout.monospacedDigit()).foregroundStyle(.tertiary)
                 }
             }
@@ -316,7 +324,7 @@ private struct TrackRow: View {
                 .fontWeight(isCurrent ? .semibold : .regular)
                 .foregroundStyle(isCurrent ? AnyShapeStyle(.brandGradient) : AnyShapeStyle(.primary))
                 .lineLimit(1)
-            if track.isVideo { Pill(text: "Clip", symbol: "play.rectangle") }
+            if track.isVideo { Pill(text: String(localized: "Clip"), symbol: "play.rectangle") }
             Spacer()
             if track.lyricsURL != nil {
                 Button(action: onLyrics) { Image(systemName: "quote.bubble") }
@@ -368,7 +376,7 @@ private struct LyricsSheet: View {
     }
 
     private var lyrics: String {
-        guard let url = track.lyricsURL, let raw = try? String(contentsOf: url, encoding: .utf8) else { return "Paroles illisibles." }
+        guard let url = track.lyricsURL, let raw = try? String(contentsOf: url, encoding: .utf8) else { return String(localized: "Paroles illisibles.") }
         return LyricsText.plain(fromLRC: raw)
     }
 }

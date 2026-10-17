@@ -15,8 +15,8 @@ enum SongCodec: String, CaseIterable, Codable, Sendable, Identifiable {
     }
     var detail: String {
         switch self {
-        case .aacWeb: "Qualité Apple Music standard"
-        case .aacHeWeb: "Fichiers légers, pour l'écoute mobile"
+        case .aacWeb: String(localized: "Qualité Apple Music standard")
+        case .aacHeWeb: String(localized: "Fichiers légers, pour l'écoute mobile")
         }
     }
 }
@@ -32,9 +32,9 @@ enum LyricsMode: String, CaseIterable, Codable, Sendable, Identifiable {
     var id: String { rawValue }
     var label: String {
         switch self {
-        case .withAudio: "Avec le son"
-        case .none: "Aucunes"
-        case .lyricsOnly: "Paroles seules"
+        case .withAudio: String(localized: "Avec le son")
+        case .none: String(localized: "Aucunes")
+        case .lyricsOnly: String(localized: "Paroles seules")
         }
     }
 }
@@ -53,13 +53,13 @@ enum ArtistSelection: String, CaseIterable, Codable, Sendable, Identifiable {
     var id: String { rawValue }
     var label: String {
         switch self {
-        case .mainAlbums: "Albums"
-        case .singlesEPs: "Singles et EP"
-        case .compilationAlbums: "Compilations"
-        case .liveAlbums: "Albums live"
-        case .allAlbums: "Tous les albums"
-        case .topSongs: "Top morceaux"
-        case .musicVideos: "Clips"
+        case .mainAlbums: String(localized: "Albums")
+        case .singlesEPs: String(localized: "Singles et EP")
+        case .compilationAlbums: String(localized: "Compilations")
+        case .liveAlbums: String(localized: "Albums live")
+        case .allAlbums: String(localized: "Tous les albums")
+        case .topSongs: String(localized: "Top morceaux")
+        case .musicVideos: String(localized: "Clips")
         }
     }
 }

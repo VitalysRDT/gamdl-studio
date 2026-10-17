@@ -24,7 +24,8 @@
 Gamdl Studio donne une interface Mac à la ligne de commande gamdl : on colle un lien, on
 vérifie ce qu'il contient, on suit le téléchargement piste par piste, puis on parcourt et on
 écoute ce qui a été téléchargé. gamdl tourne sur ta machine, avec ta propre session Apple
-Music ; rien ne passe par un serveur tiers.
+Music ; rien ne passe par un serveur tiers. L'interface existe en français et en anglais et
+suit la langue de macOS.
 
 ## Fonctionnalités
 

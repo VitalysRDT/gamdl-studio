@@ -37,12 +37,35 @@ struct UtilitiesTests {
         #expect(Formatters.duration(seconds: .nan) == "–:––")
         #expect(Formatters.longDuration(milliseconds: 54 * 60_000) == "54 min")
         #expect(Formatters.longDuration(milliseconds: 72 * 60_000) == "1 h 12 min")
-        #expect(Formatters.count(1, "titre") == "1 titre")
-        #expect(Formatters.count(3, "titre") == "3 titres")
-        #expect(Formatters.count(0, "erreur") == "0 erreur")
+        // Plural variations come from the String Catalog; French puts 0 in the "one" category.
+        #expect(String(localized: "\(1) titres") == "1 titre")
+        #expect(String(localized: "\(3) titres") == "3 titres")
+        #expect(String(localized: "\(0) erreurs") == "0 erreur")
+        #expect(String(localized: "\(2) déjà présents") == "2 déjà présents")
+        // Plural substitution followed by a positional argument.
+        let size = "1,2 Go", day = "3 mars"
+        #expect(String(localized: "\(1) albums, \(size)") == "1 album, 1,2 Go")
+        #expect(String(localized: "\(3) albums, \(size)") == "3 albums, 1,2 Go")
+        #expect(String(localized: "\(1) cookies Apple, media-user-token valable jusqu'au \(day).")
+                == "1 cookie Apple, media-user-token valable jusqu'au 3 mars.")
         let now = Date()
         #expect(Formatters.relative(now.addingTimeInterval(0.2), now: now) == "à l'instant")
         #expect(Formatters.relative(now.addingTimeInterval(-3600), now: now) == "il y a 1 heure")
+    }
+
+    @Test("English localization ships with its plural forms")
+    func englishCatalog() throws {
+        let path = try #require(Bundle.main.path(forResource: "en", ofType: "lproj"))
+        let en = try #require(Bundle(path: path))
+        #expect(String(localized: "\(1) titres", bundle: en) == "1 track")
+        #expect(String(localized: "\(3) titres", bundle: en) == "3 tracks")
+        // No 0 case here: the plural category follows the process locale (fr under the
+        // test scheme), which files 0 under "one" even when reading the English table.
+        #expect(String(localized: "File d'attente", bundle: en) == "Queue")
+        #expect(String(localized: "Terminé avec \(1) erreurs", bundle: en) == "Finished with 1 error")
+        #expect(String(localized: "\(3) albums, \("1.2 GB")", bundle: en) == "3 albums, 1.2 GB")
+        #expect(String(localized: "\(4) cookies Apple, media-user-token valable jusqu'au \("March 3").", bundle: en)
+                == "4 Apple cookies, media-user-token valid until March 3.")
     }
 
     @Test("LRC lyrics to plain text")

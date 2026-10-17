@@ -43,7 +43,7 @@ struct SidebarView: View {
                 .background(.brandGradient, in: .rect(cornerRadius: 8, style: .continuous))
             VStack(alignment: .leading, spacing: 0) {
                 Text("Gamdl Studio").font(.system(size: 14, weight: .bold)).foregroundStyle(.primary)
-                Text(model.report?.gamdl.version.map { "gamdl \($0)" } ?? "Apple Music")
+                Text(verbatim: model.report?.gamdl.version.map { "gamdl \($0)" } ?? "Apple Music")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
             }
         }
@@ -55,12 +55,12 @@ struct SidebarView: View {
         switch item {
         case .queue:
             let n = model.queue.pendingCount
-            return n > 0 ? Text("\(n)") : nil
+            return n > 0 ? Text(verbatim: "\(n)") : nil
         case .library:
-            return model.library.albums.isEmpty ? nil : Text("\(model.library.albums.count)")
+            return model.library.albums.isEmpty ? nil : Text(verbatim: "\(model.library.albums.count)")
         case .diagnostics:
             guard let report = model.report else { return nil }
-            return report.isReady ? nil : Text("!")
+            return report.isReady ? nil : Text(verbatim: "!")
         case .download:
             return nil
         }
@@ -81,7 +81,7 @@ struct ActiveJobPill: View {
             .frame(width: 46, height: 46)
             VStack(alignment: .leading, spacing: 2) {
                 Text(job.title).font(.system(size: 12, weight: .semibold)).lineLimit(1)
-                Text(job.currentTrackTitle ?? "Préparation…")
+                (job.currentTrackTitle.map { Text(verbatim: $0) } ?? Text("Préparation…"))
                     .font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
             }
             Spacer(minLength: 0)

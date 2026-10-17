@@ -119,14 +119,14 @@ private struct AdvancedSettings: View {
 
 /// Editable path field with a "Choose…" button (NSOpenPanel).
 private struct PathField: View {
-    let title: String
+    let title: LocalizedStringKey
     @Binding var path: String
     let directory: Bool
 
     var body: some View {
         LabeledContent(title) {
             HStack {
-                Text(path.isEmpty ? "—" : (path as NSString).abbreviatingWithTildeInPath)
+                Text(verbatim: path.isEmpty ? "—" : (path as NSString).abbreviatingWithTildeInPath)
                     .font(.callout.monospaced())
                     .lineLimit(1)
                     .truncationMode(.middle)

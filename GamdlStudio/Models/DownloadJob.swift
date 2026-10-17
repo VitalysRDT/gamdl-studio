@@ -126,7 +126,7 @@ final class DownloadJob: Identifiable {
                 trackTotal = total
                 trackFraction = 0
             }
-            append(LogLine(level: .info, text: "Analyse de \(url)"))
+            append(LogLine(level: .info, text: String(localized: "Analyse de \(url)")))
 
         case let .trackStarted(position, title):
             closeCurrentTrack(as: .done)
@@ -134,7 +134,7 @@ final class DownloadJob: Identifiable {
             updatePosition(position)
             trackFraction = 0
             speed = nil; eta = nil; size = nil
-            append(LogLine(level: .info, text: "Téléchargement de « \(title) »"))
+            append(LogLine(level: .info, text: String(localized: "Téléchargement de « \(title) »")))
 
         case .progress(let p):
             // yt-dlp sometimes revises its estimate downward; never go backwards.
@@ -153,7 +153,7 @@ final class DownloadJob: Identifiable {
             }
             updatePosition(position)
             trackFraction = 1
-            append(LogLine(level: .warning, text: "« \(title) » ignoré : \(reason)"))
+            append(LogLine(level: .warning, text: String(localized: "« \(title) » ignoré : \(reason)")))
 
         case let .trackFailed(position, title):
             if let i = tracks.lastIndex(where: { $0.title == title }) {
@@ -161,8 +161,8 @@ final class DownloadJob: Identifiable {
             } else {
                 tracks.append(JobTrack(index: position?.index, title: title, status: .failed))
             }
-            lastError = "Échec sur « \(title) »"
-            append(LogLine(level: .error, text: "Échec du téléchargement de « \(title) »"))
+            lastError = String(localized: "Échec sur « \(title) »")
+            append(LogLine(level: .error, text: String(localized: "Échec du téléchargement de « \(title) »")))
 
         case .urlFailed(let message):
             lastError = message
@@ -175,11 +175,11 @@ final class DownloadJob: Identifiable {
             finishedAt = .now
             if urlFailures > 0 && tracks.isEmpty {
                 // Every URL was rejected: nothing was attempted, so this is a failure.
-                state = .failed(lastError ?? "Lien refusé par gamdl")
+                state = .failed(lastError ?? String(localized: "Lien refusé par gamdl"))
             } else {
                 state = .completed(errors: errors + urlFailures)
             }
-            append(LogLine(level: .info, text: "Terminé avec \(Formatters.count(errors, "erreur"))"))
+            append(LogLine(level: .info, text: String(localized: "Terminé avec \(errors) erreurs")))
 
         case .log(let line):
             if line.level == .error { lastError = line.text }
@@ -207,7 +207,7 @@ final class DownloadJob: Identifiable {
         if result.wasCancelled {
             closeCurrentTrack(as: .failed)
             state = .cancelled
-            append(LogLine(level: .warning, text: "Annulé"))
+            append(LogLine(level: .warning, text: String(localized: "Annulé")))
             return
         }
         guard !state.isFinished else { return }
@@ -216,7 +216,7 @@ final class DownloadJob: Identifiable {
             state = .completed(errors: failedCount)
         } else {
             closeCurrentTrack(as: .failed)
-            state = .failed(lastError ?? "gamdl s'est arrêté (code \(result.exitCode))")
+            state = .failed(lastError ?? String(localized: "gamdl s'est arrêté (code \(result.exitCode))"))
         }
     }
 

@@ -16,13 +16,13 @@ struct AppleMusicLink: Hashable, Sendable, Identifiable, Codable {
 
         var label: String {
             switch self {
-            case .song: "Morceau"
-            case .album: "Album"
-            case .playlist: "Playlist"
-            case .artist: "Artiste"
-            case .musicVideo: "Clip"
-            case .station: "Station"
-            case .unknown: "Lien"
+            case .song: String(localized: "Morceau")
+            case .album: String(localized: "Album")
+            case .playlist: String(localized: "Playlist")
+            case .artist: String(localized: "Artiste")
+            case .musicVideo: String(localized: "Clip")
+            case .station: String(localized: "Station")
+            case .unknown: String(localized: "Lien")
             }
         }
 

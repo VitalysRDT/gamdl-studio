@@ -137,7 +137,7 @@ struct DownloadView: View {
                 .font(.title2).foregroundStyle(.brandGradient)
             VStack(alignment: .leading, spacing: 2) {
                 Text("\(links.count) liens détectés").font(.headline)
-                Text(Dictionary(grouping: links, by: \.kind).map { "\($0.value.count) \($0.key.label.lowercased())" }.joined(separator: " · "))
+                Text(verbatim: Dictionary(grouping: links, by: \.kind).map { "\($0.value.count) \($0.key.label.lowercased())" }.joined(separator: " · "))
                     .font(.callout).foregroundStyle(.secondary)
             }
             Spacer()
@@ -257,7 +257,7 @@ private struct PreviewCard: View {
                 VStack(alignment: .leading, spacing: 10) {
                     HStack(spacing: 6) {
                         Pill(text: link.kind.label, symbol: link.kind.symbol, color: .brand)
-                        if preview.isExplicit { Pill(text: "Explicite", symbol: "e.square.fill") }
+                        if preview.isExplicit { Pill(text: String(localized: "Explicite"), symbol: "e.square.fill") }
                         if let storefront = link.storefront { Pill(text: storefront.uppercased(), symbol: "globe") }
                     }
                     Text(preview.title)
@@ -286,7 +286,7 @@ private struct PreviewCard: View {
                     let multiDisc = Set(preview.tracks.map(\.disc)).count > 1
                     ForEach(shown) { track in
                         HStack(spacing: 12) {
-                            Text(multiDisc ? "\(track.disc)-\(track.number)" : "\(track.number)")
+                            Text(verbatim: multiDisc ? "\(track.disc)-\(track.number)" : "\(track.number)")
                                 .font(.callout.monospacedDigit())
                                 .foregroundStyle(.tertiary)
                                 .frame(width: 30, alignment: .trailing)
@@ -304,7 +304,7 @@ private struct PreviewCard: View {
                         Divider().opacity(track == shown.last ? 0 : 0.5)
                     }
                     if preview.tracks.count > 8 {
-                        Button(showAllTracks ? "Réduire" : "Afficher les \(preview.tracks.count) pistes") {
+                        Button(showAllTracks ? String(localized: "Réduire") : String(localized: "Afficher les \(preview.tracks.count) pistes")) {
                             withAnimation(.snappy) { showAllTracks.toggle() }
                         }
                         .buttonStyle(.borderless)
@@ -347,8 +347,8 @@ private struct PreviewFallback: View {
                 .glassEffect(.regular, in: .rect(cornerRadius: 16, style: .continuous))
             VStack(alignment: .leading, spacing: 4) {
                 Text("\(link.kind.label) Apple Music").font(.title3.weight(.semibold))
-                Text(error.map { "Aperçu indisponible (\($0)). Le téléchargement reste possible." }
-                     ?? "Pas d'aperçu public pour ce lien. Le téléchargement reste possible.")
+                (error.map { Text("Aperçu indisponible (\($0)). Le téléchargement reste possible.") }
+                     ?? Text("Pas d'aperçu public pour ce lien. Le téléchargement reste possible."))
                     .font(.callout).foregroundStyle(.secondary)
                 Text(link.absoluteString).font(.caption.monospaced()).foregroundStyle(.tertiary).lineLimit(1).truncationMode(.middle)
             }

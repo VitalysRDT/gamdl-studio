@@ -24,10 +24,8 @@
 Gamdl Studio wraps the gamdl command line in a Mac interface: paste a link, check what it
 points to, follow the download track by track, then browse and play what you downloaded.
 It runs gamdl on your machine with your own Apple Music session; nothing goes through a
-third-party server.
-
-> [!NOTE]
-> The interface is currently in French. English localization is planned.
+third-party server. The interface is available in English and French and follows your
+macOS language.
 
 ## Features
 

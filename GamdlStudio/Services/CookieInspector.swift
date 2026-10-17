@@ -31,29 +31,29 @@ enum CookieStatus: Hashable, Sendable {
 
     var title: String {
         switch self {
-        case .missing: "Aucun fichier de cookies"
-        case .invalidFormat: "Format non reconnu"
-        case .noMediaUserToken: "Session Apple Music absente"
-        case .expired: "Session expirée"
-        case .valid: "Session Apple Music active"
+        case .missing: String(localized: "Aucun fichier de cookies")
+        case .invalidFormat: String(localized: "Format non reconnu")
+        case .noMediaUserToken: String(localized: "Session Apple Music absente")
+        case .expired: String(localized: "Session expirée")
+        case .valid: String(localized: "Session Apple Music active")
         }
     }
 
     var message: String {
         switch self {
         case .missing:
-            "Le fichier de cookies est absent ou vide."
+            String(localized: "Le fichier de cookies est absent ou vide.")
         case .invalidFormat:
-            "Ce n'est pas un export Netscape (lignes à 7 champs tabulés). Un export JSON ne convient pas."
+            String(localized: "Ce n'est pas un export Netscape (lignes à 7 champs tabulés). Un export JSON ne convient pas.")
         case .noMediaUserToken:
-            "Le cookie « media-user-token » manque : l'export ne vient pas d'un onglet music.apple.com connecté."
+            String(localized: "Le cookie « media-user-token » manque : l'export ne vient pas d'un onglet music.apple.com connecté.")
         case .expired(let date):
-            "Le cookie « media-user-token » a expiré le \(Formatters.day(date))."
+            String(localized: "Le cookie « media-user-token » a expiré le \(Formatters.day(date)).")
         case let .valid(count, expiresAt):
             if let expiresAt {
-                "\(Formatters.count(count, "cookie")) Apple, media-user-token valable jusqu'au \(Formatters.day(expiresAt))."
+                String(localized: "\(count) cookies Apple, media-user-token valable jusqu'au \(Formatters.day(expiresAt)).")
             } else {
-                "\(Formatters.count(count, "cookie")) Apple, media-user-token de session."
+                String(localized: "\(count) cookies Apple, media-user-token de session.")
             }
         }
     }
@@ -65,7 +65,7 @@ enum CookieInspectorError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .unreadable(let url): "Impossible de lire \(url.lastPathComponent)."
+        case .unreadable(let url): String(localized: "Impossible de lire \(url.lastPathComponent).")
         case .unusable(let status): status.message
         }
     }

@@ -12,8 +12,8 @@ enum ProcessRunnerError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .alreadyStarted: "Ce processus a déjà été lancé."
-        case .launchFailed(let reason): "Impossible de lancer le processus : \(reason)"
+        case .alreadyStarted: String(localized: "Ce processus a déjà été lancé.")
+        case .launchFailed(let reason): String(localized: "Impossible de lancer le processus : \(reason)")
         }
     }
 }

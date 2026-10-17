@@ -184,18 +184,18 @@ struct GamdlOutputParser {
     /// gamdl's reasons are English exception messages. The most common ones
     /// are translated; the rest pass through unchanged.
     static func humanURLError(_ message: String) -> String {
-        if message.lowercased().contains("not valid or supported") { return "Lien non pris en charge par gamdl" }
+        if message.lowercased().contains("not valid or supported") { return String(localized: "Lien non pris en charge par gamdl") }
         return message
     }
 
     static func humanReason(_ reason: String) -> String {
         let lower = reason.lowercased()
-        if lower.contains("already exists") { return "Déjà dans la bibliothèque" }
-        if lower.contains("not streamable") { return "Indisponible en streaming" }
-        if lower.contains("format not available") || lower.contains("codec") { return "Format demandé indisponible" }
-        if lower.contains("decryption") { return "Déchiffrement impossible sans wrapper" }
-        if lower.contains("synced lyrics") { return "Pas de paroles synchronisées" }
-        if lower.contains("not found") && lower.contains("dependency") { return "Dépendance manquante (ffmpeg ?)" }
+        if lower.contains("already exists") { return String(localized: "Déjà dans la bibliothèque") }
+        if lower.contains("not streamable") { return String(localized: "Indisponible en streaming") }
+        if lower.contains("format not available") || lower.contains("codec") { return String(localized: "Format demandé indisponible") }
+        if lower.contains("decryption") { return String(localized: "Déchiffrement impossible sans wrapper") }
+        if lower.contains("synced lyrics") { return String(localized: "Pas de paroles synchronisées") }
+        if lower.contains("not found") && lower.contains("dependency") { return String(localized: "Dépendance manquante (ffmpeg ?)") }
         return reason
     }
 }

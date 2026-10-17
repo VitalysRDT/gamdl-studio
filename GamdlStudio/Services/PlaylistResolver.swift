@@ -30,7 +30,7 @@ struct ResolvedPlaylist: Decodable, Hashable, Sendable {
     func preview(kind: AppleMusicLink.Kind = .playlist) -> MediaPreview {
         MediaPreview(
             kind: kind,
-            title: name ?? "Playlist",
+            title: name ?? String(localized: "Playlist"),
             artist: curator,
             album: nil,
             artworkURL: artworkURL,
@@ -61,13 +61,13 @@ enum PlaylistResolverError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .pythonNotFound(let gamdl):
-            "Impossible de trouver l'interpréteur Python de gamdl (\(gamdl.displayPath))."
+            String(localized: "Impossible de trouver l'interpréteur Python de gamdl (\(gamdl.displayPath)).")
         case .scriptMissing:
-            "Script de résolution de playlist absent de l'app."
+            String(localized: "Script de résolution de playlist absent de l'app.")
         case .failed(let message):
-            "Lecture de la playlist impossible : \(message)"
+            String(localized: "Lecture de la playlist impossible : \(message)")
         case .empty:
-            "La playlist est vide."
+            String(localized: "La playlist est vide.")
         }
     }
 }

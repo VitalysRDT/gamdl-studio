@@ -13,7 +13,7 @@ struct MiniPlayerBar: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(track.title).font(.system(size: 13, weight: .semibold)).lineLimit(1)
-                    Text(player.album?.subtitle ?? "").font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
+                    Text(verbatim: player.album?.subtitle ?? "").font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
                 }
                 .frame(width: 180, alignment: .leading)
 
