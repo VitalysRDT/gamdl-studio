@@ -45,7 +45,7 @@ enum DownloadQueueError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .gamdlMissing: "gamdl est introuvable. Installe-le avec « pipx install gamdl »."
+        case .gamdlMissing: String(localized: "gamdl est introuvable. Installe-le avec « pipx install gamdl ».")
         case .cookies(let status): status.message
         }
     }
@@ -169,11 +169,11 @@ final class DownloadQueue {
                 defer { try? FileManager.default.removeItem(at: paths.temp) }
 
                 if job.link.needsResolution {
-                    job.note("Lecture de la playlist personnalisée…")
+                    job.note(String(localized: "Lecture de la playlist personnalisée…"))
                     let playlist = try await env.resolvePlaylist(job.link, paths)
                     job.expandedURLs = playlist.trackURLs
                     if job.preview?.tracks.isEmpty ?? true { job.preview = playlist.preview() }
-                    job.note("\(Formatters.count(playlist.trackURLs.count, "morceau", "morceaux")) à télécharger")
+                    job.note(String(localized: "\(playlist.trackURLs.count) morceaux à télécharger"))
                 }
 
                 let args = GamdlCommand.arguments(for: job.link, urls: job.expandedURLs, options: job.options, paths: paths)
@@ -239,7 +239,7 @@ final class DownloadQueue {
         guard notifyOnCompletion, NSApp?.isActive == false else { return }
         let content = UNMutableNotificationContent()
         content.title = job.title
-        content.body = HistoryEntry(job: job)?.summary ?? "Téléchargement terminé"
+        content.body = HistoryEntry(job: job)?.summary ?? String(localized: "Téléchargement terminé")
         content.sound = nil
         UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: job.id.uuidString, content: content, trigger: nil))
     }

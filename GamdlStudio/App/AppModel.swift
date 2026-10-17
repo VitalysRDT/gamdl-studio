@@ -8,10 +8,10 @@ enum SidebarItem: String, Hashable, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .download: "Télécharger"
-        case .queue: "File d'attente"
-        case .library: "Bibliothèque"
-        case .diagnostics: "Diagnostic"
+        case .download: String(localized: "Télécharger")
+        case .queue: String(localized: "File d'attente")
+        case .library: String(localized: "Bibliothèque")
+        case .diagnostics: String(localized: "Diagnostic")
         }
     }
 
@@ -94,8 +94,8 @@ final class AppModel {
         if !usable.isEmpty {
             show(Toast(
                 symbol: "arrow.down.circle.fill",
-                message: usable.count == 1 ? "Ajouté à la file d'attente" : "\(usable.count) liens ajoutés à la file",
-                action: "Voir"
+                message: usable.count == 1 ? String(localized: "Ajouté à la file d'attente") : String(localized: "\(usable.count) liens ajoutés à la file"),
+                action: String(localized: "Voir")
             ))
         }
         return usable.count

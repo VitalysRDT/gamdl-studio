@@ -22,10 +22,10 @@ struct DiagnosticReport: Hashable, Sendable {
 
     var problems: [String] {
         var out: [String] = []
-        if !gamdl.isAvailable { out.append("gamdl introuvable") }
-        if !ffmpeg.isAvailable { out.append("ffmpeg introuvable") }
+        if !gamdl.isAvailable { out.append(String(localized: "gamdl introuvable")) }
+        if !ffmpeg.isAvailable { out.append(String(localized: "ffmpeg introuvable")) }
         if !cookies.isUsable { out.append(cookies.title) }
-        if !outputWritable { out.append("Dossier de sortie non accessible en écriture") }
+        if !outputWritable { out.append(String(localized: "Dossier de sortie non accessible en écriture")) }
         return out
     }
 }

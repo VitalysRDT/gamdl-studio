@@ -9,7 +9,7 @@ enum MediaPreviewError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .http(let code): "Apple Music a répondu \(code)."
+        case .http(let code): String(localized: "Apple Music a répondu \(code).")
         }
     }
 }
@@ -94,9 +94,9 @@ struct MediaPreviewService: MediaPreviewProviding {
 
         let title: String
         switch link.kind {
-        case .album: title = main.collectionName ?? main.trackName ?? "Album"
-        case .artist: title = main.artistName ?? "Artiste"
-        default: title = main.trackName ?? main.collectionName ?? "Sans titre"
+        case .album: title = main.collectionName ?? main.trackName ?? String(localized: "Album")
+        case .artist: title = main.artistName ?? String(localized: "Artiste")
+        default: title = main.trackName ?? main.collectionName ?? String(localized: "Sans titre")
         }
 
         return MediaPreview(

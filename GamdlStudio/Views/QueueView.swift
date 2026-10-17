@@ -80,12 +80,13 @@ struct QueueView: View {
     private var subtitle: String {
         let q = model.queue
         if let job = q.active.first {
-            return "En cours : \(job.title)" + (q.queued.isEmpty ? "" : " · \(q.queued.count) en attente")
+            let current = String(localized: "En cours : \(job.title)")
+            return q.queued.isEmpty ? current : current + " · " + String(localized: "\(q.queued.count) en attente")
         }
-        return q.queued.isEmpty ? "Aucun téléchargement en cours" : "\(q.queued.count) en attente"
+        return q.queued.isEmpty ? String(localized: "Aucun téléchargement en cours") : String(localized: "\(q.queued.count) en attente")
     }
 
-    private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
+    private func section<Content: View>(_ title: LocalizedStringKey, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title).sectionLabel()
             VStack(spacing: 8) { content() }
@@ -140,12 +141,12 @@ private struct ActiveJobCard: View {
                     ProgressCapsule(value: job.overallFraction, isActive: true, height: 10)
                     HStack(spacing: 16) {
                         if let speed = job.speed { stat("speedometer", speed) }
-                        if let eta = job.eta { stat("clock", "reste \(eta)") }
+                        if let eta = job.eta { stat("clock", String(localized: "reste \(eta)")) }
                         if let size = job.size { stat("internaldrive", size) }
                         if let elapsed = job.elapsed { stat("timer", Formatters.duration(seconds: elapsed)) }
                         Spacer()
                         Button { showLog.toggle() } label: {
-                            Label(showLog ? "Masquer le journal" : "Journal", systemImage: "terminal")
+                            Label(showLog ? String(localized: "Masquer le journal") : String(localized: "Journal"), systemImage: "terminal")
                         }
                         .buttonStyle(.borderless)
                         Button(role: .destructive) { model.queue.cancel(job) } label: {
@@ -172,9 +173,9 @@ private struct ActiveJobCard: View {
     }
 
     private var trackLabel: String {
-        guard let index = job.trackIndex else { return "Piste" }
-        if let total = job.trackTotal { return "Piste \(index)/\(total)" }
-        return "Piste \(index)"
+        guard let index = job.trackIndex else { return String(localized: "Piste") }
+        if let total = job.trackTotal { return String(localized: "Piste \(index)/\(total)") }
+        return String(localized: "Piste \(index)")
     }
 
     private func stat(_ symbol: String, _ text: String) -> some View {
@@ -192,7 +193,7 @@ private struct TrackTimeline: View {
             HStack {
                 Text("Pistes").sectionLabel()
                 Spacer()
-                Text(counts).font(.caption).foregroundStyle(.secondary)
+                Text(verbatim: counts).font(.caption).foregroundStyle(.secondary)
             }
             ScrollViewReader { proxy in
                 ScrollView {
@@ -228,9 +229,9 @@ private struct TrackTimeline: View {
     private var counts: String {
         let done = tracks.filter { $0.status == .done }.count
         let skipped = tracks.filter { if case .skipped = $0.status { true } else { false } }.count
-        var parts = ["\(done) terminée\(done > 1 ? "s" : "")"]
-        if skipped > 0 { parts.append("\(skipped) ignorée\(skipped > 1 ? "s" : "")") }
-        if let total { parts.append("sur \(total)") }
+        var parts = [String(localized: "\(done) terminées")]
+        if skipped > 0 { parts.append(String(localized: "\(skipped) ignorées")) }
+        if let total { parts.append(String(localized: "sur \(total)")) }
         return parts.joined(separator: " · ")
     }
 
@@ -337,7 +338,7 @@ private struct JobRow: View {
         case .running:
             ProgressCapsule(value: job.overallFraction, height: 5).frame(width: 200)
         case .completed(let errors):
-            Label(HistoryEntry(job: job)?.summary ?? "Terminé", systemImage: errors > 0 ? "exclamationmark.circle.fill" : "checkmark.circle.fill")
+            Label(HistoryEntry(job: job)?.summary ?? String(localized: "Terminé"), systemImage: errors > 0 ? "exclamationmark.circle.fill" : "checkmark.circle.fill")
                 .font(.caption)
                 .foregroundStyle(errors > 0 ? .orange : .green)
         case .failed(let message):
@@ -373,7 +374,7 @@ private struct JobRow: View {
         }
     }
 
-    private func iconButton(_ symbol: String, _ help: String, action: @escaping () -> Void) -> some View {
+    private func iconButton(_ symbol: String, _ help: LocalizedStringKey, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: symbol).frame(width: 18, height: 18)
         }
@@ -446,7 +447,7 @@ private struct HistorySection: View {
             }
             .glassEffect(.regular, in: .rect(cornerRadius: 18, style: .continuous))
             if entries.count > 6 {
-                Button(expanded ? "Réduire" : "Tout afficher (\(entries.count))") { withAnimation(.snappy) { expanded.toggle() } }
+                Button(expanded ? String(localized: "Réduire") : String(localized: "Tout afficher (\(entries.count))")) { withAnimation(.snappy) { expanded.toggle() } }
                     .buttonStyle(.borderless).font(.callout)
             }
         }

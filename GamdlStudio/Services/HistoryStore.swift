@@ -19,14 +19,14 @@ struct HistoryEntry: Codable, Hashable, Identifiable, Sendable {
 
     var summary: String {
         switch outcome {
-        case .cancelled: return "Annulé"
-        case .failed: return "Échec"
+        case .cancelled: return String(localized: "Annulé")
+        case .failed: return String(localized: "Échec")
         case .completed:
             var parts: [String] = []
-            if downloaded > 0 { parts.append(Formatters.count(downloaded, "titre") + " " + (downloaded > 1 ? "téléchargés" : "téléchargé")) }
-            if skipped > 0 { parts.append("\(skipped) déjà présent\(skipped > 1 ? "s" : "")") }
-            if failed > 0 { parts.append(Formatters.count(failed, "erreur")) }
-            return parts.isEmpty ? "Rien de nouveau" : parts.joined(separator: " · ")
+            if downloaded > 0 { parts.append(String(localized: "\(downloaded) titres téléchargés")) }
+            if skipped > 0 { parts.append(String(localized: "\(skipped) déjà présents")) }
+            if failed > 0 { parts.append(String(localized: "\(failed) erreurs")) }
+            return parts.isEmpty ? String(localized: "Rien de nouveau") : parts.joined(separator: " · ")
         }
     }
 }
