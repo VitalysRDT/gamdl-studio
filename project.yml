@@ -1,0 +1,71 @@
+name: GamdlStudio
+options:
+  bundleIdPrefix: eu.vitalys
+  deploymentTarget:
+    macOS: "26.0"
+  createIntermediateGroups: true
+  developmentLanguage: fr
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    SWIFT_STRICT_CONCURRENCY: minimal
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    MACOSX_DEPLOYMENT_TARGET: "26.0"
+targets:
+  GamdlStudio:
+    type: application
+    platform: macOS
+    sources:
+      - path: GamdlStudio
+    info:
+      path: GamdlStudio/Info.plist
+      properties:
+        CFBundleName: Gamdl Studio
+        CFBundleDisplayName: Gamdl Studio
+        CFBundleDevelopmentRegion: fr
+        LSApplicationCategoryType: public.app-category.music
+        LSMinimumSystemVersion: "26.0"
+        NSHumanReadableCopyright: "© 2026 Vitalys Rougetet--De Troyane"
+        NSDocumentsFolderUsageDescription: "Gamdl Studio lit ta bibliothèque et tes cookies dans le dossier Documents."
+        NSMusicFolderUsageDescription: "Gamdl Studio peut enregistrer tes téléchargements dans le dossier Musique."
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: eu.vitalys.gamdlstudio
+        PRODUCT_NAME: GamdlStudio
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_STYLE: Manual
+        DEVELOPMENT_TEAM: ""
+        ENABLE_APP_SANDBOX: NO
+        ENABLE_HARDENED_RUNTIME: YES
+        COMBINE_HIDPI_IMAGES: YES
+  GamdlStudioTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: GamdlStudioTests
+        excludes:
+          - "Fixtures/**"
+    dependencies:
+      - target: GamdlStudio
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: eu.vitalys.gamdlstudio.tests
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_STYLE: Manual
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/GamdlStudio.app/Contents/MacOS/GamdlStudio"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+schemes:
+  GamdlStudio:
+    build:
+      targets:
+        GamdlStudio: all
+        GamdlStudioTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - GamdlStudioTests
