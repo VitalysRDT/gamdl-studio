@@ -72,6 +72,9 @@ xcodebuild archive \
 APP="$BUILD/$APP_NAME.xcarchive/Products/Applications/$APP_NAME.app"
 [ -d "$APP" ] || { echo "Archive failed: $APP not found" >&2; exit 1; }
 
+BUNDLE_VERSION="$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' "$APP/Contents/Info.plist")"
+[ "$BUNDLE_VERSION" = "$VERSION" ] || { echo "App reports version $BUNDLE_VERSION, expected $VERSION" >&2; exit 1; }
+
 echo "==> Verifying signature"
 codesign --verify --deep --strict --verbose=2 "$APP"
 codesign -d --entitlements - --verbose=2 "$APP" 2>&1 | grep -E "Authority=Developer ID|flags=.*runtime" >/dev/null \
