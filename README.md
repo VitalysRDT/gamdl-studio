@@ -81,9 +81,9 @@ Gamdl Studio looks for `gamdl` in `~/.local/bin` (pipx), `/opt/homebrew/bin` and
 
 1. Download `GamdlStudio-x.y.z.dmg` from the [latest release](https://github.com/VitalysRDT/gamdl-studio/releases/latest).
 2. Open it and drag **Gamdl Studio** to **Applications**. The app is signed and notarized.
-3. Launch it, open **Diagnostic**, and drop your `cookies.txt` onto the drop zone.
+3. Launch it, open **Diagnostics**, and drop your `cookies.txt` onto the drop zone.
 
-When the Diagnostic tab shows everything green, paste a link in the **Télécharger** tab and
+When the Diagnostics tab shows everything green, paste a link in the **Download** tab and
 press <kbd>⌘</kbd><kbd>↩</kbd>.
 
 ### Where files go
