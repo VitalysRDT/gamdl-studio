@@ -25,6 +25,8 @@ targets:
       properties:
         CFBundleName: Gamdl Studio
         CFBundleDisplayName: Gamdl Studio
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         CFBundleDevelopmentRegion: fr
         LSApplicationCategoryType: public.app-category.music
         LSMinimumSystemVersion: "26.0"
