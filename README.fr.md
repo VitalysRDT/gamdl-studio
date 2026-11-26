@@ -73,6 +73,9 @@ Cela installe le gamdl actuel, en 4.x. Si tu restes sur gamdl 3, installe aussi 
 (`brew install ffmpeg`). gamdl 4 n'a plus de mode « Paroles seules » : l'option n'est proposée
 qu'avec gamdl 3.
 
+Gamdl Studio 1.1.0 et les versions précédentes ne pilotent que gamdl 3. Avec elles, installe
+plutôt `pipx install 'gamdl>=3.9,<4'`, ou compile l'app depuis les sources pour gamdl 4.
+
 Gamdl Studio cherche `gamdl` dans `~/.local/bin` (pipx), `/opt/homebrew/bin` et
 `/usr/local/bin`. S'il est ailleurs, indique son chemin dans **Réglages → Avancé**.
 

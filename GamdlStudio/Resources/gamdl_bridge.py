@@ -58,7 +58,10 @@ def install_hooks():
             if progress is not None:
                 percent = float(progress.percentage)
                 now = time.monotonic()
-                if percent >= 100 or now - last_sent.get(occurrence, 0.0) >= PROGRESS_INTERVAL:
+                # monotonic() has no fixed origin (it starts near 0 with the
+                # process on some Pythons): a track's first event always goes out.
+                previous = last_sent.get(occurrence)
+                if percent >= 100 or previous is None or now - previous >= PROGRESS_INTERVAL:
                     last_sent[occurrence] = now
                     emit(
                         {

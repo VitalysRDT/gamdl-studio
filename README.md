@@ -72,6 +72,9 @@ This installs the current gamdl, 4.x. If you stay on gamdl 3, also install FFmpe
 (`brew install ffmpeg`). gamdl 4 has no "lyrics only" mode: that option is only offered
 with gamdl 3.
 
+Gamdl Studio 1.1.0 and earlier only drive gamdl 3. With those versions, install
+`pipx install 'gamdl>=3.9,<4'` instead, or build the app from source for gamdl 4.
+
 Gamdl Studio looks for `gamdl` in `~/.local/bin` (pipx), `/opt/homebrew/bin` and
 `/usr/local/bin`. If yours lives elsewhere, set its path in **Settings → Advanced**.
 

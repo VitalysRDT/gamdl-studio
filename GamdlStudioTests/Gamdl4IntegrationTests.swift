@@ -3,8 +3,11 @@ import Testing
 @testable import GamdlStudio
 
 /// A Python 3 to run the app's real scripts against stub `gamdl` packages.
+/// The system one comes first: it is Xcode's Python 3.9, the oldest the
+/// scripts promise to support. It is also where time.monotonic() starts near
+/// 0, which once made the bridge drop each track's first progress line.
 private enum Python {
-    static let path: URL? = ["/opt/homebrew/bin/python3", "/usr/local/bin/python3", "/usr/bin/python3"]
+    static let path: URL? = ["/usr/bin/python3", "/opt/homebrew/bin/python3", "/usr/local/bin/python3"]
         .map { URL(filePath: $0) }
         .first { FileManager.default.isExecutableFile(atPath: $0.path) }
 }
