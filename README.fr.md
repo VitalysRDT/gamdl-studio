@@ -37,7 +37,7 @@ suit la langue de macOS.
   déposés d'un coup partent tous en file.
 - **Bibliothèque.** Tout le dossier de sortie, regroupé par album, avec recherche, tri,
   lecteur intégré, paroles synchronisées (LRC) et « Ouvrir dans Musique ».
-- **Diagnostic.** Vérifie gamdl, ffmpeg, le fichier de cookies et le dossier de sortie. Les
+- **Diagnostic.** Vérifie gamdl, ffmpeg (gamdl 3 seulement), le fichier de cookies et le dossier de sortie. Les
   cookies s'importent par glisser-déposer : seuls les cookies Apple sont conservés, avec des
   droits `600`. gamdl se met à jour depuis l'app (`pipx upgrade gamdl`).
 - **Réglages de téléchargement.** Codec, format des paroles, taille de pochette, `Cover.jpg`,
@@ -52,20 +52,26 @@ suit la langue de macOS.
 
 - macOS 26 (Tahoe) ou plus récent, Mac Apple silicon ou Intel
 - Un abonnement Apple Music actif
-- [gamdl](https://github.com/glomatico/gamdl) 3.9 ou plus récent et [FFmpeg](https://ffmpeg.org)
+- [gamdl](https://github.com/glomatico/gamdl) 3.9 ou plus récent. gamdl 3 et gamdl 4 sont tous
+  deux pris en charge : l'app lit `gamdl --version` et pilote celui qui est installé.
+- [FFmpeg](https://ffmpeg.org), avec gamdl 3 seulement (gamdl 4 ne l'utilise plus)
 - Un fichier `cookies.txt` exporté depuis [music.apple.com](https://music.apple.com) en étant connecté
 
 ## Installation et configuration
 
-### 1. Installer gamdl et FFmpeg
+### 1. Installer gamdl
 
 Avec [Homebrew](https://brew.sh) :
 
 ```bash
-brew install pipx ffmpeg
+brew install pipx
 pipx ensurepath
 pipx install gamdl
 ```
+
+Cela installe le gamdl actuel, en 4.x. Si tu restes sur gamdl 3, installe aussi FFmpeg
+(`brew install ffmpeg`). gamdl 4 n'a plus de mode « Paroles seules » : l'option n'est proposée
+qu'avec gamdl 3.
 
 Gamdl Studio cherche `gamdl` dans `~/.local/bin` (pipx), `/opt/homebrew/bin` et
 `/usr/local/bin`. S'il est ailleurs, indique son chemin dans **Réglages → Avancé**.
@@ -95,8 +101,9 @@ sur <kbd>⌘</kbd><kbd>↩</kbd>.
 | Cookies | `~/Library/Application Support/Gamdl Studio/cookies.txt` | Réglages → Général |
 | Fichiers temporaires | `~/Library/Caches/Gamdl Studio/temp` | Réglages → Avancé |
 
-Les noms de dossiers et de fichiers suivent les modèles de gamdl : un `~/.gamdl/config.ini`
-existant reste pris en compte.
+Les noms de dossiers et de fichiers suivent les modèles de gamdl : ta configuration gamdl
+existante reste prise en compte (`~/.gamdl/config.ini` pour gamdl 3, `~/.gamdl/config.yml`
+pour gamdl 4).
 
 ## Liens pris en charge
 
@@ -150,21 +157,34 @@ xcodebuild test -project GamdlStudio.xcodeproj -scheme GamdlStudio -destination 
 
 Les tests (Swift Testing) ne contactent jamais Apple Music. Les tests d'intégration font
 tourner la vraie file de téléchargement contre un faux script `gamdl` qui rejoue une sortie
-de gamdl enregistrée.
+de gamdl enregistrée, et lancent les scripts Python de l'app (`gamdl_bridge.py`,
+`resolve_playlist.py`) contre des paquets `gamdl` factices, avec le Python 3 présent sur le
+Mac. Ces tests-là sont ignorés s'il n'y en a pas.
 
 Pour produire un DMG signé et notarisé, voir [`scripts/release.sh`](scripts/release.sh).
 
 ## Fonctionnement
 
-- L'app lance gamdl comme processus enfant, avec les options qu'on lui passerait à la main
-  (`--cookies-path`, `--output-path`, `--song-codec-priority`…), et lit sa sortie ligne par
-  ligne. Chaque journal propose de copier la commande exacte.
+- L'app lance gamdl comme processus enfant, avec les options qu'on lui passerait à la main, et
+  lit sa sortie ligne par ligne. Chaque journal propose de copier la commande exacte.
+- gamdl 4 a remplacé la commande unique de gamdl 3 par des sous-commandes et renommé la plupart
+  des options : la commande est donc construite selon la version majeure installée (lue avec
+  `gamdl --version`, mise en cache par exécutable) :
+  - gamdl 3 : `gamdl --cookies-path … --output-path … --song-codec-priority … URL`
+  - gamdl 4 : `gamdl rip --auth-mode cookies --cookies-path … --output-dir … URL`, avec
+    `--concurrent-downloads 1` pour recevoir les morceaux un par un, et `--no-progress`.
 - Une app lancée depuis le Finder n'hérite pas du `PATH` du terminal : gamdl et ffmpeg sont
   donc localisés explicitement.
 - gamdl tourne avec `PYTHONUNBUFFERED=1` pour une progression en temps réel, et stdin fermé :
   une question interactive échoue au lieu de bloquer.
-- La progression se base sur le compteur de fragments HLS de yt-dlp plutôt que sur son
-  pourcentage, qui recule à chaque révision de l'estimation de taille.
+- Avec gamdl 3, la progression se base sur le compteur de fragments HLS de yt-dlp plutôt que
+  sur son pourcentage, qui recule à chaque révision de l'estimation de taille.
+- gamdl 4 dessine sa progression avec un affichage éphémère qui n'écrit rien dans un pipe.
+  L'app le lance donc via `GamdlStudio/Resources/gamdl_bridge.py`, avec le Python de gamdl :
+  le script se branche sur cet affichage, écrit chaque début de morceau, transfert et échec en
+  JSON, puis passe les arguments au point d'entrée de gamdl. Si un gamdl ultérieur renomme cet
+  affichage, gamdl tourne tel quel et l'app se rabat sur les lignes que gamdl écrit à la fin de
+  chaque morceau.
 - L'annulation envoie `SIGINT` à gamdl et à ses processus enfants, puis `SIGTERM` et `SIGKILL`
   s'ils tournent encore.
 - Les playlists personnalisées sont dépliées par `GamdlStudio/Resources/resolve_playlist.py`,
@@ -176,7 +196,7 @@ Pour produire un DMG signé et notarisé, voir [`scripts/release.sh`](scripts/re
 - [**gamdl**](https://github.com/glomatico/gamdl), par [glomatico](https://github.com/glomatico),
   fait tout le travail de téléchargement, de déchiffrement et de tags. Gamdl Studio n'en est
   que l'interface : les problèmes de téléchargement sont à signaler à gamdl.
-- [FFmpeg](https://ffmpeg.org) et [yt-dlp](https://github.com/yt-dlp/yt-dlp), utilisés par gamdl.
+- [FFmpeg](https://ffmpeg.org) et [yt-dlp](https://github.com/yt-dlp/yt-dlp), utilisés par gamdl 3.
 
 ## Avertissement
 

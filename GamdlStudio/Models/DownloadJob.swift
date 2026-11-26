@@ -143,6 +143,17 @@ final class DownloadJob: Identifiable {
             eta = p.isComplete ? nil : (p.eta ?? eta)
             size = p.size ?? size
 
+        case let .trackCompleted(position, title, _):
+            if let i = tracks.lastIndex(where: { $0.title == title && $0.status == .downloading }) {
+                tracks[i].status = .done
+            } else {
+                closeCurrentTrack(as: .done)
+                tracks.append(JobTrack(index: multiURL ? urlIndex : position?.index, title: title, status: .done))
+            }
+            updatePosition(position)
+            trackFraction = 1
+            append(LogLine(level: .info, text: String(localized: "« \(title) » enregistré")))
+
         case let .trackSkipped(position, title, reason, file):
             if let i = tracks.lastIndex(where: { $0.title == title && $0.status == .downloading }) {
                 tracks[i].status = .skipped(reason)

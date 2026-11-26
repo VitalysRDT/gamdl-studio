@@ -17,13 +17,19 @@ struct DiagnosticReport: Hashable, Sendable {
     let freeSpace: Int64?
     let checkedAt: Date
 
+    /// Which command line the installed gamdl speaks, once it was found.
+    var generation: GamdlGeneration? { gamdl.isAvailable ? GamdlGeneration(version: gamdl.version) : nil }
+
+    /// gamdl 4 no longer uses ffmpeg.
+    var needsFFmpeg: Bool { generation?.needsFFmpeg ?? true }
+
     /// Everything needed to start a download.
-    var isReady: Bool { gamdl.isAvailable && ffmpeg.isAvailable && cookies.isUsable && outputWritable }
+    var isReady: Bool { gamdl.isAvailable && (ffmpeg.isAvailable || !needsFFmpeg) && cookies.isUsable && outputWritable }
 
     var problems: [String] {
         var out: [String] = []
         if !gamdl.isAvailable { out.append(String(localized: "gamdl introuvable")) }
-        if !ffmpeg.isAvailable { out.append(String(localized: "ffmpeg introuvable")) }
+        if !ffmpeg.isAvailable && needsFFmpeg { out.append(String(localized: "ffmpeg introuvable")) }
         if !cookies.isUsable { out.append(cookies.title) }
         if !outputWritable { out.append(String(localized: "Dossier de sortie non accessible en écriture")) }
         return out
@@ -33,12 +39,21 @@ struct DiagnosticReport: Hashable, Sendable {
 /// Environment checks (tools and their versions), returned as data.
 enum Diagnostics {
     /// "gamdl, version 3.9.1" → "3.9.1"; "ffmpeg version 9.0.2 Copyright…" → "9.0.2".
+    ///
+    /// gamdl 4 prints a "Gamdl 4.1.2" banner on stderr before its version
+    /// line, so every line is searched, not just the first.
     static func parseVersion(_ output: String) -> String? {
-        let firstLine = output.split(whereSeparator: \.isNewline).first.map(String.init) ?? ""
+        let lines = output.split(whereSeparator: \.isNewline).map { String($0).trimmed }
         let pattern = TextPatterns.regex(#"version\s+v?([0-9][0-9A-Za-z.\-+]*)"#, options: .caseInsensitive)
-        if let v = pattern.captures(in: firstLine)?[1] { return v }
+        for line in lines {
+            if let v = pattern.captures(in: line)?[1] { return v }
+        }
+        let banner = TextPatterns.regex(#"^gamdl\s+v?([0-9][0-9A-Za-z.\-+]*)$"#, options: .caseInsensitive)
+        for line in lines {
+            if let v = banner.captures(in: line)?[1] { return v }
+        }
         // pipx --version prints only the number.
-        let bare = firstLine.trimmed
+        let bare = lines.first ?? ""
         return bare.range(of: #"^[0-9][0-9.]*$"#, options: .regularExpression) != nil ? bare : nil
     }
 

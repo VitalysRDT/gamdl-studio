@@ -62,12 +62,21 @@ private struct DownloadSettings: View {
                 Text("L'ALAC (sans perte) et le Dolby Atmos exigent le wrapper FairPlay, que gamdl ne peut pas utiliser avec de simples cookies.")
                     .font(.caption).foregroundStyle(.secondary)
             }
-            Section("Paroles") {
+            Section {
                 Picker("Paroles synchronisées", selection: $settings.options.lyricsMode) {
-                    ForEach(LyricsMode.allCases) { Text($0.label).tag($0) }
+                    ForEach(LyricsMode.choices(for: model.report?.generation, keeping: settings.options.lyricsMode)) {
+                        Text($0.label).tag($0)
+                    }
                 }
                 Picker("Format", selection: $settings.options.lyricsFormat) {
                     ForEach(LyricsFormat.allCases) { Text($0.label).tag($0) }
+                }
+            } header: {
+                Text("Paroles")
+            } footer: {
+                if settings.options.lyricsMode.isUnsupported(by: model.report?.generation) {
+                    Text(GamdlCommandError.lyricsOnlyUnsupported.localizedDescription)
+                        .font(.caption).foregroundStyle(.orange)
                 }
             }
             Section("Pochette") {

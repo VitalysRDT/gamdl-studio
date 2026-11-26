@@ -405,18 +405,27 @@ private struct OptionsPanel: View {
                 }
                 GridRow {
                     Text("Paroles").foregroundStyle(.secondary)
-                    HStack(spacing: 12) {
-                        Picker("", selection: $settings.options.lyricsMode) {
-                            ForEach(LyricsMode.allCases) { Text($0.label).tag($0) }
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack(spacing: 12) {
+                            Picker("", selection: $settings.options.lyricsMode) {
+                                ForEach(LyricsMode.choices(for: model.report?.generation, keeping: settings.options.lyricsMode)) {
+                                    Text($0.label).tag($0)
+                                }
+                            }
+                            .labelsHidden()
+                            .frame(width: 150)
+                            Picker("", selection: $settings.options.lyricsFormat) {
+                                ForEach(LyricsFormat.allCases) { Text($0.label).tag($0) }
+                            }
+                            .labelsHidden()
+                            .frame(width: 90)
+                            .disabled(settings.options.lyricsMode == .none)
                         }
-                        .labelsHidden()
-                        .frame(width: 150)
-                        Picker("", selection: $settings.options.lyricsFormat) {
-                            ForEach(LyricsFormat.allCases) { Text($0.label).tag($0) }
+                        if settings.options.lyricsMode.isUnsupported(by: model.report?.generation) {
+                            Text(GamdlCommandError.lyricsOnlyUnsupported.localizedDescription)
+                                .font(.caption).foregroundStyle(.orange)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
-                        .labelsHidden()
-                        .frame(width: 90)
-                        .disabled(settings.options.lyricsMode == .none)
                     }
                 }
                 GridRow {
