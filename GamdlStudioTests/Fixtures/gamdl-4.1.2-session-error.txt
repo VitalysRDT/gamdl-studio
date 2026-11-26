@@ -1,0 +1,5 @@
+Gamdl 4.1.2
+
+Created config at /Users/me/.gamdl/config.yml
+Errors (1):
+  ✗ Session: Authentication failed (check cookies or wrapper login)

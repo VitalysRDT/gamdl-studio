@@ -4,6 +4,42 @@
     "" : {
 
     },
+    "—" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "—"
+          }
+        }
+      }
+    },
+    "« %@ » enregistré" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Saved “%@”"
+          }
+        }
+      }
+    },
+    "« %@ » ignoré : %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Skipped “%1$@”: %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "« %1$@ » ignoré : %2$@"
+          }
+        }
+      }
+    },
     "%@ %@ %@" : {
       "localizations" : {
         "en" : {
@@ -570,6 +606,16 @@
         }
       }
     },
+    "⌘↩ pour lancer · les morceaux déjà présents sont ignorés" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "⌘↩ to start · tracks already downloaded are skipped"
+          }
+        }
+      }
+    },
     "1 (recommandé)" : {
       "localizations" : {
         "en" : {
@@ -596,6 +642,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "3"
+          }
+        }
+      }
+    },
+    "à l'instant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "just now"
           }
         }
       }
@@ -670,6 +726,26 @@
         }
       }
     },
+    "ajouté %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "added %@"
+          }
+        }
+      }
+    },
+    "Ajouté à la file d'attente" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Added to the queue"
+          }
+        }
+      }
+    },
     "Ajouter à Musique" : {
       "localizations" : {
         "en" : {
@@ -686,16 +762,6 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Recently Added"
-          }
-        }
-      }
-    },
-    "Ajouté à la file d'attente" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Added to the queue"
           }
         }
       }
@@ -750,6 +816,16 @@
         }
       }
     },
+    "Annulé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Cancelled"
+          }
+        }
+      }
+    },
     "Annuler" : {
       "localizations" : {
         "en" : {
@@ -766,16 +842,6 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Cancel All Downloads"
-          }
-        }
-      }
-    },
-    "Annulé" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Cancelled"
           }
         }
       }
@@ -836,6 +902,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "No cookies file"
+          }
+        }
+      }
+    },
+    "Aucun média téléchargeable à ce lien" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "No downloadable media at this link"
           }
         }
       }
@@ -1130,6 +1206,56 @@
         }
       }
     },
+    "Déchiffrement impossible sans wrapper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Can't decrypt without the wrapper"
+          }
+        }
+      }
+    },
+    "Déjà dans la bibliothèque" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Already in library"
+          }
+        }
+      }
+    },
+    "Dépendance manquante (ffmpeg ?)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Missing dependency (ffmpeg?)"
+          }
+        }
+      }
+    },
+    "Dépose ici un export cookies.txt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Drop a cookies.txt export here"
+          }
+        }
+      }
+    },
+    "Dépose le fichier ci-dessous : seuls les cookies Apple sont conservés." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Drop the file below: only Apple cookies are kept."
+          }
+        }
+      }
+    },
     "Depuis une page d'artiste, prendre" : {
       "localizations" : {
         "en" : {
@@ -1200,52 +1326,52 @@
         }
       }
     },
-    "Déchiffrement impossible sans wrapper" : {
+    "Échec" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
-            "value" : "Can't decrypt without the wrapper"
+            "value" : "Failed"
           }
         }
       }
     },
-    "Déjà dans la bibliothèque" : {
+    "Échec (code %d)" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
-            "value" : "Already in library"
+            "value" : "Failed (code %d)"
           }
         }
       }
     },
-    "Dépendance manquante (ffmpeg ?)" : {
+    "Échec du téléchargement de « %@ »" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
-            "value" : "Missing dependency (ffmpeg?)"
+            "value" : "Failed to download “%@”"
           }
         }
       }
     },
-    "Dépose ici un export cookies.txt" : {
+    "Échec sur « %@ »" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
-            "value" : "Drop a cookies.txt export here"
+            "value" : "Failed on “%@”"
           }
         }
       }
     },
-    "Dépose le fichier ci-dessous : seuls les cookies Apple sont conservés." : {
+    "Écouter" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
-            "value" : "Drop the file below: only Apple cookies are kept."
+            "value" : "Play"
           }
         }
       }
@@ -1430,6 +1556,16 @@
         }
       }
     },
+    "Facultatif avec gamdl 4" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Optional with gamdl 4"
+          }
+        }
+      }
+    },
     "Fermer" : {
       "localizations" : {
         "en" : {
@@ -1446,6 +1582,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Close Player"
+          }
+        }
+      }
+    },
+    "ffmpeg introuvable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "ffmpeg not found"
           }
         }
       }
@@ -1520,12 +1666,92 @@
         }
       }
     },
+    "gamdl 4 n'utilise plus ffmpeg." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl 4 no longer uses ffmpeg."
+          }
+        }
+      }
+    },
+    "gamdl 4 ne sait plus télécharger les paroles seules. Choisis « Avec le son » ou « Aucunes » dans les réglages." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl 4 can no longer download lyrics only. Choose “With Audio” or “None” in Settings."
+          }
+        }
+      }
+    },
+    "gamdl est cherché dans ~/.local/bin, /opt/homebrew/bin et /usr/local/bin : une app lancée depuis le Finder n'hérite pas du PATH du terminal." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl is looked up in ~/.local/bin, /opt/homebrew/bin and /usr/local/bin: an app launched from the Finder doesn't inherit the terminal's PATH."
+          }
+        }
+      }
+    },
+    "gamdl est introuvable. Installe-le avec « pipx install gamdl »." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl can't be found. Install it with “pipx install gamdl”."
+          }
+        }
+      }
+    },
+    "gamdl et ta session Apple Music sont opérationnels." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl and your Apple Music session are ready."
+          }
+        }
+      }
+    },
+    "gamdl introuvable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl not found"
+          }
+        }
+      }
+    },
+    "gamdl s'est arrêté (code %d)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl exited (code %d)"
+          }
+        }
+      }
+    },
     "Gamdl Studio" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Gamdl Studio"
+          }
+        }
+      }
+    },
+    "gamdl, ffmpeg et ta session Apple Music sont opérationnels." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl, ffmpeg and your Apple Music session are ready."
           }
         }
       }
@@ -1546,6 +1772,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "History"
+          }
+        }
+      }
+    },
+    "https://music.apple.com/fr/album/…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "https://music.apple.com/us/album/…"
           }
         }
       }
@@ -2086,16 +2322,6 @@
         }
       }
     },
-    "Proposer les liens copiés dans le presse-papiers" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Suggest links copied to the clipboard"
-          }
-        }
-      }
-    },
     "Préparation…" : {
       "localizations" : {
         "en" : {
@@ -2112,6 +2338,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Ready to download"
+          }
+        }
+      }
+    },
+    "Proposer les liens copiés dans le presse-papiers" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Suggest links copied to the clipboard"
           }
         }
       }
@@ -2146,12 +2382,82 @@
         }
       }
     },
+    "Réduire" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Show Less"
+          }
+        }
+      }
+    },
+    "Réécrire les fichiers déjà téléchargés" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Overwrite files already downloaded"
+          }
+        }
+      }
+    },
+    "Réécrire les fichiers existants" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Overwrite existing files"
+          }
+        }
+      }
+    },
+    "Réessayer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Retry"
+          }
+        }
+      }
+    },
+    "Réglages" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
     "Relire le dossier (⌘R)" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Rescan the folder (⌘R)"
+          }
+        }
+      }
+    },
+    "reste %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "%@ left"
+          }
+        }
+      }
+    },
+    "Rétablir les emplacements par défaut" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Restore Default Locations"
           }
         }
       }
@@ -2206,66 +2512,6 @@
         }
       }
     },
-    "Réduire" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Show Less"
-          }
-        }
-      }
-    },
-    "Réessayer" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Retry"
-          }
-        }
-      }
-    },
-    "Réglages" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Settings"
-          }
-        }
-      }
-    },
-    "Rétablir les emplacements par défaut" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Restore Default Locations"
-          }
-        }
-      }
-    },
-    "Réécrire les fichiers déjà téléchargés" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Overwrite files already downloaded"
-          }
-        }
-      }
-    },
-    "Réécrire les fichiers existants" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Overwrite existing files"
-          }
-        }
-      }
-    },
     "Sans titre" : {
       "localizations" : {
         "en" : {
@@ -2302,6 +2548,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Apple Music Session"
+          }
+        }
+      }
+    },
+    "Session Apple Music : %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Apple Music session: %@"
           }
         }
       }
@@ -2366,6 +2622,16 @@
         }
       }
     },
+    "sur %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "of %lld"
+          }
+        }
+      }
+    },
     "Sur l'onglet music.apple.com, exporte les cookies au format Netscape." : {
       "localizations" : {
         "en" : {
@@ -2392,6 +2658,76 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Embedded Size"
+          }
+        }
+      }
+    },
+    "Téléchargement" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Downloads"
+          }
+        }
+      }
+    },
+    "Téléchargement de « %@ »" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Downloading “%@”"
+          }
+        }
+      }
+    },
+    "Téléchargement terminé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Download complete"
+          }
+        }
+      }
+    },
+    "Téléchargements simultanés" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Simultaneous Downloads"
+          }
+        }
+      }
+    },
+    "Télécharger" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Download"
+          }
+        }
+      }
+    },
+    "Télécharger à nouveau" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Download Again"
+          }
+        }
+      }
+    },
+    "Télécharger quelque chose" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Download Something"
           }
         }
       }
@@ -2576,82 +2912,32 @@
         }
       }
     },
-    "Téléchargement" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Downloads"
-          }
-        }
-      }
-    },
-    "Téléchargement de « %@ »" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Downloading “%@”"
-          }
-        }
-      }
-    },
-    "Téléchargement terminé" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Download complete"
-          }
-        }
-      }
-    },
-    "Téléchargements simultanés" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Simultaneous Downloads"
-          }
-        }
-      }
-    },
-    "Télécharger" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Download"
-          }
-        }
-      }
-    },
-    "Télécharger quelque chose" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Download Something"
-          }
-        }
-      }
-    },
-    "Télécharger à nouveau" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Download Again"
-          }
-        }
-      }
-    },
     "Utiliser" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Use"
+          }
+        }
+      }
+    },
+    "Vérification…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Checking…"
+          }
+        }
+      }
+    },
+    "Vérifié %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Checked %@"
           }
         }
       }
@@ -2692,222 +2978,6 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "View"
-          }
-        }
-      }
-    },
-    "Vérification…" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Checking…"
-          }
-        }
-      }
-    },
-    "Vérifié %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Checked %@"
-          }
-        }
-      }
-    },
-    "ajouté %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "added %@"
-          }
-        }
-      }
-    },
-    "ffmpeg introuvable" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "ffmpeg not found"
-          }
-        }
-      }
-    },
-    "gamdl est cherché dans ~/.local/bin, /opt/homebrew/bin et /usr/local/bin : une app lancée depuis le Finder n'hérite pas du PATH du terminal." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "gamdl is looked up in ~/.local/bin, /opt/homebrew/bin and /usr/local/bin: an app launched from the Finder doesn't inherit the terminal's PATH."
-          }
-        }
-      }
-    },
-    "gamdl est introuvable. Installe-le avec « pipx install gamdl »." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "gamdl can't be found. Install it with “pipx install gamdl”."
-          }
-        }
-      }
-    },
-    "gamdl introuvable" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "gamdl not found"
-          }
-        }
-      }
-    },
-    "gamdl s'est arrêté (code %d)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "gamdl exited (code %d)"
-          }
-        }
-      }
-    },
-    "gamdl, ffmpeg et ta session Apple Music sont opérationnels." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "gamdl, ffmpeg and your Apple Music session are ready."
-          }
-        }
-      }
-    },
-    "https://music.apple.com/fr/album/…" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "https://music.apple.com/us/album/…"
-          }
-        }
-      }
-    },
-    "reste %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "%@ left"
-          }
-        }
-      }
-    },
-    "sur %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "of %lld"
-          }
-        }
-      }
-    },
-    "« %@ » ignoré : %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Skipped “%1$@”: %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "« %1$@ » ignoré : %2$@"
-          }
-        }
-      }
-    },
-    "Échec" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Failed"
-          }
-        }
-      }
-    },
-    "Échec (code %d)" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Failed (code %d)"
-          }
-        }
-      }
-    },
-    "Échec du téléchargement de « %@ »" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Failed to download “%@”"
-          }
-        }
-      }
-    },
-    "Échec sur « %@ »" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Failed on “%@”"
-          }
-        }
-      }
-    },
-    "Écouter" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "Play"
-          }
-        }
-      }
-    },
-    "à l'instant" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "just now"
-          }
-        }
-      }
-    },
-    "—" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "—"
-          }
-        }
-      }
-    },
-    "⌘↩ pour lancer · les morceaux déjà présents sont ignorés" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "⌘↩ to start · tracks already downloaded are skipped"
           }
         }
       }

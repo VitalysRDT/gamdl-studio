@@ -88,7 +88,17 @@ enum PlaylistResolver {
     }
 
     static func interpreter(fromShebang text: String) -> URL? {
-        guard let line = text.split(whereSeparator: \.isNewline).first, line.hasPrefix("#!") else { return nil }
+        let lines = text.split(whereSeparator: \.isNewline)
+        guard let line = lines.first, line.hasPrefix("#!") else { return nil }
+        // A shebang can't hold a path with spaces, and pipx now lives in
+        // ~/Library/Application Support/pipx. pip then writes a /bin/sh
+        // trampoline whose second line names the interpreter:
+        //     #!/bin/sh
+        //     '''exec' '/…/Application Support/pipx/venvs/gamdl/bin/python' "$0" "$@"
+        if lines.count > 1, let m = trampoline.captures(in: String(lines[1])), let path = m[1] {
+            let url = URL(filePath: path)
+            return FileManager.default.isExecutableFile(atPath: url.path) ? url : nil
+        }
         let parts = line.dropFirst(2).split(separator: " ").map(String.init)
         guard let first = parts.first else { return nil }
         // `#!/usr/bin/env python3` style shebangs name the interpreter second.
@@ -96,6 +106,8 @@ enum PlaylistResolver {
         let url = URL(filePath: first)
         return FileManager.default.isExecutableFile(atPath: url.path) ? url : nil
     }
+
+    private static let trampoline = TextPatterns.regex(#"^'''exec' '([^']+)' "\$0" "\$@""#)
 
     static var bundledScript: URL? {
         Bundle.main.url(forResource: "resolve_playlist", withExtension: "py")

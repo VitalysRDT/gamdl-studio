@@ -37,6 +37,17 @@ enum LyricsMode: String, CaseIterable, Codable, Sendable, Identifiable {
         case .lyricsOnly: String(localized: "Paroles seules")
         }
     }
+
+    /// Modes the installed gamdl can honor. The current choice stays listed so
+    /// the picker never shows a blank value; the queue refuses it if needed.
+    static func choices(for generation: GamdlGeneration?, keeping current: LyricsMode) -> [LyricsMode] {
+        allCases.filter { $0 != .lyricsOnly || (generation?.supportsLyricsOnly ?? true) || $0 == current }
+    }
+
+    /// Whether this choice can't be used with the installed gamdl.
+    func isUnsupported(by generation: GamdlGeneration?) -> Bool {
+        self == .lyricsOnly && generation?.supportsLyricsOnly == false
+    }
 }
 
 /// What gamdl should grab when given an artist page. Without an answer,

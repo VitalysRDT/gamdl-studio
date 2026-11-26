@@ -48,6 +48,9 @@ enum GamdlEvent: Hashable, Sendable {
     case processingURL(index: Int, total: Int, url: String)
     case trackStarted(TrackPosition?, title: String)
     case progress(TransferProgress)
+    /// gamdl 4 only: it reports each finished track ("✓ Title: downloaded").
+    /// gamdl 3 doesn't, so a track ends there when the next one starts.
+    case trackCompleted(TrackPosition?, title: String, file: URL?)
     case trackSkipped(TrackPosition?, title: String, reason: String, existingFile: URL?)
     case trackFailed(TrackPosition?, title: String)
     case urlFailed(message: String)

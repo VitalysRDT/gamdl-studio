@@ -23,12 +23,16 @@ struct DownloadEnvironment: Sendable {
                 let cookies = CookieInspector.status(ofFileAt: settings.cookies)
                 guard cookies.isUsable else { throw DownloadQueueError.cookies(cookies) }
                 try FileManager.default.createDirectory(at: settings.output, withIntermediateDirectories: true)
+                let version = await GamdlVersionCache.shared.version(of: gamdl, environment: locator.environment())
+                let generation = GamdlGeneration(version: version)
                 return GamdlPaths(
                     gamdl: gamdl,
                     ffmpeg: locator.locate("ffmpeg"),
                     cookies: settings.cookies,
                     output: settings.output,
-                    temp: settings.temp
+                    temp: settings.temp,
+                    generation: generation,
+                    python: generation == .v4 ? PlaylistResolver.python(forGamdl: gamdl) : nil
                 )
             },
             processEnvironment: locator.environment(),
@@ -162,6 +166,9 @@ final class DownloadQueue {
         Task {
             do {
                 var paths = try await env.paths()
+                // Before anything else: an unsupported option must not turn
+                // into a different download.
+                try GamdlCommand.validate(job.options, for: paths.generation)
                 // One temporary subfolder per job, so two concurrent gamdl runs
                 // don't clobber each other's partial files.
                 paths.temp = paths.temp.appending(path: job.id.uuidString)
@@ -177,13 +184,20 @@ final class DownloadQueue {
                 }
 
                 let args = GamdlCommand.arguments(for: job.link, urls: job.expandedURLs, options: job.options, paths: paths)
+                // The copyable line is plain gamdl, even when it runs through the bridge.
                 job.markStarted(commandLine: GamdlCommand.shellLine(executable: paths.gamdl, arguments: args))
+                let invocation = GamdlCommand.invocation(for: job.link, urls: job.expandedURLs, options: job.options, paths: paths)
+                if paths.generation == .v4, let urls = job.expandedURLs {
+                    // gamdl 4 numbers tracks across all URLs but never prints
+                    // a total; here it is known up front.
+                    job.trackTotal = urls.count
+                }
 
-                let parser = ParserBox()
+                let parser = ParserBox(generation: paths.generation)
                 let result = try await runner.run(
-                    executable: paths.gamdl,
-                    arguments: args,
-                    environment: env.processEnvironment,
+                    executable: invocation.executable,
+                    arguments: invocation.arguments,
+                    environment: GamdlCommand.environment(env.processEnvironment, for: paths.generation),
                     onOutput: { text in
                         let events = parser.feed(text)
                         guard !events.isEmpty else { return }
@@ -250,9 +264,19 @@ final class DownloadQueue {
 
     /// The parser is stateful (incomplete line) and lives on the reading thread.
     private final class ParserBox: @unchecked Sendable {
-        private var parser = GamdlOutputParser()
+        private let generation: GamdlGeneration
+        private var parser3 = GamdlOutputParser()
+        private var parser4 = Gamdl4OutputParser()
         private let lock = NSLock()
-        func feed(_ s: String) -> [GamdlEvent] { lock.withLock { parser.feed(s) } }
-        func flush() -> [GamdlEvent] { lock.withLock { parser.flush() } }
+
+        init(generation: GamdlGeneration) { self.generation = generation }
+
+        func feed(_ s: String) -> [GamdlEvent] {
+            lock.withLock { generation == .v4 ? parser4.feed(s) : parser3.feed(s) }
+        }
+
+        func flush() -> [GamdlEvent] {
+            lock.withLock { generation == .v4 ? parser4.flush() : parser3.flush() }
+        }
     }
 }

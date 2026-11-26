@@ -27,7 +27,7 @@ struct DiagnosticsView: View {
                                     .buttonStyle(.glass)
                                 }
                             }
-                            toolCard(report.ffmpeg, symbol: "film.stack", help: "brew install ffmpeg") { EmptyView() }
+                            toolCard(report.ffmpeg, symbol: "film.stack", help: "brew install ffmpeg", optional: !report.needsFFmpeg) { EmptyView() }
                         }
                         cookiesCard(report.cookies)
                         outputCard(report)
@@ -87,8 +87,10 @@ struct DiagnosticsView: View {
             VStack(alignment: .leading, spacing: 4) {
                 (report.isReady ? Text("Prêt à télécharger") : Text("Il reste à régler"))
                     .font(.title2.bold())
-                (report.isReady ? Text("gamdl, ffmpeg et ta session Apple Music sont opérationnels.")
-                                : Text(verbatim: report.problems.joined(separator: " · ")))
+                (report.isReady
+                    ? (report.needsFFmpeg ? Text("gamdl, ffmpeg et ta session Apple Music sont opérationnels.")
+                                          : Text("gamdl et ta session Apple Music sont opérationnels."))
+                    : Text(verbatim: report.problems.joined(separator: " · ")))
                     .foregroundStyle(.secondary)
             }
             Spacer()
@@ -96,17 +98,22 @@ struct DiagnosticsView: View {
         .glassCard(radius: 24, tint: report.isReady ? .green : .orange)
     }
 
-    private func toolCard<Extra: View>(_ tool: ToolCheck, symbol: String, help: String, @ViewBuilder extra: () -> Extra) -> some View {
+    /// `optional`: the installed gamdl doesn't need this tool.
+    private func toolCard<Extra: View>(_ tool: ToolCheck, symbol: String, help: String, optional: Bool = false, @ViewBuilder extra: () -> Extra) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: symbol).font(.title2).foregroundStyle(.brandGradient)
                 Text(tool.name).font(.title3.bold())
                 Spacer()
-                statusDot(tool.isAvailable)
+                statusDot(tool.isAvailable || optional)
             }
             if let path = tool.path {
                 (tool.version.map { Text("Version \($0)") } ?? Text("Version inconnue")).font(.headline)
                 Text(path.displayPath).font(.caption.monospaced()).foregroundStyle(.secondary).textSelection(.enabled).lineLimit(1).truncationMode(.middle)
+                if optional { Text("Facultatif avec gamdl 4").font(.caption).foregroundStyle(.secondary) }
+            } else if optional {
+                Text("Facultatif avec gamdl 4").font(.headline).foregroundStyle(.secondary)
+                Text("gamdl 4 n'utilise plus ffmpeg.").font(.caption).foregroundStyle(.secondary)
             } else {
                 Text("Introuvable").font(.headline).foregroundStyle(.red)
                 Text("Installe-le avec : \(help)").font(.caption.monospaced()).foregroundStyle(.secondary).textSelection(.enabled)

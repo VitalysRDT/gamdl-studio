@@ -5,6 +5,9 @@ gamdl's URL parser only accepts catalog playlists (pl.<32 hex>) and user playlis
 served by the same AMP endpoint once the request carries the subscriber's
 media-user-token, so we fetch them here and hand gamdl one song URL per track.
 
+Works with gamdl 3.9+ and gamdl 4, whose API client was rewritten (see
+open_api and next_page below).
+
 Usage: python resolve_playlist.py <cookies.txt> <storefront> <playlist id>
 Prints a JSON object on stdout; errors go to stderr with a non-zero exit code.
 """
@@ -12,12 +15,33 @@ Prints a JSON object on stdout; errors go to stderr with a non-zero exit code.
 import asyncio
 import json
 import sys
+from contextlib import asynccontextmanager
 
 from gamdl.api.apple_music import AppleMusicApi
 
 
+@asynccontextmanager
+async def open_api(cookies_path: str):
+    if hasattr(AppleMusicApi, "create_from_netscape_cookies"):  # gamdl 3
+        yield await AppleMusicApi.create_from_netscape_cookies(cookies_path=cookies_path)
+        return
+    # gamdl 4 owns an HTTP connection that must be closed.
+    async with await AppleMusicApi.from_cookies(cookies_path) as api:
+        yield api
+
+
+async def next_page(api, url: str) -> dict:
+    if hasattr(api, "get_extended_api_data"):  # gamdl 4
+        return await api.get_extended_api_data(url)
+    return await api._amp_request(url)  # gamdl 3
+
+
 async def resolve(cookies_path: str, storefront: str, playlist_id: str) -> dict:
-    api = await AppleMusicApi.create_from_netscape_cookies(cookies_path=cookies_path)
+    async with open_api(cookies_path) as api:
+        return await read_playlist(api, storefront, playlist_id)
+
+
+async def read_playlist(api, storefront: str, playlist_id: str) -> dict:
     # The account storefront wins, but personalized mixes are tied to the URL's.
     api.storefront = storefront or api.storefront
 
@@ -27,11 +51,11 @@ async def resolve(cookies_path: str, storefront: str, playlist_id: str) -> dict:
     tracks_rel = playlist.get("relationships", {}).get("tracks", {})
     items = list(tracks_rel.get("data", []))
 
-    next_page = tracks_rel.get("next")
-    while next_page:
-        page = await api._amp_request(next_page)
+    next_url = tracks_rel.get("next")
+    while next_url:
+        page = await next_page(api, next_url)
         items.extend(page.get("data", []))
-        next_page = page.get("next")
+        next_url = page.get("next")
 
     tracks = []
     for item in items:
