@@ -33,6 +33,10 @@ targets:
         NSHumanReadableCopyright: "© 2026 Vitalys Rougetet--De Troyane"
         NSDocumentsFolderUsageDescription: "Gamdl Studio lit ta bibliothèque et tes cookies dans le dossier Documents."
         NSMusicFolderUsageDescription: "Gamdl Studio peut enregistrer tes téléchargements dans le dossier Musique."
+        # The wrapper-v2 is reached over plain http on the local network (IP,
+        # .local or unqualified name). Nothing else is exempted.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: eu.vitalys.gamdlstudio

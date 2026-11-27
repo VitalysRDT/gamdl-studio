@@ -137,11 +137,13 @@ Ce qui marche avec de simples cookies navigateur, mesuré avec gamdl 4.1.2 :
 
 | Codec | Avec cookies | Remarque |
 |---|---|---|
-| AAC 256 kb/s, HE-AAC 64 kb/s (`aac-web`, `aac-he-web`, `aac`, `aac-he`) | Oui | |
+| AAC 256 kb/s (`aac-web`, `aac`) | Oui | Environ 260 kb/s |
+| HE-AAC 64 kb/s (`aac-he-web`, `aac-he`) | Oui | Environ 70 kb/s |
 | Dolby Atmos (`atmos`) | Oui | E-AC-3 5.1 à 768 kb/s, pour les morceaux mixés en Atmos |
-| Binaural, mixage spatial en stéréo (`aac-binaural`, `aac-downmix`, …) | Oui | |
+| Binaural et mixage spatial en stéréo (`aac-binaural`, `aac-downmix`, `aac-he-binaural`, `aac-he-downmix`) | Oui | |
+| ALAC (`alac`, `alac-lossless`) | Non | Apple refuse la licence : passe en mode wrapper, ci-dessous |
+| ALAC Hi-Res (`alac-hires`) | Non testé | Le morceau essayé n'existe pas en hi-res ; sans doute refusé comme l'ALAC |
 | Dolby Digital (`ac3`) | Non testé | Aucun morceau essayé ne le proposait |
-| ALAC (`alac`, `alac-lossless`, `alac-hires`) | Non | Apple refuse la licence : passe en mode wrapper, ci-dessous |
 
 Un morceau qui n'existe pas dans le codec choisi échoue, sauf si un codec de secours est
 défini : avec l'Atmos en premier, l'AAC fait un bon secours. Pour remplacer des morceaux déjà
@@ -155,7 +157,9 @@ que tu héberges toi-même : un hôte Linux avec Docker (validé en x86_64, pas 
 un paquet Apple Music que tu fournis. Gamdl Studio ne l'installe pas, il s'y connecte.
 
 1. Dans **Réglages → Session**, choisis **Wrapper** et indique son adresse
-   (`http://127.0.0.1:8080` par défaut). N'expose pas le wrapper sur Internet.
+   (`http://127.0.0.1:8080` par défaut). Utilise une adresse IP ou un nom en `.local` : macOS
+   laisse l'app les joindre en http simple, pas les autres noms. N'expose pas le wrapper sur
+   Internet.
 2. **Diagnostic** interroge `/info` et `/session` du wrapper avec les mêmes règles que gamdl 4.1.2
    (version 1.x, protocole, profil Temari) et dit ce qui ne va pas.
 3. Si le wrapper n'est pas connecté à ton compte Apple, **Se connecter dans le Terminal** ouvre

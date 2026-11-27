@@ -24,6 +24,11 @@
 	<string>public.app-category.music</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>26.0</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>NSDocumentsFolderUsageDescription</key>
 	<string>Gamdl Studio lit ta bibliothèque et tes cookies dans le dossier Documents.</string>
 	<key>NSHumanReadableCopyright</key>

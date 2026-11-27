@@ -230,3 +230,36 @@ struct WrapperSessionMessageTests {
         #expect(line.text.contains(expected))
     }
 }
+
+/// Answers every request with an App Transport Security refusal, as macOS
+/// does for plain http to a qualified host name.
+private final class ATSRefusal: URLProtocol {
+    override class func canInit(with request: URLRequest) -> Bool { true }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func startLoading() {
+        client?.urlProtocol(self, didFailWithError: URLError(.appTransportSecurityRequiresSecureConnection))
+    }
+    override func stopLoading() {}
+}
+
+@Suite("Wrapper over plain http (App Transport Security)")
+struct WrapperATSTests {
+    /// Measured: without it, http://<name>.local was refused while
+    /// http://127.0.0.1 and the LAN IP worked.
+    @Test("The app allows plain http on the local network, and only there")
+    func localNetworkAllowed() throws {
+        let ats = try #require(Bundle.main.infoDictionary?["NSAppTransportSecurity"] as? [String: Any])
+        #expect(ats["NSAllowsLocalNetworking"] as? Bool == true)
+        #expect(ats["NSAllowsArbitraryLoads"] == nil)
+    }
+
+    @Test("A refused host name is reported as such, not as a wrapper that isn't running")
+    func refusedHostName() async {
+        let config = URLSessionConfiguration.ephemeral
+        config.protocolClasses = [ATSRefusal.self]
+        let status = await WrapperProbe.check("http://wrapper.example.com:8080", session: URLSession(configuration: config))
+        guard case .unreachable(let reason) = status else { Issue.record("\(status)"); return }
+        #expect(reason.contains("wrapper.example.com"))
+        #expect(reason.contains(".local"))
+    }
+}
