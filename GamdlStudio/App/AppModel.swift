@@ -33,6 +33,9 @@ final class AppModel {
     let queue: DownloadQueue
     let library = LibraryStore()
     let player = PlayerController()
+    /// The wrapper-v2 installation assistant, kept alive so a long build
+    /// survives closing its window.
+    let wrapperSetup = WrapperSetup()
 
     var selection: SidebarItem? = .download
     var report: DiagnosticReport?
@@ -77,6 +80,11 @@ final class AppModel {
         queue.playSound = settings.playSoundOnCompletion
     }
 
+    /// Why the current settings would make an ALAC download fail, if they would.
+    var losslessGate: LosslessGate? {
+        LosslessGate.check(options: settings.options, session: settings.session, wrapper: report?.wrapper)
+    }
+
     func runDiagnostics() async {
         isCheckingDiagnostics = true
         report = await Diagnostics.run(settings: SettingsSnapshot(settings))
@@ -84,6 +92,18 @@ final class AppModel {
     }
 
     // MARK: - Downloads
+
+    /// A dropped link goes straight to the queue, unless ALAC would fail
+    /// without the wrapper: then it lands in the link field, where the
+    /// download button explains why.
+    func enqueueDropped(_ links: [AppleMusicLink]) {
+        guard losslessGate != nil, let first = links.first(where: \.kind.isDownloadable) else {
+            enqueue(links)
+            return
+        }
+        draftURL = links.count > 1 ? links.map(\.absoluteString).joined(separator: "\n") : first.absoluteString
+        selection = .download
+    }
 
     @discardableResult
     func enqueue(_ links: [AppleMusicLink], previews: [AppleMusicLink: MediaPreview] = [:]) -> Int {

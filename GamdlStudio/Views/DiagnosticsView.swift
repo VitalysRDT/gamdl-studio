@@ -30,6 +30,7 @@ struct DiagnosticsView: View {
                             toolCard(report.ffmpeg, symbol: "film.stack", help: "brew install ffmpeg", optional: !report.needsFFmpeg) { EmptyView() }
                         }
                         if report.usesWrapper { wrapperCard(report) }
+                        if model.losslessGate == .wrapperNotActivated { losslessCard }
                         cookiesCard(report.cookies)
                         outputCard(report)
                     } else {
@@ -215,10 +216,8 @@ struct DiagnosticsView: View {
                 }
                 Button { Task { await model.runDiagnostics() } } label: { Label("Vérifier", systemImage: "arrow.clockwise") }
                     .buttonStyle(.glass)
-                Link(destination: URL(string: "https://github.com/glomatico/wrapper-v2")!) {
-                    Label("Installer le wrapper", systemImage: "arrow.up.right.square")
-                }
-                .buttonStyle(.borderless)
+                WrapperSetupButton(title: "Assistant d'installation…")
+                    .buttonStyle(.glass)
             }
             if status == .loggedOut {
                 Text("Choisis « Wrapper » dans l'assistant, puis connecte-toi avec ton compte Apple. Gamdl Studio ne voit jamais ton identifiant ni ton mot de passe.")
@@ -227,6 +226,22 @@ struct DiagnosticsView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .glassCard()
+    }
+
+    /// ALAC is selected but the app still signs in with cookies only.
+    private var losslessCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Image(systemName: "waveform.badge.exclamationmark").font(.title2).foregroundStyle(.orange)
+                Text(LosslessGate.wrapperNotActivated.title).font(.title3.bold())
+                Spacer()
+            }
+            Text(LosslessGate.wrapperNotActivated.message).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            WrapperSetupButton().buttonStyle(.glassProminent).tint(.brand)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .glassCard(tint: .orange)
     }
 
     private func outputCard(_ report: DiagnosticReport) -> some View {
