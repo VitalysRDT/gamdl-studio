@@ -33,6 +33,8 @@ final class AppSettings {
     var notifyOnCompletion: Bool { didSet { defaults.set(notifyOnCompletion, forKey: Keys.notify) } }
     var playSoundOnCompletion: Bool { didSet { defaults.set(playSoundOnCompletion, forKey: Keys.sound) } }
     var watchClipboard: Bool { didSet { defaults.set(watchClipboard, forKey: Keys.clipboard) } }
+    /// Warn before a Dolby Atmos or spatial download without the wrapper.
+    var warnSpatialWithoutWrapper: Bool { didSet { defaults.set(warnSpatialWithoutWrapper, forKey: Keys.warnSpatial) } }
     var options: DownloadOptions {
         didSet { defaults.set(try? JSONEncoder().encode(options), forKey: Keys.options) }
     }
@@ -49,6 +51,7 @@ final class AppSettings {
         static let output = "outputPath", cookies = "cookiesPath", temp = "tempPath", gamdl = "gamdlOverride"
         static let concurrency = "maxConcurrentJobs", notify = "notifyOnCompletion", sound = "playSound"
         static let clipboard = "watchClipboard", options = "downloadOptions", session = "gamdlSession"
+        static let warnSpatial = "warnSpatialWithoutWrapper"
     }
 
     init(defaults: UserDefaults = .standard) {
@@ -62,6 +65,7 @@ final class AppSettings {
         notifyOnCompletion = defaults.object(forKey: Keys.notify) as? Bool ?? true
         playSoundOnCompletion = defaults.object(forKey: Keys.sound) as? Bool ?? true
         watchClipboard = defaults.object(forKey: Keys.clipboard) as? Bool ?? true
+        warnSpatialWithoutWrapper = defaults.object(forKey: Keys.warnSpatial) as? Bool ?? true
         options = defaults.data(forKey: Keys.options).flatMap { try? JSONDecoder().decode(DownloadOptions.self, from: $0) } ?? DownloadOptions()
         session = defaults.data(forKey: Keys.session).flatMap { try? JSONDecoder().decode(GamdlSession.self, from: $0) } ?? GamdlSession()
     }

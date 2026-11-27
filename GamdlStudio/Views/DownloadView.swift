@@ -6,13 +6,13 @@ struct DownloadView: View {
     @State private var palette = ImagePalette.fallback
     @State private var preview: PreviewState = .idle
     @FocusState private var fieldFocused: Bool
-    @State private var losslessAlert: LosslessAlert?
+    @State private var wrapperAlert: WrapperAlert?
     @Environment(\.openWindow) private var openWindow
 
     /// A download held back because ALAC would fail without a ready wrapper.
-    struct LosslessAlert: Identifiable {
+    struct WrapperAlert: Identifiable {
         let id = UUID()
-        let gate: LosslessGate
+        let gate: WrapperGate
         let all: Bool
     }
 
@@ -56,13 +56,21 @@ struct DownloadView: View {
         .task(id: link) { await loadPreview() }
         .onAppear { fieldFocused = model.draftURL.isEmpty }
         .navigationTitle("")
-        .alert(Text(verbatim: losslessAlert?.gate.title ?? ""), isPresented: Binding(
-            get: { losslessAlert != nil }, set: { if !$0 { losslessAlert = nil } }
-        ), presenting: losslessAlert) { pending in
+        .alert(Text(verbatim: wrapperAlert?.gate.title ?? ""), isPresented: Binding(
+            get: { wrapperAlert != nil }, set: { if !$0 { wrapperAlert = nil } }
+        ), presenting: wrapperAlert) { pending in
             Button(pending.gate == .wrapperNotActivated ? "Installer et activer le wrapper…" : "Ouvrir l'assistant du wrapper…") {
                 openWindow(id: WrapperSetupView.windowID)
             }
-            Button("Télécharger quand même") { enqueue(all: pending.all) }
+            if pending.gate.isBlocking {
+                Button("Télécharger quand même") { enqueue(all: pending.all) }
+            } else {
+                Button("Télécharger avec les cookies") { enqueue(all: pending.all) }
+                Button("Ne plus prévenir pour l'audio spatial") {
+                    model.settings.warnSpatialWithoutWrapper = false
+                    enqueue(all: pending.all)
+                }
+            }
             Button("Annuler", role: .cancel) {}
         } message: { pending in
             Text(pending.gate.message)
@@ -257,19 +265,19 @@ struct DownloadView: View {
     /// is not set up: then the user is told why it would fail first.
     private func requestDownload(all: Bool) {
         let kinds = all ? links.map(\.kind) : link.map { [$0.kind] } ?? []
-        guard kinds.contains(where: { $0 != .musicVideo }), let gate = model.losslessGate else {
+        guard kinds.contains(where: { $0 != .musicVideo }), let gate = model.wrapperGate else {
             enqueue(all: all)
             return
         }
         guard case .wrapperNotReady = gate else {
-            losslessAlert = LosslessAlert(gate: gate, all: all)
+            wrapperAlert = WrapperAlert(gate: gate, all: all)
             return
         }
         // The last check may be stale (wrapper started or signed in since).
         Task {
             await model.runDiagnostics()
-            if let gate = model.losslessGate {
-                losslessAlert = LosslessAlert(gate: gate, all: all)
+            if let gate = model.wrapperGate {
+                wrapperAlert = WrapperAlert(gate: gate, all: all)
             } else {
                 enqueue(all: all)
             }

@@ -30,7 +30,9 @@ struct DiagnosticsView: View {
                             toolCard(report.ffmpeg, symbol: "film.stack", help: "brew install ffmpeg", optional: !report.needsFFmpeg) { EmptyView() }
                         }
                         if report.usesWrapper { wrapperCard(report) }
-                        if model.losslessGate == .wrapperNotActivated { losslessCard }
+                        if let gate = model.wrapperGate, gate == .wrapperNotActivated || gate == .spatialWithoutWrapper {
+                            wrapperAdviceCard(gate)
+                        }
                         cookiesCard(report.cookies)
                         outputCard(report)
                     } else {
@@ -228,20 +230,22 @@ struct DiagnosticsView: View {
         .glassCard()
     }
 
-    /// ALAC is selected but the app still signs in with cookies only.
-    private var losslessCard: some View {
+    /// ALAC, Dolby Atmos or spatial audio is selected but the app still
+    /// signs in with cookies only.
+    private func wrapperAdviceCard(_ gate: WrapperGate) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Image(systemName: "waveform.badge.exclamationmark").font(.title2).foregroundStyle(.orange)
-                Text(LosslessGate.wrapperNotActivated.title).font(.title3.bold())
+                Image(systemName: gate.isBlocking ? "waveform.badge.exclamationmark" : "dot.radiowaves.left.and.right")
+                    .font(.title2).foregroundStyle(gate.isBlocking ? AnyShapeStyle(.orange) : AnyShapeStyle(.brandGradient))
+                Text(gate.title).font(.title3.bold())
                 Spacer()
             }
-            Text(LosslessGate.wrapperNotActivated.message).foregroundStyle(.secondary)
+            Text(gate.message).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             WrapperSetupButton().buttonStyle(.glassProminent).tint(.brand)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard(tint: .orange)
+        .glassCard(tint: gate.isBlocking ? .orange : nil)
     }
 
     private func outputCard(_ report: DiagnosticReport) -> some View {

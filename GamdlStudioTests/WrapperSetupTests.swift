@@ -138,27 +138,65 @@ struct WrapperRecipeTests {
     }
 }
 
-@Suite("ALAC gate")
-struct LosslessGateTests {
+@Suite("Wrapper gate: ALAC, Dolby Atmos, spatial")
+struct WrapperGateTests {
     private func options(_ codecs: [SongCodec]) -> DownloadOptions {
         var o = DownloadOptions()
         o.songCodecPriority = codecs
         return o
     }
 
-    @Test("AAC, Atmos and spatial codecs never need the wrapper", arguments: SongCodec.allCases.filter { !$0.needsWrapper })
-    func notLossless(codec: SongCodec) {
-        #expect(LosslessGate.check(options: options([codec]), session: GamdlSession(), wrapper: nil) == nil)
+    @Test("Stereo AAC never brings up the wrapper", arguments: SongCodec.Family.stereo.codecs)
+    func stereo(codec: SongCodec) {
+        #expect(WrapperGate.check(options: options([codec]), session: GamdlSession(), wrapper: nil) == nil)
+    }
+
+    @Test("Dolby Atmos and spatial codecs with cookies get advice, not a block", arguments: SongCodec.Family.spatial.codecs)
+    func spatial(codec: SongCodec) {
+        let gate = WrapperGate.check(options: options([codec]), session: GamdlSession(), wrapper: nil)
+        #expect(gate == .spatialWithoutWrapper)
+        #expect(gate?.isBlocking == false)
+        #expect(WrapperGate.check(options: options([codec]), session: GamdlSession(), wrapper: nil, warnSpatial: false) == nil)
+    }
+
+    @Test("Atmos with an AAC fallback still gets the advice; ALAC in the list wins over it")
+    func spatialFallback() {
+        #expect(WrapperGate.check(options: options([.atmos, .aacWeb]), session: GamdlSession(), wrapper: nil) == .spatialWithoutWrapper)
+        #expect(WrapperGate.check(options: options([.atmos, .alac]), session: GamdlSession(), wrapper: nil) == .wrapperNotActivated)
+        #expect(WrapperGate.check(options: options([.atmos, .alac]), session: GamdlSession(), wrapper: nil, warnSpatial: false) == .wrapperNotActivated)
+    }
+
+    @Test("In wrapper mode, Atmos also waits for a ready wrapper")
+    func spatialWrapperMode() {
+        var session = GamdlSession()
+        session.authMode = .wrapper
+        #expect(WrapperGate.check(options: options([.atmos]), session: session, wrapper: .loggedOut) == .wrapperNotReady(.loggedOut))
+        #expect(WrapperGate.check(options: options([.atmos]), session: session, wrapper: .ready(version: "1.0.1", architecture: "x86_64")) == nil)
+    }
+
+    @Test("The spatial warning setting persists, on by default")
+    @MainActor func spatialSetting() throws {
+        let name = "gamdlstudio.tests.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: name))
+        let settings = AppSettings(defaults: defaults)
+        #expect(settings.warnSpatialWithoutWrapper)
+        settings.warnSpatialWithoutWrapper = false
+        #expect(AppSettings(defaults: defaults).warnSpatialWithoutWrapper == false)
+        let model = AppModel(settings: AppSettings(defaults: defaults))
+        model.settings.options.songCodecPriority = [.atmos]
+        #expect(model.wrapperGate == nil)
+        model.settings.warnSpatialWithoutWrapper = true
+        #expect(model.wrapperGate == .spatialWithoutWrapper)
     }
 
     @Test("ALAC with cookies only is blocked as not activated", arguments: SongCodec.Family.lossless.codecs)
     func cookies(codec: SongCodec) {
-        #expect(LosslessGate.check(options: options([codec]), session: GamdlSession(), wrapper: nil) == .wrapperNotActivated)
+        #expect(WrapperGate.check(options: options([codec]), session: GamdlSession(), wrapper: nil) == .wrapperNotActivated)
     }
 
     @Test("An ALAC fallback after AAC still counts: gamdl falls back on availability, not on license")
     func fallback() {
-        #expect(LosslessGate.check(options: options([.aacWeb, .alac]), session: GamdlSession(), wrapper: nil) == .wrapperNotActivated)
+        #expect(WrapperGate.check(options: options([.aacWeb, .alac]), session: GamdlSession(), wrapper: nil) == .wrapperNotActivated)
     }
 
     @Test("Wrapper mode passes only when the wrapper is ready")
@@ -166,16 +204,18 @@ struct LosslessGateTests {
         var session = GamdlSession()
         session.authMode = .wrapper
         let alac = options([.alac])
-        #expect(LosslessGate.check(options: alac, session: session, wrapper: nil) == .wrapperNotReady(nil))
-        #expect(LosslessGate.check(options: alac, session: session, wrapper: .loggedOut) == .wrapperNotReady(.loggedOut))
-        #expect(LosslessGate.check(options: alac, session: session, wrapper: .ready(version: "1.0.1", architecture: "x86_64")) == nil)
+        #expect(WrapperGate.check(options: alac, session: session, wrapper: nil) == .wrapperNotReady(nil))
+        #expect(WrapperGate.check(options: alac, session: session, wrapper: .loggedOut) == .wrapperNotReady(.loggedOut))
+        #expect(WrapperGate.check(options: alac, session: session, wrapper: .ready(version: "1.0.1", architecture: "x86_64")) == nil)
     }
 
     @Test("Messages name the problem")
     func messages() {
-        #expect(LosslessGate.wrapperNotActivated.message.contains("cookies"))
-        #expect(LosslessGate.wrapperNotReady(.loggedOut).message.contains(WrapperStatus.loggedOut.title))
-        #expect(LosslessGate.wrapperNotReady(nil).message.contains("vérifié"))
+        #expect(WrapperGate.wrapperNotActivated.message.contains("cookies"))
+        #expect(WrapperGate.wrapperNotReady(.loggedOut).message.contains(WrapperStatus.loggedOut.title))
+        #expect(WrapperGate.wrapperNotReady(nil).message.contains("vérifié"))
+        #expect(WrapperGate.spatialWithoutWrapper.message.contains("Dolby Atmos"))
+        #expect(WrapperGate.wrapperNotActivated.isBlocking && WrapperGate.wrapperNotReady(nil).isBlocking)
     }
 
     @Test("A dropped ALAC link lands in the link field instead of the queue")

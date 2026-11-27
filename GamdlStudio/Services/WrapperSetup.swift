@@ -597,25 +597,41 @@ final class WrapperSetup {
     }
 }
 
-/// Why a download asking for ALAC would fail, checked before it is queued.
+/// Why the wrapper matters for a download, checked before it is queued:
+/// ALAC (lossless), Dolby Atmos and the other spatial codecs.
+///
 /// With plain cookies Apple rejects the ALAC license (measured with gamdl
-/// 4.1.2), so the user is warned instead of watching the job fail.
-enum LosslessGate: Hashable, Sendable {
-    /// The app still signs in with the cookies file.
+/// 4.1.2), so that download would fail. Atmos and spatial audio did download
+/// with cookies in the same measurements: for them the warning is advice,
+/// and it can be turned off.
+enum WrapperGate: Hashable, Sendable {
+    /// ALAC with the cookies file: the download would fail.
     case wrapperNotActivated
     /// The wrapper is the session mode, but the last check found it not ready.
     case wrapperNotReady(WrapperStatus?)
+    /// Dolby Atmos or spatial audio with the cookies file: advice only.
+    case spatialWithoutWrapper
 
-    static func check(options: DownloadOptions, session: GamdlSession, wrapper: WrapperStatus?) -> LosslessGate? {
-        guard options.songCodecPriority.contains(where: \.needsWrapper) else { return nil }
-        guard session.authMode == .wrapper else { return .wrapperNotActivated }
-        return wrapper?.isReady == true ? nil : .wrapperNotReady(wrapper)
+    static func check(options: DownloadOptions, session: GamdlSession, wrapper: WrapperStatus?, warnSpatial: Bool = true) -> WrapperGate? {
+        let codecs = options.songCodecPriority
+        let lossless = codecs.contains(where: \.needsWrapper)
+        let spatial = codecs.contains { $0.family == .spatial }
+        guard lossless || spatial else { return nil }
+        if session.authMode == .wrapper {
+            return wrapper?.isReady == true ? nil : .wrapperNotReady(wrapper)
+        }
+        if lossless { return .wrapperNotActivated }
+        return warnSpatial ? .spatialWithoutWrapper : nil
     }
+
+    /// Whether the download would fail without acting on the warning.
+    var isBlocking: Bool { self != .spatialWithoutWrapper }
 
     var title: String {
         switch self {
         case .wrapperNotActivated: String(localized: "L'ALAC demande le wrapper")
         case .wrapperNotReady: String(localized: "Le wrapper n'est pas prêt")
+        case .spatialWithoutWrapper: String(localized: "Dolby Atmos et audio spatial sans wrapper")
         }
     }
 
@@ -627,6 +643,8 @@ enum LosslessGate: Hashable, Sendable {
             [status?.title, status?.message].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " : ")
                 + (status == nil ? String(localized: "Le wrapper n'a pas encore été vérifié.") : "")
                 + "\n" + String(localized: "Sans wrapper prêt, gamdl ne peut rien télécharger dans ce mode.")
+        case .spatialWithoutWrapper:
+            String(localized: "Tu télécharges en Dolby Atmos ou en audio spatial avec le seul fichier de cookies. Lors des tests avec gamdl 4.1.2, ces codecs ont fonctionné ainsi ; si Apple refuse une licence, le wrapper est la voie à prendre. L'assistant l'installe avec Docker.")
         }
     }
 }

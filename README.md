@@ -180,8 +180,10 @@ Never run `docker compose down -v`: it erases the session and the device identit
 
 Choosing ALAC while the wrapper isn't active or ready brings up a warning before the download
 is queued, with a button to the assistant; a dropped link waits in the link field instead of
-going straight to the queue. Dolby Atmos and the binaural or downmix variants don't need the
-wrapper.
+going straight to the queue. Dolby Atmos and the other spatial codecs (binaural, downmix, AC-3)
+get a lighter warning: they downloaded with the cookies file in the measurements above, so the
+alert offers to download with cookies, and "Settings → Session" (or the alert itself) turns it
+off.
 
 A wrapper on another machine also works: in **Settings → Session**, choose **Wrapper** and enter
 its address. Use an IP address or a `.local` name: macOS lets the app reach those over plain

@@ -1878,11 +1878,32 @@
       }
     },
     "Dolby Atmos et audio spatial : ils passent avec le fichier de cookies, sans wrapper." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Dolby Atmos and Spatial Audio work with the cookies file, without the wrapper."
+          }
+        }
+      }
+    },
+    "Dolby Atmos et audio spatial : ils sont passés avec le fichier de cookies lors des tests, mais le wrapper reste la voie sûre si Apple refuse une licence." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Dolby Atmos and Spatial Audio worked with the cookies file in testing, but the wrapper remains the safe route if Apple refuses a license."
+          }
+        }
+      }
+    },
+    "Dolby Atmos et audio spatial sans wrapper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Dolby Atmos and Spatial Audio without the wrapper"
           }
         }
       }
@@ -3538,6 +3559,16 @@
         }
       }
     },
+    "Ne plus prévenir pour l'audio spatial" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Don’t Warn Again for Spatial Audio"
+          }
+        }
+      }
+    },
     "Noms des dossiers et des fichiers" : {
       "localizations" : {
         "en" : {
@@ -3880,6 +3911,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Ready to download"
+          }
+        }
+      }
+    },
+    "Prévenir avant un téléchargement Dolby Atmos ou spatial sans wrapper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Warn before downloading Dolby Atmos or Spatial Audio without the wrapper"
           }
         }
       }
@@ -4504,6 +4545,16 @@
         }
       }
     },
+    "Télécharger avec les cookies" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Download with Cookies"
+          }
+        }
+      }
+    },
     "Télécharger le code" : {
       "localizations" : {
         "en" : {
@@ -4770,6 +4821,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "You can also drag one or more links anywhere into the window."
+          }
+        }
+      }
+    },
+    "Tu télécharges en Dolby Atmos ou en audio spatial avec le seul fichier de cookies. Lors des tests avec gamdl 4.1.2, ces codecs ont fonctionné ainsi ; si Apple refuse une licence, le wrapper est la voie à prendre. L'assistant l'installe avec Docker." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "You’re downloading in Dolby Atmos or Spatial Audio with only the cookies file. In testing with gamdl 4.1.2, these codecs worked this way; if Apple refuses a license, the wrapper is the way to go. The assistant installs it with Docker."
           }
         }
       }

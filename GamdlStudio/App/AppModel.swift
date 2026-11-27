@@ -81,8 +81,9 @@ final class AppModel {
     }
 
     /// Why the current settings would make an ALAC download fail, if they would.
-    var losslessGate: LosslessGate? {
-        LosslessGate.check(options: settings.options, session: settings.session, wrapper: report?.wrapper)
+    var wrapperGate: WrapperGate? {
+        WrapperGate.check(options: settings.options, session: settings.session, wrapper: report?.wrapper,
+                          warnSpatial: settings.warnSpatialWithoutWrapper)
     }
 
     func runDiagnostics() async {
@@ -97,7 +98,7 @@ final class AppModel {
     /// without the wrapper: then it lands in the link field, where the
     /// download button explains why.
     func enqueueDropped(_ links: [AppleMusicLink]) {
-        guard losslessGate != nil, let first = links.first(where: \.kind.isDownloadable) else {
+        guard wrapperGate != nil, let first = links.first(where: \.kind.isDownloadable) else {
             enqueue(links)
             return
         }

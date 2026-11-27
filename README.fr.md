@@ -186,8 +186,10 @@ l'appareil.
 
 Choisir l'ALAC alors que le wrapper n'est pas activé ou pas prêt affiche un avertissement avant
 la mise en file, avec un bouton vers l'assistant ; un lien déposé attend dans le champ au lieu
-de partir directement dans la file. Le Dolby Atmos et les variantes binaurales ou en mixage
-stéréo n'ont pas besoin du wrapper.
+de partir directement dans la file. Le Dolby Atmos et les autres codecs spatiaux (binaural,
+mixage stéréo, AC-3) ont un avertissement plus léger : ils sont passés avec le fichier de cookies
+dans les mesures ci-dessus, donc l'alerte propose de télécharger avec les cookies, et
+« Réglages → Session » (ou l'alerte elle-même) permet de le couper.
 
 Un wrapper sur une autre machine marche aussi : dans **Réglages → Session**, choisis **Wrapper**
 et indique son adresse. Utilise une adresse IP ou un nom en `.local` : macOS laisse l'app les
