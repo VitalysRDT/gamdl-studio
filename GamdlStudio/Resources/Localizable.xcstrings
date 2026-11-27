@@ -14,6 +14,16 @@
         }
       }
     },
+    "« %@ » demande gamdl 4. Mets gamdl à jour depuis l'onglet Diagnostic, ou change ce réglage." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "“%@” requires gamdl 4. Update gamdl from the Diagnostics tab, or change this setting."
+          }
+        }
+      }
+    },
     "« %@ » enregistré" : {
       "localizations" : {
         "en" : {
@@ -202,6 +212,16 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "%lld caractères" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "%lld characters"
           }
         }
       }
@@ -656,6 +676,36 @@
         }
       }
     },
+    "AAC (flux de l'app Musique)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "AAC (Music app stream)"
+          }
+        }
+      }
+    },
+    "AAC binaural" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "AAC Binaural"
+          }
+        }
+      }
+    },
+    "AAC stéréo (mixage spatial)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "AAC Stereo (spatial mix)"
+          }
+        }
+      }
+    },
     "Actualiser" : {
       "localizations" : {
         "en" : {
@@ -722,6 +772,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Show Lyrics"
+          }
+        }
+      }
+    },
+    "Afficher les traces Python dans le journal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Show Python tracebacks in the log"
           }
         }
       }
@@ -866,6 +926,16 @@
         }
       }
     },
+    "Arrêter au premier morceau en échec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Stop at the first failed track"
+          }
+        }
+      }
+    },
     "Artiste" : {
       "localizations" : {
         "en" : {
@@ -887,11 +957,22 @@
       }
     },
     "Artistes" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Artists"
+          }
+        }
+      }
+    },
+    "Au-delà de 1080p, gamdl a besoin d'un appareil Widevine L1 ou PlayReady SL3000." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Above 1080p, gamdl needs a Widevine L1 or PlayReady SL3000 device."
           }
         }
       }
@@ -932,6 +1013,36 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "None"
+          }
+        }
+      }
+    },
+    "Audio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Audio"
+          }
+        }
+      }
+    },
+    "Audio spatial" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Spatial Audio"
+          }
+        }
+      }
+    },
+    "Audio spatial rendu pour un casque" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Spatial Audio rendered for headphones"
           }
         }
       }
@@ -986,6 +1097,16 @@
         }
       }
     },
+    "Ce morceau n'existe pas dans le codec demandé. Ajoute un codec de secours dans les réglages." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "This track isn't available in the requested codec. Add a fallback codec in Settings."
+          }
+        }
+      }
+    },
     "Ce n'est pas un export Netscape (lignes à 7 champs tabulés). Un export JSON ne convient pas." : {
       "localizations" : {
         "en" : {
@@ -1002,6 +1123,26 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "This process has already been started."
+          }
+        }
+      }
+    },
+    "Ces réglages ne s'appliquent qu'avec gamdl 4." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "These settings only apply with gamdl 4."
+          }
+        }
+      }
+    },
+    "Champs à ne pas écrire (%lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Fields to Leave Out (%lld)"
           }
         }
       }
@@ -1066,6 +1207,16 @@
         }
       }
     },
+    "Codec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Codec"
+          }
+        }
+      }
+    },
     "Colle un lien Apple Music : morceau, album, playlist ou artiste." : {
       "localizations" : {
         "en" : {
@@ -1112,6 +1263,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Paste Apple Music Link"
+          }
+        }
+      }
+    },
+    "Comme la pochette intégrée" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Same as Embedded Artwork"
           }
         }
       }
@@ -1206,6 +1367,26 @@
         }
       }
     },
+    "Créer une liste M3U pour les playlists" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Create an M3U file for playlists"
+          }
+        }
+      }
+    },
+    "Dater les morceaux à la sortie de l'album" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Use the album release date for tracks"
+          }
+        }
+      }
+    },
     "Déchiffrement impossible sans wrapper" : {
       "localizations" : {
         "en" : {
@@ -1296,6 +1477,36 @@
         }
       }
     },
+    "Dossier d'album" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Album Folder"
+          }
+        }
+      }
+    },
+    "Dossier de compilation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Compilation Folder"
+          }
+        }
+      }
+    },
+    "Dossier de playlist" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Playlist Folder"
+          }
+        }
+      }
+    },
     "Dossier de sortie" : {
       "localizations" : {
         "en" : {
@@ -1316,12 +1527,32 @@
         }
       }
     },
+    "Dossier hors album" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Non-Album Folder"
+          }
+        }
+      }
+    },
     "Dossier temporaire" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Temporary Folder"
+          }
+        }
+      }
+    },
+    "E-AC-3 5.1 à 768 kb/s, pour les morceaux mixés en Atmos" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "E-AC-3 5.1 at 768 kb/s, for tracks mixed in Atmos"
           }
         }
       }
@@ -1366,12 +1597,32 @@
         }
       }
     },
+    "Échouer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Fail"
+          }
+        }
+      }
+    },
     "Écouter" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Play"
+          }
+        }
+      }
+    },
+    "Écrire les métadonnées" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Write metadata"
           }
         }
       }
@@ -1392,6 +1643,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Clear History"
+          }
+        }
+      }
+    },
+    "Emplacement de l'index" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Index Location"
           }
         }
       }
@@ -1432,6 +1693,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Downloading: %@"
+          }
+        }
+      }
+    },
+    "En dernier recours" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "As a Last Resort"
           }
         }
       }
@@ -1477,6 +1748,7 @@
       }
     },
     "Enregistrer aussi Cover.jpg" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1486,7 +1758,18 @@
         }
       }
     },
+    "Enregistrer aussi la pochette à part" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Also save the artwork as a separate file"
+          }
+        }
+      }
+    },
     "Enregistrer aussi un fichier Cover.jpg" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1556,6 +1839,16 @@
         }
       }
     },
+    "Extension" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "File Extension"
+          }
+        }
+      }
+    },
     "Facultatif avec gamdl 4" : {
       "localizations" : {
         "en" : {
@@ -1606,6 +1899,16 @@
         }
       }
     },
+    "Fichiers" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Files"
+          }
+        }
+      }
+    },
     "Fichiers légers, pour l'écoute mobile" : {
       "localizations" : {
         "en" : {
@@ -1646,6 +1949,16 @@
         }
       }
     },
+    "Format de la date" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Date Format"
+          }
+        }
+      }
+    },
     "Format demandé indisponible" : {
       "localizations" : {
         "en" : {
@@ -1656,12 +1969,42 @@
         }
       }
     },
+    "Format du fichier" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "File Format"
+          }
+        }
+      }
+    },
+    "Format intégré au morceau" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Embedded Format"
+          }
+        }
+      }
+    },
     "Format non reconnu" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Unrecognized format"
+          }
+        }
+      }
+    },
+    "gamdl 3 ne prend que la première catégorie cochée." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl 3 only downloads the first checked category."
           }
         }
       }
@@ -1766,6 +2109,66 @@
         }
       }
     },
+    "H.264 seulement" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "H.264 Only"
+          }
+        }
+      }
+    },
+    "H.265 seulement" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "H.265 Only"
+          }
+        }
+      }
+    },
+    "Hauteur maximale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Maximum Height"
+          }
+        }
+      }
+    },
+    "HE-AAC (flux de l'app Musique)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "HE-AAC (Music app stream)"
+          }
+        }
+      }
+    },
+    "HE-AAC binaural" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "HE-AAC Binaural"
+          }
+        }
+      }
+    },
+    "HE-AAC stéréo (mixage spatial)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "HE-AAC Stereo (spatial mix)"
+          }
+        }
+      }
+    },
     "Historique" : {
       "localizations" : {
         "en" : {
@@ -1846,6 +2249,16 @@
         }
       }
     },
+    "Index des médias" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Media Index"
+          }
+        }
+      }
+    },
     "Indisponible en streaming" : {
       "localizations" : {
         "en" : {
@@ -1907,11 +2320,32 @@
       }
     },
     "L'ALAC (sans perte) et le Dolby Atmos exigent le wrapper FairPlay, que gamdl ne peut pas utiliser avec de simples cookies." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "ALAC (lossless) and Dolby Atmos require the FairPlay wrapper, which gamdl can't use with plain cookies."
+          }
+        }
+      }
+    },
+    "L'ALAC demande le wrapper de gamdl : avec de simples cookies, Apple refuse la licence de déchiffrement." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "ALAC requires gamdl's wrapper: with plain cookies, Apple refuses the decryption license."
+          }
+        }
+      }
+    },
+    "L'index permet à gamdl de reconnaître un morceau déjà téléchargé sans rien redemander à Apple." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The index lets gamdl recognize a track it has already downloaded without asking Apple for anything again."
           }
         }
       }
@@ -1952,6 +2386,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "The cookies file is missing or empty."
+          }
+        }
+      }
+    },
+    "Le flux que lit l'app Musique" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The stream the Music app plays"
           }
         }
       }
@@ -2006,6 +2450,16 @@
         }
       }
     },
+    "Licence de déchiffrement refusée par Apple. L'ALAC demande le wrapper de gamdl." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Apple refused the decryption license. ALAC requires gamdl's wrapper."
+          }
+        }
+      }
+    },
     "Lien" : {
       "localizations" : {
         "en" : {
@@ -2046,12 +2500,52 @@
         }
       }
     },
+    "Liste M3U" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "M3U File"
+          }
+        }
+      }
+    },
+    "LRC mot à mot" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Word-by-Word LRC"
+          }
+        }
+      }
+    },
     "Masquer le journal" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Hide Log"
+          }
+        }
+      }
+    },
+    "Maximale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Maximum"
+          }
+        }
+      }
+    },
+    "Métadonnées" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Metadata"
           }
         }
       }
@@ -2076,6 +2570,16 @@
         }
       }
     },
+    "Mixage spatial ramené en stéréo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Spatial mix downmixed to stereo"
+          }
+        }
+      }
+    },
     "Monter dans la file" : {
       "localizations" : {
         "en" : {
@@ -2092,6 +2596,46 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Song"
+          }
+        }
+      }
+    },
+    "Morceau (plusieurs disques)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Track (Multiple Discs)"
+          }
+        }
+      }
+    },
+    "Morceau (un disque)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Track (Single Disc)"
+          }
+        }
+      }
+    },
+    "Morceau hors album" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Non-Album Track"
+          }
+        }
+      }
+    },
+    "Noms des dossiers et des fichiers" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Folder and File Names"
           }
         }
       }
@@ -2162,6 +2706,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Open music.apple.com"
+          }
+        }
+      }
+    },
+    "Par défaut de gamdl" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl Default"
           }
         }
       }
@@ -2322,6 +2876,26 @@
         }
       }
     },
+    "Pour les morceaux qui le proposent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "For tracks that offer it"
+          }
+        }
+      }
+    },
+    "Pour remplacer des morceaux déjà téléchargés dans un autre codec, active « Réécrire les fichiers existants »." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "To replace tracks already downloaded in another codec, turn on “Overwrite existing files”."
+          }
+        }
+      }
+    },
     "Préparation…" : {
       "localizations" : {
         "en" : {
@@ -2378,6 +2952,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "What do you want to listen to?"
+          }
+        }
+      }
+    },
+    "Raccourcir les noms à" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Shorten Names To"
           }
         }
       }
@@ -2512,6 +3096,56 @@
         }
       }
     },
+    "S'il n'existe pas" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "If Unavailable"
+          }
+        }
+      }
+    },
+    "Sans perte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Lossless"
+          }
+        }
+      }
+    },
+    "Sans perte, à la meilleure résolution disponible" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Lossless, at the best available resolution"
+          }
+        }
+      }
+    },
+    "Sans perte, jusqu'à 24 bits / 48 kHz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Lossless, up to 24-bit / 48 kHz"
+          }
+        }
+      }
+    },
+    "Sans perte, jusqu'à 24 bits / 192 kHz" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Lossless, up to 24-bit / 192 kHz"
+          }
+        }
+      }
+    },
     "Sans titre" : {
       "localizations" : {
         "en" : {
@@ -2528,6 +3162,26 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "The playlist resolver script is missing from the app."
+          }
+        }
+      }
+    },
+    "SD, son amélioré" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "SD, Enhanced Audio"
+          }
+        }
+      }
+    },
+    "Segments en parallèle par morceau" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Parallel Segments per Track"
           }
         }
       }
@@ -2622,6 +3276,16 @@
         }
       }
     },
+    "Stéréo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Stereo"
+          }
+        }
+      }
+    },
     "sur %lld" : {
       "localizations" : {
         "en" : {
@@ -2648,6 +3312,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Size"
+          }
+        }
+      }
+    },
+    "Taille du fichier à part" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Separate File Size"
           }
         }
       }
@@ -2732,6 +3406,16 @@
         }
       }
     },
+    "Tenir l'index des médias de gamdl" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Maintain gamdl's media index"
+          }
+        }
+      }
+    },
     "Terminé" : {
       "localizations" : {
         "en" : {
@@ -2788,6 +3472,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Finished"
+          }
+        }
+      }
+    },
+    "Texte brut" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Plain Text"
           }
         }
       }
@@ -2902,12 +3596,42 @@
         }
       }
     },
+    "TTML mot à mot" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Word-by-Word TTML"
+          }
+        }
+      }
+    },
     "Tu peux aussi glisser un ou plusieurs liens n'importe où dans la fenêtre." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "You can also drag one or more links anywhere into the window."
+          }
+        }
+      }
+    },
+    "Un morceau qui n'existe pas dans ce codec échouera : choisis un codec de secours." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "A track that isn't available in this codec will fail: choose a fallback codec."
+          }
+        }
+      }
+    },
+    "Utile pour signaler un bug à gamdl. Ces traces peuvent contenir des liens signés ou des informations de compte : relis-les avant de les partager." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Useful when reporting a bug to gamdl. These tracebacks may contain signed links or account information: review them before you share them."
           }
         }
       }
@@ -2962,6 +3686,46 @@
         }
       }
     },
+    "Version provisoire" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Provisional Version"
+          }
+        }
+      }
+    },
+    "Vide : le modèle de gamdl s'applique (~/.gamdl/config.yml, sinon celui affiché)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Leave empty to use gamdl's template (from ~/.gamdl/config.yml, otherwise the one shown)."
+          }
+        }
+      }
+    },
+    "Vidéo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Video"
+          }
+        }
+      }
+    },
+    "Vidéos mises en ligne par les artistes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Videos Uploaded by Artists"
+          }
+        }
+      }
+    },
     "Vider les terminés" : {
       "localizations" : {
         "en" : {
@@ -2978,6 +3742,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "View"
+          }
+        }
+      }
+    },
+    "Y garder aussi les métadonnées" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Also save metadata in the index"
           }
         }
       }

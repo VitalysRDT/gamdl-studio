@@ -146,10 +146,23 @@ struct Gamdl4OutputParser {
             sourceFailures += 1
             return [.urlFailed(message: GamdlOutputParser.humanURLError(message))]
         default:
-            let detail = LogLine(level: .error, text: "\(label) : \(message)")
+            let detail = LogLine(level: .error, text: "\(label) : \(Self.humanFailure(message))")
             if reportedFailures.contains(label) { return [.log(detail)] }
             return [.trackFailed(nil, title: label), .log(detail)]
         }
+    }
+
+    /// The two failures a codec choice causes, as measured with gamdl 4.1.2;
+    /// anything else passes through unchanged.
+    static func humanFailure(_ message: String) -> String {
+        let lower = message.lowercased()
+        if lower.contains("decryption key") {
+            return String(localized: "Licence de déchiffrement refusée par Apple. L'ALAC demande le wrapper de gamdl.")
+        }
+        if lower.contains("codec or stream unavailable") {
+            return String(localized: "Ce morceau n'existe pas dans le codec demandé. Ajoute un codec de secours dans les réglages.")
+        }
+        return message
     }
 
     private func splitFailure(_ text: String) -> (label: String, message: String) {

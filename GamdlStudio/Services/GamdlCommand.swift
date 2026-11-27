@@ -21,11 +21,15 @@ struct GamdlInvocation: Hashable, Sendable {
 
 enum GamdlCommandError: LocalizedError, Equatable {
     case lyricsOnlyUnsupported
+    /// A setting that only gamdl 4 understands, while gamdl 3 is installed.
+    case needsGamdl4(String)
 
     var errorDescription: String? {
         switch self {
         case .lyricsOnlyUnsupported:
             String(localized: "gamdl 4 ne sait plus télécharger les paroles seules. Choisis « Avec le son » ou « Aucunes » dans les réglages.")
+        case .needsGamdl4(let setting):
+            String(localized: "« \(setting) » demande gamdl 4. Mets gamdl à jour depuis l'onglet Diagnostic, ou change ce réglage.")
         }
     }
 }
@@ -45,10 +49,39 @@ enum GamdlCommand {
     /// Options gamdl can't honor. Checked before launching, so an
     /// unsupported request never falls back to a plain audio download.
     static func validate(_ options: DownloadOptions, for generation: GamdlGeneration) throws {
-        if options.lyricsMode == .lyricsOnly && !generation.supportsLyricsOnly {
-            throw GamdlCommandError.lyricsOnlyUnsupported
+        switch generation {
+        case .v4:
+            if options.lyricsMode == .lyricsOnly { throw GamdlCommandError.lyricsOnlyUnsupported }
+        case .v3:
+            // These change what gets downloaded; gamdl 3 would silently
+            // download something else. gamdl 4's other settings are ignored.
+            if let codec = options.songCodecPriority.first(where: { !$0.isWeb }) {
+                throw GamdlCommandError.needsGamdl4(codec.label)
+            }
+            if !options.lyricsFormat.supportedByGamdl3 {
+                throw GamdlCommandError.needsGamdl4(options.lyricsFormat.label)
+            }
         }
     }
+
+    /// `gamdl rip` options the app never passes, and why. Every other option
+    /// of gamdl 4.1.2's `rip` is reachable from the settings (checked by
+    /// tests against the recorded option list).
+    static let excludedRipOptions: [String: String] = [
+        "--select": "interactive menu, needs a terminal",
+        "--ask-song-codec": "interactive menu, needs a terminal",
+        "--ask-music-video-streams": "interactive menu, needs a terminal",
+        "--ask-uploaded-video-quality": "interactive menu, needs a terminal",
+        "--max-visible-tracks": "terminal display only; the app always passes --no-progress",
+        "--song-codec": "a one-codec --song-codec-priority says the same, and gamdl ignores the priority once it is set",
+        "--music-video-codec": "same as --song-codec, for videos",
+        "--media-user-token": "would show in the process list, the log and the copied command; the cookies file carries the same token",
+        "--wrapper-url": "not yet: wrapper mode comes next",
+        "--storefront": "not yet: session settings come with wrapper mode",
+        "--language": "not yet: session settings come with wrapper mode",
+        "--drm-backend": "not yet: session settings come with wrapper mode",
+        "--device-path": "not yet: session settings come with wrapper mode",
+    ]
 
     /// gamdl 4 runs through `gamdl_bridge.py` when its Python is known, so the
     /// app gets live per-track progress; otherwise gamdl runs directly.
@@ -112,8 +145,10 @@ enum GamdlCommand {
 
     // MARK: - gamdl 4
 
+    /// Settings shown in the main screen are always passed, both ways, so
+    /// ~/.gamdl/config.yml can't contradict the UI. The rest is passed only
+    /// once set: until then gamdl's own configuration applies.
     private static func arguments4(for link: AppleMusicLink, urls: [String]?, options: DownloadOptions, paths: GamdlPaths) -> [String] {
-        let cover = options.coverSize == .max ? "max" : String(options.coverSize.rawValue)
         var args = [
             "rip",
             // Without an explicit mode, gamdl 4 opens its setup wizard, which
@@ -122,24 +157,62 @@ enum GamdlCommand {
             "--cookies-path", paths.cookies.path,
             "--output-dir", paths.output.path,
             "--temp-path", paths.temp.path,
-            "--song-codec-priority", options.codec.rawValue,
+            "--song-codec-priority", options.songCodecPriority.map(\.rawValue).joined(separator: ","),
             "--lyrics-file-format", options.lyricsFormat.rawValue,
-            "--embedded-cover-size", cover,
-            "--file-cover-size", cover,
+            "--embedded-cover-size", coverArgument(options.coverSize),
+            "--file-cover-size", coverArgument(options.fileCoverSize ?? options.coverSize),
             // The job follows one track at a time, as gamdl 3 downloaded them.
             "--concurrent-downloads", "1",
             // The live display draws nothing in a pipe.
             "--no-progress",
-            // Explicit both ways, so ~/.gamdl/config.yml can't override the UI.
             options.saveCover ? "--save-cover" : "--no-save-cover",
             options.overwrite ? "--overwrite" : "--no-overwrite",
         ]
         if options.lyricsMode == .none { args.append("--no-lyrics-file") }
+        if let format = options.embeddedLyricsFormat { args += ["--embedded-lyrics-format", format.rawValue] }
+        if options.useAlbumDate { args.append("--use-album-date") }
+
+        // Artwork and tags
+        if let format = options.coverFormat { args += ["--cover-format", format.rawValue] }
+        if !options.writeTags { args.append("--no-tag") }
+        if !options.excludedTags.isEmpty { args += ["--exclude-tags", options.excludedTags.joined(separator: ",")] }
+        if !options.dateTagTemplate.trimmed.isEmpty { args += ["--date-tag-template", options.dateTagTemplate.trimmed] }
+
+        // Collections. Without a choice, gamdl would open an interactive menu
+        // on an artist page.
         if link.kind == .artist {
-            args += ["--artist-auto-select", options.artistSelection.rawValue]
+            args += ["--artist-auto-select", options.artistSelections.map(\.rawValue).joined(separator: ",")]
         }
+        if options.savePlaylist { args.append("--save-playlist") }
+
+        // Music videos
+        if !options.musicVideoCodecPriority.isEmpty {
+            args += ["--music-video-codec-priority", options.musicVideoCodecPriority.map(\.rawValue).joined(separator: ",")]
+        }
+        if let container = options.musicVideoContainer { args += ["--music-video-container", container.rawValue] }
+        if let height = options.maxVideoHeight { args += ["--max-height", String(height)] }
+        if let quality = options.uploadedVideoQuality { args += ["--uploaded-video-quality", quality.rawValue] }
+
+        // File names
+        for (flag, value) in options.templates.arguments { args += [flag, value] }
+        if let length = options.templates.truncate { args += ["--truncate", String(length)] }
+
+        // Advanced
+        if let segments = options.segmentConcurrency { args += ["--segment-concurrency", String(segments)] }
+        if options.failFast { args.append("--fail-fast") }
+        if !options.useDatabase { args.append("--no-database") }
+        if !options.databasePath.trimmed.isEmpty {
+            args += ["--database-path", (options.databasePath.trimmed as NSString).expandingTildeInPath]
+        }
+        if options.saveMetadata { args.append("--save-metadata") }
+        if !options.showTracebacks { args.append("--no-tracebacks") }
+
         args += urls ?? [link.absoluteString]
         return args
+    }
+
+    private static func coverArgument(_ size: CoverSize) -> String {
+        size == .max ? "max" : String(size.rawValue)
     }
 
     // MARK: - Display

@@ -40,8 +40,12 @@ suit la langue de macOS.
 - **Diagnostic.** Vérifie gamdl, ffmpeg (gamdl 3 seulement), le fichier de cookies et le dossier de sortie. Les
   cookies s'importent par glisser-déposer : seuls les cookies Apple sont conservés, avec des
   droits `600`. gamdl se met à jour depuis l'app (`pipx upgrade gamdl`).
-- **Réglages de téléchargement.** Codec, format des paroles, taille de pochette, `Cover.jpg`,
-  réécriture, et ce qu'il faut prendre sur une page d'artiste.
+- **Toutes les options de `gamdl rip`, dans les Réglages** (gamdl 4). Codec et codecs de secours,
+  formats des paroles (fichier et intégrées), taille et format de pochette, tags à ne pas
+  écrire, format de date, catégories d'artiste, listes M3U, codec, hauteur et extension des
+  clips, modèles de noms de dossiers et de fichiers, segments en parallèle, arrêt au premier
+  échec, index des médias de gamdl et traces Python. Un réglage laissé sur « Par défaut de
+  gamdl » n'est pas passé : `~/.gamdl/config.yml` continue de s'appliquer.
 
 <p align="center">
   <img src="docs/screenshots/queue.png" width="410" alt="File d'attente">
@@ -124,10 +128,24 @@ de gamdl, puis passe chaque morceau à gamdl. Les stations de radio ne sont pas 
 
 ## Codecs
 
-L'app propose les deux codecs que gamdl obtient avec de simples cookies navigateur :
-**AAC 256 kb/s** (`aac-web`) et **HE-AAC 64 kb/s** (`aac-he-web`). L'ALAC sans perte et le
-Dolby Atmos exigent le [wrapper](https://github.com/glomatico/wrapper-v2) de gamdl, que l'app
-ne pilote pas.
+Avec gamdl 4, tous les codecs de gamdl sont proposés, avec jusqu'à deux codecs de secours.
+gamdl prend le premier codec dans lequel le morceau existe ; il ne se rabat pas quand Apple
+refuse une licence.
+
+Ce qui marche avec de simples cookies navigateur, mesuré avec gamdl 4.1.2 :
+
+| Codec | Avec cookies | Remarque |
+|---|---|---|
+| AAC 256 kb/s, HE-AAC 64 kb/s (`aac-web`, `aac-he-web`, `aac`, `aac-he`) | Oui | |
+| Dolby Atmos (`atmos`) | Oui | E-AC-3 5.1 à 768 kb/s, pour les morceaux mixés en Atmos |
+| Binaural, mixage spatial en stéréo (`aac-binaural`, `aac-downmix`, …) | Oui | |
+| Dolby Digital (`ac3`) | Non testé | Aucun morceau essayé ne le proposait |
+| ALAC (`alac`, `alac-lossless`, `alac-hires`) | Non | Apple refuse la licence : il faut le [wrapper](https://github.com/glomatico/wrapper-v2) de gamdl |
+
+Un morceau qui n'existe pas dans le codec choisi échoue, sauf si un codec de secours est
+défini : avec l'Atmos en premier, l'AAC fait un bon secours. Pour remplacer des morceaux déjà
+téléchargés dans un autre codec, active « Réécrire les fichiers existants ». gamdl 3 se limite
+aux deux premiers codecs.
 
 ## Raccourcis clavier
 

@@ -396,12 +396,14 @@ private struct OptionsPanel: View {
             Grid(alignment: .leading, horizontalSpacing: 18, verticalSpacing: 14) {
                 GridRow {
                     Text("Qualité").foregroundStyle(.secondary)
-                    Picker("", selection: $settings.options.codec) {
-                        ForEach(SongCodec.allCases) { Text($0.label).tag($0) }
+                    VStack(alignment: .leading, spacing: 6) {
+                        Picker("", selection: $settings.options.codec) {
+                            CodecMenuItems { $0 }
+                        }
+                        .labelsHidden()
+                        .frame(maxWidth: 260)
+                        CodecNotes(options: settings.options)
                     }
-                    .pickerStyle(.segmented)
-                    .labelsHidden()
-                    .frame(maxWidth: 320)
                 }
                 GridRow {
                     Text("Paroles").foregroundStyle(.secondary)
@@ -436,17 +438,21 @@ private struct OptionsPanel: View {
                         }
                         .labelsHidden()
                         .frame(width: 110)
-                        Toggle("Enregistrer aussi Cover.jpg", isOn: $settings.options.saveCover)
+                        Toggle("Enregistrer aussi la pochette à part", isOn: $settings.options.saveCover)
                     }
                 }
                 if kind == .artist {
                     GridRow {
                         Text("Discographie").foregroundStyle(.secondary)
-                        Picker("", selection: $settings.options.artistSelection) {
-                            ForEach(ArtistSelection.allCases) { Text($0.label).tag($0) }
+                        Menu(settings.options.artistSelections.map(\.label).joined(separator: ", ")) {
+                            ForEach(ArtistSelection.allCases) { selection in
+                                Toggle(selection.label, isOn: Binding(
+                                    get: { settings.options.includesArtist(selection) },
+                                    set: { settings.options.setArtist(selection, included: $0) }
+                                ))
+                            }
                         }
-                        .labelsHidden()
-                        .frame(width: 200)
+                        .frame(width: 260)
                     }
                 }
                 GridRow {
