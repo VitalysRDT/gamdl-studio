@@ -1,0 +1,10 @@
+Gamdl 4.1.2
+
+✓ Authenticated
+@gamdl-studio {"e": "track", "i": 1, "title": "I Love the Nightlife (Disco 'Round)"}
+@gamdl-studio {"e": "progress", "i": 1, "pct": 0.007616897033635036, "bytes": 1006, "total": 13207478, "elapsed": 0.146887958}
+@gamdl-studio {"e": "progress", "i": 1, "pct": 90.61481684845509, "bytes": 11967932, "total": 13207478, "elapsed": 0.428173666}
+@gamdl-studio {"e": "progress", "i": 1, "pct": 100.0, "bytes": 13207478, "total": 13207478, "elapsed": 0.432565125}
+Created database at /Users/me/.gamdl/media.sqlite3
+✓ I Love the Nightlife (Disco 'Round): downloaded → /Users/me/Music/Gamdl Studio/Compilations/Alicia Bridges_ The Collection/01 I Love the Nightlife (Disco 'Round).m4a
+Finished: 1 downloaded, 0 overwritten, 0 skipped, 0 failed, 0 finalization failures (1 discovered)
