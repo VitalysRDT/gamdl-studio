@@ -278,6 +278,12 @@ private final class FakeToolchain {
         echo "services: {}" > "$last/compose.yaml"
         cat > "$last/tools/build-docker.sh" <<'EOS'
         echo "build $* in $(pwd)" >> '\(log)'
+        printf '#1 [internal] load build definition from Dockerfile\n#1 DONE 0.0s\n'
+        printf '#5 [builder 1/2] FROM docker.io/library/rust\n#5 CACHED\n'
+        printf '#6 [builder 2/2] RUN cargo build --release\n#6 DONE 41.2s\n'
+        printf '#7 [runtime 1/2] FROM docker.io/library/debian\n#7 DONE 1.0s\n'
+        printf '#8 [runtime 2/2] COPY --from=builder /out /app\n'
+
         command -v sha256sum >/dev/null || { echo "no sha256sum on PATH"; exit 9; }
         \(buildFails ? "exit 4" : "echo amd64 > '\(st)/image'")
         EOS
@@ -354,6 +360,11 @@ struct WrapperSetupIntegrationTests {
                 || fake.callLog.contains("build \(fake.package.path) --arch x86_64 in \(fake.wrapperDir.path)"))
         #expect(fake.callLog.contains("docker compose up -d"))
         #expect(fake.has("image") && fake.has("up"))
+        let progress = try #require(setup.buildProgress)
+        #expect(progress.total == 4)
+        #expect(progress.finished == 3)
+        #expect(progress.current == "[runtime 2/2] COPY --from=builder /out /app")
+        #expect(setup.buildStartedAt == nil)
         #expect(setup.state(.build) == .done("Image wrapper-v2:local présente (x86_64)."))
         #expect(setup.state(.start).isDone)
         #expect(setup.nextStep == .signIn)
@@ -476,5 +487,65 @@ struct WrapperSetupIntegrationTests {
         #expect(text.contains("set -e\necho hi\n"))
         let perms = try FileManager.default.attributesOfItem(atPath: file.path)[.posixPermissions] as? Int
         #expect(perms == 0o700)
+    }
+}
+
+// MARK: - Build progress and the codec button
+
+@Suite("Docker build progress and wrapper button")
+struct BuildProgressTests {
+    @Test("BuildKit steps add up across stages; DONE and CACHED count, the internal steps don't")
+    func stages() {
+        var p = BuildKitProgress()
+        p.consume("#1 [internal] load build definition from Dockerfile\n#1 DONE 0.0s\n")
+        #expect(p.total == 0 && p.fraction == 0)
+        p.consume("#4 [builder  1/4] FROM docker.io/library/rust:1.86@sha256:abc\n#4 CACHED\n")
+        #expect(p.total == 4 && p.finished == 1 && p.fraction == 0.25)
+        p.consume("#9 [builder  2/4] RUN apt-get upd")          // split mid-line
+        p.consume("ate\n#9 0.312 Get:1 http://deb.debian.org\n")
+        #expect(p.current == "[builder 2/4] RUN apt-get update")
+        p.consume("#9 DONE 12.3s\n#12 [runtime 1/2] FROM debian:bookworm-slim\n")
+        #expect(p.total == 6)
+        #expect(p.finished == 2)
+        #expect(p.fraction == 0.5)
+    }
+
+    @Test("Unnamed stages and ERROR lines")
+    func unnamed() {
+        var p = BuildKitProgress()
+        p.consume("#3 [1/2] FROM alpine\n#3 DONE 0.1s\n#4 [2/2] RUN false\n#4 ERROR: process did not complete\n")
+        #expect(p.total == 2 && p.finished == 1)
+        #expect(p.current == "[2/2] RUN false")
+    }
+
+    @Test("Never reaches 100 % before the image is exported")
+    func cap() {
+        var p = BuildKitProgress()
+        p.consume("#2 [1/1] FROM alpine\n#2 DONE 0.1s\n")
+        #expect(p.fraction == 0.99)
+    }
+
+    @Test("The codec button activates a ready local wrapper, otherwise installs or connects it")
+    func callToAction() {
+        #expect(WrapperCallToAction.choose(gate: nil, local: .ready(version: "1.0.1", architecture: "x86_64")) == nil)
+        #expect(WrapperCallToAction.choose(gate: .wrapperNotActivated, local: .ready(version: "1.0.1", architecture: "x86_64")) == .activate)
+        #expect(WrapperCallToAction.choose(gate: .spatialWithoutWrapper, local: .loggedOut) == .connect)
+        #expect(WrapperCallToAction.choose(gate: .wrapperNotActivated, local: .unreachable("x")) == .install)
+        #expect(WrapperCallToAction.choose(gate: .wrapperNotActivated, local: nil) == .install)
+        #expect(WrapperCallToAction.choose(gate: .wrapperNotReady(.loggedOut), local: nil) == .openAssistant)
+    }
+
+    @Test("Choosing ALAC or Atmos brings the button; AAC hides it")
+    @MainActor func modelButton() throws {
+        let defaults = try #require(UserDefaults(suiteName: "gamdlstudio.tests.\(UUID().uuidString)"))
+        let model = AppModel(settings: AppSettings(defaults: defaults))
+        model.settings.options.songCodecPriority = [.aacWeb]
+        #expect(model.wrapperAction == nil)
+        model.settings.options.songCodecPriority = [.alac]
+        #expect(model.wrapperAction == .install)
+        model.localWrapper = .ready(version: "1.0.1", architecture: "x86_64")
+        #expect(model.wrapperAction == .activate)
+        model.settings.options.songCodecPriority = [.atmos]
+        #expect(model.wrapperAction == .activate)
     }
 }

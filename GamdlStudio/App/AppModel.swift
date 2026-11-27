@@ -86,10 +86,28 @@ final class AppModel {
                           warnSpatial: settings.warnSpatialWithoutWrapper)
     }
 
+    /// A wrapper answering on this Mac while the app still uses cookies:
+    /// then "Activate" is enough, no installation needed.
+    var localWrapper: WrapperStatus?
+
+    /// What the big wrapper button under the codec picker offers.
+    var wrapperAction: WrapperCallToAction? {
+        WrapperCallToAction.choose(gate: wrapperGate, local: localWrapper)
+    }
+
     func runDiagnostics() async {
         isCheckingDiagnostics = true
         report = await Diagnostics.run(settings: SettingsSnapshot(settings))
+        localWrapper = settings.session.authMode == .wrapper
+            ? nil : await WrapperProbe.check(GamdlSession.defaultWrapperURL, timeout: 1.5)
         isCheckingDiagnostics = false
+    }
+
+    /// Switches to the wrapper already running on this Mac.
+    func activateLocalWrapper() async {
+        settings.session.authMode = .wrapper
+        settings.session.wrapperURL = GamdlSession.defaultWrapperURL
+        await runDiagnostics()
     }
 
     // MARK: - Downloads

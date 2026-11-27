@@ -332,6 +332,9 @@ final class WrapperSetup {
         }
     }
     private(set) var package: URL?
+    /// Progress of the running `build-docker.sh`, read from BuildKit's output.
+    private(set) var buildProgress: BuildKitProgress?
+    private(set) var buildStartedAt: Date?
 
     let environment: WrapperSetupEnvironment
     private var runner: ProcessRunner?
@@ -511,7 +514,13 @@ final class WrapperSetup {
         guard FileManager.default.fileExists(atPath: script.path) else { return .failed(String(localized: "Télécharge d'abord le code de wrapper-v2.")) }
         appendLog(String(localized: "Construction pour \(architecture.rawValue). L'image contient des bibliothèques d'Apple : ne la publie pas.") + "\n")
         let args = WrapperRecipe.buildArguments(package: package, architecture: architecture)
-        let result = await execute(URL(filePath: "/bin/bash"), args, directory: environment.root, timeout: .seconds(7200))
+        buildProgress = BuildKitProgress()
+        buildStartedAt = .now
+        // The last progress stays readable after the build (tests, log).
+        defer { buildStartedAt = nil }
+        let result = await execute(URL(filePath: "/bin/bash"), args, directory: environment.root, timeout: .seconds(7200)) { [weak self] text in
+            self?.buildProgress?.consume(text)
+        }
         if result.cancelled { return .failed(String(localized: "Construction annulée.")) }
         if result.exitCode != 0 {
             return .failed(String(localized: "La construction a échoué (code \(result.exitCode)). Vérifie que le paquet est bien la build 1109 pour \(architecture.rawValue) ; le détail est dans le journal."))
@@ -552,7 +561,8 @@ final class WrapperSetup {
 
     private func execute(
         _ executable: URL, _ arguments: [String], directory: URL? = nil,
-        logged: Bool = true, timeout: Duration = .seconds(20)
+        logged: Bool = true, timeout: Duration = .seconds(20),
+        observe: (@MainActor (String) -> Void)? = nil
     ) async -> Outcome {
         let runner = ProcessRunner()
         if logged {
@@ -570,7 +580,10 @@ final class WrapperSetup {
                 environment: environment.processEnvironment, currentDirectory: directory
             ) { [weak self] text in
                 guard logged else { return }
-                Task { @MainActor in self?.appendLog(text) }
+                Task { @MainActor in
+                    self?.appendLog(text)
+                    observe?(text)
+                }
             }
             return Outcome(exitCode: result.exitCode, cancelled: result.wasCancelled)
         } catch {
@@ -645,6 +658,104 @@ enum WrapperGate: Hashable, Sendable {
                 + "\n" + String(localized: "Sans wrapper prêt, gamdl ne peut rien télécharger dans ce mode.")
         case .spatialWithoutWrapper:
             String(localized: "Tu télécharges en Dolby Atmos ou en audio spatial avec le seul fichier de cookies. Lors des tests avec gamdl 4.1.2, ces codecs ont fonctionné ainsi ; si Apple refuse une licence, le wrapper est la voie à prendre. L'assistant l'installe avec Docker.")
+        }
+    }
+}
+
+/// Progress of a `docker buildx build`, estimated from BuildKit's plain
+/// output (`BUILDKIT_PROGRESS=plain`):
+///
+///     #12 [builder  3/15] RUN cargo build --release
+///     #12 DONE 41.2s
+///     #13 [runtime 2/6] COPY --from=builder …
+///     #13 CACHED
+///
+/// Each `[stage n/m]` line is one step of a stage with `m` steps. The total is
+/// the sum of the stages seen so far, so the estimate can only go up.
+struct BuildKitProgress: Hashable, Sendable {
+    /// Steps per stage, as announced by `n/m`.
+    private(set) var stageTotals: [String: Int] = [:]
+    /// Vertex id → "stage n".
+    private var steps: [Int: String] = [:]
+    private var finishedSteps: Set<String> = []
+    /// The latest step started, e.g. "[builder 3/15] RUN cargo build --release".
+    private(set) var current: String?
+    private var pending = ""
+    private var shown = 0.0
+
+    var finished: Int { finishedSteps.count }
+    var total: Int { stageTotals.values.reduce(0, +) }
+
+    /// 0…0.99 while building: the last percent is the image export.
+    var fraction: Double { shown }
+
+    mutating func consume(_ text: String) {
+        pending += text
+        var lines = pending.components(separatedBy: .newlines)
+        pending = lines.removeLast()
+        for line in lines { read(line.trimmingCharacters(in: .whitespaces)) }
+    }
+
+    private static let stepPattern = /^#(\d+) \[([^\]]*?)\s*(\d+)\/(\d+)\] (.*)$/
+    private static let donePattern = /^#(\d+) (DONE|CACHED)\b/
+
+    private mutating func read(_ line: String) {
+        if let m = line.wholeMatch(of: Self.stepPattern), let id = Int(m.1), let n = Int(m.3), let total = Int(m.4) {
+            let stage = m.2.trimmingCharacters(in: .whitespaces)
+            stageTotals[stage] = max(stageTotals[stage] ?? 0, total)
+            let key = "\(stage) \(n)"
+            steps[id] = key
+            let label = stage.isEmpty ? "[\(n)/\(total)]" : "[\(stage) \(n)/\(total)]"
+            current = String((label + " " + m.5).prefix(120))
+        } else if let m = line.prefixMatch(of: Self.donePattern), let id = Int(m.1), let key = steps[id] {
+            finishedSteps.insert(key)
+        } else {
+            return
+        }
+        if total > 0 { shown = max(shown, min(0.99, Double(finished) / Double(total))) }
+    }
+}
+
+/// The one action the codec picker offers when the chosen codec wants the
+/// wrapper and the app doesn't use one yet.
+enum WrapperCallToAction: Hashable, Sendable {
+    /// A signed-in wrapper already answers on this Mac: just switch to it.
+    case activate
+    /// It answers but isn't signed in to an Apple Account.
+    case connect
+    /// Nothing answers: install it.
+    case install
+    /// Wrapper mode is on but the wrapper isn't ready.
+    case openAssistant
+
+    static func choose(gate: WrapperGate?, local: WrapperStatus?) -> WrapperCallToAction? {
+        switch gate {
+        case nil: return nil
+        case .wrapperNotReady: return .openAssistant
+        case .wrapperNotActivated, .spatialWithoutWrapper:
+            switch local {
+            case .ready?: return .activate
+            case .loggedOut?: return .connect
+            default: return .install
+            }
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .activate: String(localized: "Activer le wrapper")
+        case .connect: String(localized: "Connecter et activer le wrapper…")
+        case .install: String(localized: "Installer le wrapper…")
+        case .openAssistant: String(localized: "Ouvrir l'assistant du wrapper…")
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .activate: "bolt.fill"
+        case .connect: "person.badge.key.fill"
+        case .install: "arrow.down.circle.fill"
+        case .openAssistant: "wand.and.stars"
         }
     }
 }

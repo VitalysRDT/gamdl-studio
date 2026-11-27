@@ -178,16 +178,11 @@ struct CodecNotes: View {
             if !usesWrapper, options.songCodecPriority.contains(where: \.needsWrapper) {
                 Text("L'ALAC demande le wrapper de gamdl : avec de simples cookies, Apple refuse la licence de déchiffrement.")
                     .foregroundStyle(.orange)
-                WrapperSetupButton(title: "Installer et activer le wrapper…")
-                    .buttonStyle(.link)
             }
             if !usesWrapper, options.songCodecPriority.contains(where: { $0.family == .spatial }) {
                 Text("Dolby Atmos et audio spatial : ils sont passés avec le fichier de cookies lors des tests, mais le wrapper reste la voie sûre si Apple refuse une licence.")
-                if !options.songCodecPriority.contains(where: \.needsWrapper) {
-                    WrapperSetupButton(title: "Installer et activer le wrapper…")
-                        .buttonStyle(.link)
-                }
             }
+            WrapperActionButton()
             if options.songCodecPriority.contains(.ac3) || options.songCodecPriority.contains(.alacHiRes) {
                 Text("Dolby Digital (AC-3) et ALAC Hi-Res n'ont pas encore été testés : aucun morceau essayé ne les proposait.")
             }
