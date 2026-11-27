@@ -78,6 +78,9 @@ struct GamdlPythonTests {
 
         let gamdl = try sandbox.write("bin/gamdl", launcher, executable: true)
         #expect(PlaylistResolver.python(forGamdl: gamdl) == python)
+        let bridge = try #require(GamdlCommand.bridgeScript)
+        let command = [python.path, "-I", "-u", bridge.path, "auth"].map(GamdlCommand.shellQuote).joined(separator: " ")
+        #expect(TerminalLauncher.script(running: gamdl).hasSuffix("exec " + command))
     }
 
     @Test("A trampoline naming a missing interpreter gives nothing")

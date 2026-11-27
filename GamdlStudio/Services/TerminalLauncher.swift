@@ -7,11 +7,18 @@ import Foundation
 enum TerminalLauncher {
     /// A `.command` file Terminal runs when opened.
     static func script(running gamdl: URL) -> String {
-        """
+        let command: [String]
+        if let python = PlaylistResolver.python(forGamdl: gamdl), python.lastPathComponent.hasPrefix("python"),
+           let bridge = GamdlCommand.bridgeScript {
+            command = [python.path, "-I", "-u", bridge.path, "auth"]
+        } else {
+            command = [gamdl.path, "auth"]
+        }
+        return """
         #!/bin/sh
         # Opened by Gamdl Studio: choose "Wrapper", then sign in with your Apple Account.
         clear
-        exec \(GamdlCommand.shellQuote(gamdl.path)) auth
+        exec \(command.map(GamdlCommand.shellQuote).joined(separator: " "))
         """
     }
 

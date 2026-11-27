@@ -10,6 +10,7 @@ If the hooks can't be installed (a later gamdl renamed the display), gamdl runs
 as is and the app falls back to the permanent lines gamdl prints.
 
 Usage: python -I -u gamdl_bridge.py rip [gamdl options] URL...
+       python -I -u gamdl_bridge.py auth
 
 Kept compatible with Python 3.9 so the test suite can run it with the system
 interpreter against a stub gamdl package.
@@ -105,6 +106,55 @@ def install_hooks():
     return True
 
 
+def install_auth_recovery():
+    """Let gamdl 4.1.2's wizard offer a fresh login after a failed restore."""
+    from importlib.metadata import PackageNotFoundError, version
+
+    try:
+        installed = version("gamdl")
+    except PackageNotFoundError:
+        return
+    if installed != "4.1.2":
+        return
+    from gamdl.api import wrapper
+
+    class CachedSessionUnavailable(Exception):
+        pass
+
+    async def check_restore(response):
+        if response.status_code not in (403, 502):
+            return
+        await response.aread()
+        try:
+            body = response.json()
+        except ValueError:
+            return
+        error = body.get("error") if isinstance(body, dict) else None
+        if isinstance(error, dict) and (
+            (response.status_code, error.get("code"))
+            in ((403, "session_expired"), (502, "session_validation_failed"))
+        ):
+            raise CachedSessionUnavailable
+
+    class AuthWrapperClient(wrapper.ApiHttpClient):
+        async def request_json(self, method, url, *, operation, **kwargs):
+            if method != "POST" or operation != "wrapper_restore":
+                return await super().request_json(method, url, operation=operation, **kwargs)
+            # gamdl's transport drops the wrapper error code when it raises.
+            # Inspect this one response before that translation.
+            hooks = self.client.event_hooks["response"]
+            hooks.append(check_restore)
+            try:
+                return await super().request_json(method, url, operation=operation, **kwargs)
+            except CachedSessionUnavailable:
+                # WrapperApi re-reads /session and handles login and 2FA itself.
+                return {"state": "logged_out"}
+            finally:
+                hooks.remove(check_restore)
+
+    wrapper.ApiHttpClient = AuthWrapperClient
+
+
 def gamdl_entry_point():
     """gamdl's console script, wherever this version of gamdl declares it."""
     try:
@@ -131,7 +181,10 @@ def main():
             stream.reconfigure(encoding="utf-8")
         except Exception:
             pass
-    install_hooks()
+    if sys.argv[1:] == ["auth"]:
+        install_auth_recovery()
+    else:
+        install_hooks()
     entry = gamdl_entry_point()
     sys.argv = ["gamdl"] + sys.argv[1:]
     return entry()
