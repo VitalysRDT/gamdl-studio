@@ -42,7 +42,8 @@ macOS language.
 - **Every `gamdl rip` option, in Settings** (gamdl 4). Codec and fallbacks, lyrics file and
   embedded formats, artwork size and format, tags to leave out, date format, artist
   categories, M3U playlists, music video codec, height and container, folder and file name
-  templates, segment concurrency, fail-fast, gamdl's media index and tracebacks. A setting left
+  templates, segment concurrency, fail-fast, gamdl's media index and tracebacks, plus sign-in
+  (cookies or wrapper), storefront, metadata language and DRM. A setting left
   on "gamdl default" isn't passed, so `~/.gamdl/config.yml` keeps applying.
 
 <p align="center">
@@ -136,11 +137,27 @@ What works with browser cookies alone, measured with gamdl 4.1.2:
 | Dolby Atmos (`atmos`) | Yes | E-AC-3 5.1 at 768 kb/s, for songs mixed in Atmos |
 | Binaural, spatial downmix (`aac-binaural`, `aac-downmix`, …) | Yes | |
 | Dolby Digital (`ac3`) | Untested | No song tried offered it |
-| ALAC (`alac`, `alac-lossless`, `alac-hires`) | No | Apple refuses the license: it takes gamdl's [wrapper](https://github.com/glomatico/wrapper-v2) |
+| ALAC (`alac`, `alac-lossless`, `alac-hires`) | No | Apple refuses the license: use wrapper mode, below |
 
 A song that doesn't exist in the chosen codec fails unless a fallback is set; with Atmos first,
 AAC is a good fallback. To replace songs already downloaded in another codec, turn on
 "Overwrite existing files". gamdl 3 is limited to the first two codecs.
+
+### ALAC: wrapper mode
+
+ALAC takes gamdl's [wrapper-v2](https://github.com/glomatico/wrapper-v2), a service you host
+yourself: a Linux host with Docker (validated on x86_64, not yet on ARM64) and an Apple Music
+package you supply. Gamdl Studio doesn't install it; it connects to it.
+
+1. In **Settings → Session**, choose **Wrapper** and enter its address (`http://127.0.0.1:8080`
+   by default). Don't expose the wrapper to the Internet.
+2. **Diagnostics** checks the wrapper's `/info` and `/session` with the same rules as gamdl 4.1.2
+   (version 1.x, protocol, Temari profile) and says what is wrong.
+3. If the wrapper isn't signed in to your Apple Account, **Sign In in Terminal** opens
+   `gamdl auth` in Terminal. gamdl asks for your Apple ID there; Gamdl Studio never sees it.
+
+In wrapper mode the cookies file is only used for personalized playlists. **Settings → Session**
+also sets the storefront, the metadata language, the DRM system and a device file.
 
 ## Keyboard shortcuts
 

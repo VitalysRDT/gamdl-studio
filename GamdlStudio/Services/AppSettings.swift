@@ -36,6 +36,10 @@ final class AppSettings {
     var options: DownloadOptions {
         didSet { defaults.set(try? JSONEncoder().encode(options), forKey: Keys.options) }
     }
+    /// How gamdl 4 signs in (cookies or wrapper), plus storefront, language and DRM.
+    var session: GamdlSession {
+        didSet { defaults.set(try? JSONEncoder().encode(session), forKey: Keys.session) }
+    }
 
     var outputURL: URL { URL(filePath: (outputPath as NSString).expandingTildeInPath) }
     var cookiesURL: URL { URL(filePath: (cookiesPath as NSString).expandingTildeInPath) }
@@ -44,7 +48,7 @@ final class AppSettings {
     private enum Keys {
         static let output = "outputPath", cookies = "cookiesPath", temp = "tempPath", gamdl = "gamdlOverride"
         static let concurrency = "maxConcurrentJobs", notify = "notifyOnCompletion", sound = "playSound"
-        static let clipboard = "watchClipboard", options = "downloadOptions"
+        static let clipboard = "watchClipboard", options = "downloadOptions", session = "gamdlSession"
     }
 
     init(defaults: UserDefaults = .standard) {
@@ -59,6 +63,7 @@ final class AppSettings {
         playSoundOnCompletion = defaults.object(forKey: Keys.sound) as? Bool ?? true
         watchClipboard = defaults.object(forKey: Keys.clipboard) as? Bool ?? true
         options = defaults.data(forKey: Keys.options).flatMap { try? JSONDecoder().decode(DownloadOptions.self, from: $0) } ?? DownloadOptions()
+        session = defaults.data(forKey: Keys.session).flatMap { try? JSONDecoder().decode(GamdlSession.self, from: $0) } ?? GamdlSession()
     }
 
     func resetPaths() {

@@ -7,6 +7,7 @@ struct SettingsView: View {
             Tab("Audio", systemImage: "music.note") { AudioSettings() }
             Tab("Vidéo", systemImage: "film") { VideoSettings() }
             Tab("Fichiers", systemImage: "folder") { FileSettings() }
+            Tab("Session", systemImage: "person.badge.key") { SessionSettings() }
             Tab("Avancé", systemImage: "wrench.and.screwdriver") { AdvancedSettings() }
         }
         .frame(width: 620, height: 600)
@@ -69,7 +70,7 @@ private struct AudioSettings: View {
             } header: {
                 Text("Codec")
             } footer: {
-                CodecNotes(options: settings.options)
+                CodecNotes(options: settings.options, usesWrapper: settings.session.authMode == .wrapper)
             }
 
             Section {
@@ -169,11 +170,12 @@ struct CodecMenuItems<Tag: Hashable>: View {
 /// What the chosen codecs imply, as measured with gamdl 4.1.2.
 struct CodecNotes: View {
     let options: DownloadOptions
+    var usesWrapper = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(options.codec.detail)
-            if options.songCodecPriority.contains(where: \.needsWrapper) {
+            if !usesWrapper, options.songCodecPriority.contains(where: \.needsWrapper) {
                 Text("L'ALAC demande le wrapper de gamdl : avec de simples cookies, Apple refuse la licence de déchiffrement.")
                     .foregroundStyle(.orange)
             }
@@ -325,6 +327,67 @@ private struct TemplateField: View {
     }
 }
 
+// MARK: - Session
+
+private struct SessionSettings: View {
+    @Environment(AppModel.self) private var model
+
+    var body: some View {
+        @Bindable var settings = model.settings
+        Form {
+            Section {
+                Picker("Connexion à Apple Music", selection: $settings.session.authMode) {
+                    ForEach(AuthMode.allCases) { Text($0.label).tag($0) }
+                }
+                .pickerStyle(.radioGroup)
+                if settings.session.authMode == .wrapper {
+                    TemplateField(title: "Adresse du wrapper", text: $settings.session.wrapperURL, placeholder: GamdlSession.defaultWrapperURL)
+                }
+            } header: {
+                Text("Connexion")
+            } footer: {
+                VStack(alignment: .leading, spacing: 4) {
+                    if settings.session.authMode == .wrapper {
+                        Text("Le wrapper-v2 de gamdl tourne sur un hôte Linux avec Docker (validé en x86_64, pas encore en ARM64) et un paquet Apple Music que tu fournis. Il doit être connecté à ton compte Apple : l'onglet Diagnostic ouvre « gamdl auth » dans le Terminal pour ça. Ne l'expose pas sur Internet.")
+                        Link("wrapper-v2 sur GitHub", destination: URL(string: "https://github.com/glomatico/wrapper-v2")!)
+                    } else {
+                        Text("Le fichier de cookies suffit pour l'AAC et le Dolby Atmos. L'ALAC demande le wrapper.")
+                    }
+                }
+                .font(.caption).foregroundStyle(.secondary)
+            }
+
+            Section {
+                TemplateField(title: "Storefront", text: $settings.session.storefront, placeholder: String(localized: "Celui du compte"))
+                TemplateField(title: "Langue des métadonnées", text: $settings.session.language, placeholder: "en-US")
+            } header: {
+                Text("Région")
+            } footer: {
+                Text("Code pays à deux lettres (fr, us…) et langue BCP 47 (fr-FR, en-US). Vide : réglage de gamdl.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+
+            Section {
+                Picker("Système DRM", selection: $settings.session.drmBackend) {
+                    Text("Par défaut de gamdl").tag(DrmBackend?.none)
+                    ForEach(DrmBackend.allCases) { Text(verbatim: $0.label).tag(DrmBackend?.some($0)) }
+                }
+                PathField(title: "Fichier d'appareil", path: $settings.session.devicePath, directory: false)
+                if !settings.session.devicePath.isEmpty {
+                    Button("Utiliser l'appareil intégré à gamdl") { settings.session.devicePath = "" }
+                }
+            } header: {
+                Text("Déchiffrement")
+            } footer: {
+                Text("gamdl embarque un appareil Widevine. PlayReady demande ton propre fichier .prd, un appareil Widevine L1 ou PlayReady SL3000 permet les clips au-delà de 1080p.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+        }
+        .formStyle(.grouped)
+        .onChange(of: settings.session) { Task { await model.runDiagnostics() } }
+    }
+}
+
 // MARK: - Advanced
 
 private struct AdvancedSettings: View {
@@ -425,4 +488,5 @@ private struct PathField: View {
         if panel.runModal() == .OK, let url = panel.url { path = url.path }
     }
 }
+
 

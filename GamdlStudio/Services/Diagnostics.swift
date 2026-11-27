@@ -16,6 +16,11 @@ struct DiagnosticReport: Hashable, Sendable {
     let outputWritable: Bool
     let freeSpace: Int64?
     let checkedAt: Date
+    /// How gamdl 4 signs in. With the wrapper, cookies are only needed for
+    /// personalized playlists.
+    var session = GamdlSession()
+    /// Checked only in wrapper mode.
+    var wrapper: WrapperStatus?
 
     /// Which command line the installed gamdl speaks, once it was found.
     var generation: GamdlGeneration? { gamdl.isAvailable ? GamdlGeneration(version: gamdl.version) : nil }
@@ -23,14 +28,23 @@ struct DiagnosticReport: Hashable, Sendable {
     /// gamdl 4 no longer uses ffmpeg.
     var needsFFmpeg: Bool { generation?.needsFFmpeg ?? true }
 
+    var usesWrapper: Bool { session.authMode == .wrapper && generation != .v3 }
+
     /// Everything needed to start a download.
-    var isReady: Bool { gamdl.isAvailable && (ffmpeg.isAvailable || !needsFFmpeg) && cookies.isUsable && outputWritable }
+    var isReady: Bool {
+        gamdl.isAvailable && (ffmpeg.isAvailable || !needsFFmpeg) && outputWritable
+            && (usesWrapper ? wrapper?.isReady == true : cookies.isUsable)
+    }
 
     var problems: [String] {
         var out: [String] = []
         if !gamdl.isAvailable { out.append(String(localized: "gamdl introuvable")) }
         if !ffmpeg.isAvailable && needsFFmpeg { out.append(String(localized: "ffmpeg introuvable")) }
-        if !cookies.isUsable { out.append(cookies.title) }
+        if usesWrapper {
+            if let wrapper, !wrapper.isReady { out.append(wrapper.title) }
+        } else if !cookies.isUsable {
+            out.append(cookies.title)
+        }
         if !outputWritable { out.append(String(localized: "Dossier de sortie non accessible en écriture")) }
         return out
     }
@@ -76,6 +90,8 @@ enum Diagnostics {
         let free = (try? snapshot.output.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey]))?
             .volumeAvailableCapacityForImportantUsage
 
+        let wrapper = snapshot.session.authMode == .wrapper ? await WrapperProbe.check(snapshot.session.wrapperURL) : nil
+
         return await DiagnosticReport(
             gamdl: gamdl,
             ffmpeg: ffmpeg,
@@ -84,7 +100,9 @@ enum Diagnostics {
             outputExists: exists,
             outputWritable: writable,
             freeSpace: free,
-            checkedAt: .now
+            checkedAt: .now,
+            session: snapshot.session,
+            wrapper: wrapper
         )
     }
 }
@@ -95,18 +113,21 @@ struct SettingsSnapshot: Sendable, Hashable {
     let cookies: URL
     let temp: URL
     let gamdlOverride: String
+    let session: GamdlSession
 
     @MainActor init(_ settings: AppSettings) {
         output = settings.outputURL
         cookies = settings.cookiesURL
         temp = settings.tempURL
         gamdlOverride = settings.gamdlOverride
+        session = settings.session
     }
 
-    init(output: URL, cookies: URL, temp: URL, gamdlOverride: String = "") {
+    init(output: URL, cookies: URL, temp: URL, gamdlOverride: String = "", session: GamdlSession = GamdlSession()) {
         self.output = output
         self.cookies = cookies
         self.temp = temp
         self.gamdlOverride = gamdlOverride
+        self.session = session
     }
 }

@@ -141,7 +141,8 @@ struct Gamdl4OutputParser {
         let (label, message) = splitFailure(text)
         switch label {
         case "Session":
-            return [.log(LogLine(level: .error, text: String(localized: "Session Apple Music : \(message)")))]
+            let reason = Self.humanSession(message)
+            return [.log(LogLine(level: .error, text: String(localized: "Session Apple Music : \(reason)")))]
         case "Source":
             sourceFailures += 1
             return [.urlFailed(message: GamdlOutputParser.humanURLError(message))]
@@ -150,6 +151,19 @@ struct Gamdl4OutputParser {
             if reportedFailures.contains(label) { return [.log(detail)] }
             return [.trackFailed(nil, title: label), .log(detail)]
         }
+    }
+
+    /// Session failures measured with gamdl 4.1.2 and a wrapper that was
+    /// stopped, or not signed in; anything else passes through unchanged.
+    static func humanSession(_ message: String) -> String {
+        let lower = message.lowercased()
+        if lower.contains("interactive terminal") {
+            return String(localized: "le wrapper n'est pas connecté à ton compte Apple. Dans Diagnostic, utilise « Se connecter dans le Terminal ».")
+        }
+        if lower.contains("network request failed") {
+            return String(localized: "connexion impossible (wrapper arrêté, mauvaise adresse ou réseau coupé).")
+        }
+        return message
     }
 
     /// The two failures a codec choice causes, as measured with gamdl 4.1.2;
