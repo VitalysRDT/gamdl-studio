@@ -1557,6 +1557,16 @@
         }
       }
     },
+    "Connecter et activer le wrapper…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Sign In and Enable the Wrapper…"
+          }
+        }
+      }
+    },
     "Connexion" : {
       "localizations" : {
         "en" : {
@@ -2216,6 +2226,22 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Also save a Cover.jpg file"
+          }
+        }
+      }
+    },
+    "Étape %lld sur %lld · %lld %%" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Step %1$lld of %2$lld · %3$lld%%"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Étape %1$lld sur %2$lld · %3$lld %%"
           }
         }
       }
@@ -2915,6 +2941,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Install the Wrapper"
+          }
+        }
+      }
+    },
+    "Installer le wrapper…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Install the Wrapper…"
           }
         }
       }
@@ -3871,6 +3907,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "To replace tracks already downloaded in another codec, turn on “Overwrite existing files”."
+          }
+        }
+      }
+    },
+    "Préparation de la construction…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Preparing the build…"
           }
         }
       }

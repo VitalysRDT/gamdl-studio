@@ -20,7 +20,9 @@ struct WrapperSetupView: View {
                 VStack(spacing: 10) {
                     ForEach(WrapperSetupStep.allCases) { step in
                         StepRow(step: step, state: setup.state(step), isNext: setup.nextStep == step,
-                                isRunning: setup.running == step, isBusy: setup.isBusy) {
+                                isRunning: setup.running == step, isBusy: setup.isBusy,
+                                progress: step == .build ? setup.buildProgress : nil,
+                                startedAt: step == .build ? setup.buildStartedAt : nil) {
                             act(step)
                         }
                     }
@@ -155,6 +157,8 @@ private struct StepRow: View {
     let isNext: Bool
     let isRunning: Bool
     let isBusy: Bool
+    var progress: BuildKitProgress?
+    var startedAt: Date?
     let action: () -> Void
 
     var body: some View {
@@ -162,6 +166,9 @@ private struct StepRow: View {
             indicator.frame(width: 26)
             VStack(alignment: .leading, spacing: 3) {
                 Label(step.title, systemImage: step.symbol).font(.headline)
+                if isRunning, let progress {
+                    BuildProgressView(progress: progress, startedAt: startedAt)
+                }
                 if !state.message.isEmpty {
                     Text(state.message)
                         .font(.callout)
@@ -210,6 +217,76 @@ private struct StepRow: View {
                     .background(.brand.opacity(isNext ? 0.35 : 0.15), in: .circle)
             case .unknown: Image(systemName: "circle.dotted").foregroundStyle(.secondary).font(.title3)
             }
+        }
+    }
+}
+
+/// Live progress of the Docker image build: a bar, the step count, the
+/// current BuildKit step and the elapsed time.
+struct BuildProgressView: View {
+    let progress: BuildKitProgress
+    let startedAt: Date?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            ProgressCapsule(value: progress.fraction, isActive: true)
+                .frame(maxWidth: 420)
+            HStack(spacing: 10) {
+                if progress.total > 0 {
+                    Text("Étape \(progress.finished) sur \(progress.total) · \(Int(progress.fraction * 100)) %")
+                        .monospacedDigit()
+                } else {
+                    Text("Préparation de la construction…")
+                }
+                if let startedAt {
+                    TimelineView(.periodic(from: startedAt, by: 1)) { context in
+                        Text(Duration.seconds(context.date.timeIntervalSince(startedAt)).formatted(.time(pattern: .minuteSecond)))
+                            .monospacedDigit()
+                    }
+                }
+            }
+            .font(.caption).foregroundStyle(.secondary)
+            if let current = progress.current {
+                Text(verbatim: current)
+                    .font(.caption.monospaced()).foregroundStyle(.tertiary)
+                    .lineLimit(1).truncationMode(.tail)
+            }
+        }
+        .padding(.top, 4)
+    }
+}
+
+/// The big button under the codec picker: activate the wrapper already
+/// running here, or install / connect it through the assistant.
+struct WrapperActionButton: View {
+    @Environment(AppModel.self) private var model
+    @Environment(\.openWindow) private var openWindow
+    @State private var working = false
+
+    var body: some View {
+        if let action = model.wrapperAction {
+            Button {
+                if action == .activate {
+                    working = true
+                    Task { await model.activateLocalWrapper(); working = false }
+                } else {
+                    openWindow(id: WrapperSetupView.windowID)
+                }
+            } label: {
+                HStack(spacing: 8) {
+                    if working { ProgressView().controlSize(.small) } else { Image(systemName: action.symbol) }
+                    Text(action.title).fontWeight(.semibold)
+                }
+                .font(.body)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 4)
+            }
+            .buttonStyle(.glassProminent)
+            .tint(.brand)
+            .controlSize(.large)
+            .disabled(working)
+            .padding(.vertical, 4)
+            .transition(.opacity.combined(with: .scale(scale: 0.95)))
         }
     }
 }
