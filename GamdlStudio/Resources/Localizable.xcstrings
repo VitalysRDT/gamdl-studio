@@ -1097,6 +1097,26 @@
         }
       }
     },
+    "Aucun codec confirmé. Les priorités des réglages s’appliquent." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No codecs could be verified. Your codec preferences apply."
+          }
+        }
+      }
+    },
+    "Aucun codec confirmé pour ce morceau avec cette configuration." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No codecs could be confirmed for this song with the current settings."
+          }
+        }
+      }
+    },
     "Aucun fichier de cookies" : {
       "localizations" : {
         "en" : {
@@ -2508,6 +2528,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "File Format"
+          }
+        }
+      }
+    },
+    "Formats communs aux morceaux disponibles." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formats available on every playable song."
           }
         }
       }
@@ -4067,6 +4097,16 @@
         }
       }
     },
+    "Qualité par piste selon les priorités des réglages." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each track uses your codec preferences."
+          }
+        }
+      }
+    },
     "Qualité Apple Music standard" : {
       "localizations" : {
         "en" : {
@@ -4123,6 +4163,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Overwrite files already downloaded"
+          }
+        }
+      }
+    },
+    "Recherche des codecs disponibles…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking available codecs…"
           }
         }
       }

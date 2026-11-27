@@ -262,9 +262,10 @@ struct WrapperActionButton: View {
     @Environment(AppModel.self) private var model
     @Environment(\.openWindow) private var openWindow
     @State private var working = false
+    var options: DownloadOptions?
 
     var body: some View {
-        if let action = model.wrapperAction {
+        if let action = model.wrapperAction(for: options) {
             Button {
                 if action == .activate {
                     working = true

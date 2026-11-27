@@ -82,7 +82,11 @@ final class AppModel {
 
     /// Why the current settings would make an ALAC download fail, if they would.
     var wrapperGate: WrapperGate? {
-        WrapperGate.check(options: settings.options, session: settings.session, wrapper: report?.wrapper,
+        wrapperGate(for: settings.options)
+    }
+
+    func wrapperGate(for options: DownloadOptions) -> WrapperGate? {
+        WrapperGate.check(options: options, session: settings.session, wrapper: report?.wrapper,
                           warnSpatial: settings.warnSpatialWithoutWrapper)
     }
 
@@ -91,8 +95,8 @@ final class AppModel {
     var localWrapper: WrapperStatus?
 
     /// What the big wrapper button under the codec picker offers.
-    var wrapperAction: WrapperCallToAction? {
-        WrapperCallToAction.choose(gate: wrapperGate, local: localWrapper)
+    func wrapperAction(for options: DownloadOptions? = nil) -> WrapperCallToAction? {
+        WrapperCallToAction.choose(gate: wrapperGate(for: options ?? settings.options), local: localWrapper)
     }
 
     func runDiagnostics() async {
@@ -125,10 +129,10 @@ final class AppModel {
     }
 
     @discardableResult
-    func enqueue(_ links: [AppleMusicLink], previews: [AppleMusicLink: MediaPreview] = [:]) -> Int {
+    func enqueue(_ links: [AppleMusicLink], previews: [AppleMusicLink: MediaPreview] = [:], options: DownloadOptions? = nil) -> Int {
         let usable = links.filter(\.kind.isDownloadable)
         for link in usable {
-            queue.enqueue(link, options: settings.options, preview: previews[link])
+            queue.enqueue(link, options: options ?? settings.options, preview: previews[link])
         }
         if !usable.isEmpty {
             show(Toast(
