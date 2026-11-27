@@ -1,0 +1,582 @@
+{
+ "gamdl": "4.1.2",
+ "command": "rip",
+ "options": [
+  {
+   "flags": [
+    "--select"
+   ],
+   "negations": [],
+   "isFlag": true,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--artist-auto-select"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": true,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--output-dir"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--temp-path"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--overwrite"
+   ],
+   "negations": [
+    "--no-overwrite"
+   ],
+   "isFlag": true,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--segment-concurrency"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--concurrent-downloads"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--song-codec"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": [
+    "aac-web",
+    "aac-he-web",
+    "aac",
+    "aac-he",
+    "aac-binaural",
+    "aac-downmix",
+    "aac-he-binaural",
+    "aac-he-downmix",
+    "atmos",
+    "ac3",
+    "alac",
+    "alac-lossless",
+    "alac-hires"
+   ]
+  },
+  {
+   "flags": [
+    "--use-album-date"
+   ],
+   "negations": [
+    "--no-use-album-date"
+   ],
+   "isFlag": true,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--song-codec-priority"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": true,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--music-video-codec"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": [
+    "h264",
+    "h265"
+   ]
+  },
+  {
+   "flags": [
+    "--music-video-codec-priority"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": true,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--music-video-container"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": [
+    "m4v",
+    "mp4"
+   ]
+  },
+  {
+   "flags": [
+    "--max-height"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--uploaded-video-quality"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": [
+    "1080pHdVideo",
+    "720pHdVideo",
+    "sdVideoWithPlusAudio",
+    "sdVideo",
+    "sd480pVideo",
+    "provisionalUploadVideo"
+   ]
+  },
+  {
+   "flags": [
+    "--ask-song-codec"
+   ],
+   "negations": [],
+   "isFlag": true,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--ask-music-video-streams"
+   ],
+   "negations": [],
+   "isFlag": true,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--ask-uploaded-video-quality"
+   ],
+   "negations": [],
+   "isFlag": true,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--save-cover"
+   ],
+   "negations": [
+    "--no-save-cover"
+   ],
+   "isFlag": true,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--cover-format"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": [
+    "jpg",
+    "png"
+   ]
+  },
+  {
+   "flags": [
+    "--embedded-cover-size"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--file-cover-size"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--no-tag"
+   ],
+   "negations": [
+    "--tag"
+   ],
+   "isFlag": true,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--exclude-tags"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": true,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--no-lyrics-file"
+   ],
+   "negations": [],
+   "isFlag": true,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--lyrics-file-format"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": [
+    "lrc",
+    "srt",
+    "ttml",
+    "enhanced-ttml",
+    "text",
+    "enhanced-lrc"
+   ]
+  },
+  {
+   "flags": [
+    "--embedded-lyrics-format"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": [
+    "lrc",
+    "srt",
+    "ttml",
+    "enhanced-ttml",
+    "text",
+    "enhanced-lrc"
+   ]
+  },
+  {
+   "flags": [
+    "--date-tag-template"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--save-playlist"
+   ],
+   "negations": [
+    "--no-save-playlist"
+   ],
+   "isFlag": true,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--fail-fast"
+   ],
+   "negations": [],
+   "isFlag": true,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--database"
+   ],
+   "negations": [
+    "--no-database"
+   ],
+   "isFlag": true,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--database-path"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--save-metadata"
+   ],
+   "negations": [
+    "--no-save-metadata"
+   ],
+   "isFlag": true,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--no-progress"
+   ],
+   "negations": [],
+   "isFlag": true,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--max-visible-tracks"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--no-tracebacks"
+   ],
+   "negations": [],
+   "isFlag": true,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--auth-mode"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": [
+    "wrapper",
+    "cookies",
+    "media-user-token"
+   ]
+  },
+  {
+   "flags": [
+    "--cookies-path"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--wrapper-url"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--media-user-token"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--storefront"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--language"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--drm-backend"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": [
+    "widevine",
+    "playready"
+   ]
+  },
+  {
+   "flags": [
+    "--device-path"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--album-folder-template"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--compilation-folder-template"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--no-album-folder-template"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--playlist-folder-template"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--single-disc-file-template"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--multi-disc-file-template"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--no-album-file-template"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--playlist-file-template"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  },
+  {
+   "flags": [
+    "--truncate"
+   ],
+   "negations": [],
+   "isFlag": false,
+   "multiple": false,
+   "choices": []
+  }
+ ],
+ "tagNames": [
+  "title",
+  "artist",
+  "album",
+  "album_artist",
+  "title_id",
+  "artist_id",
+  "album_id",
+  "track_number",
+  "track_total",
+  "disc_number",
+  "disc_total",
+  "release_date",
+  "genre",
+  "genre_id",
+  "isrc",
+  "xid",
+  "title_sort",
+  "artist_sort",
+  "album_sort",
+  "composer",
+  "composer_id",
+  "composer_sort",
+  "copyright",
+  "comment",
+  "compilation",
+  "gapless",
+  "explicit",
+  "storefront",
+  "media_type",
+  "rating",
+  "lyrics",
+  "cover"
+ ]
+}

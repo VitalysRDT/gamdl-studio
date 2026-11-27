@@ -39,8 +39,11 @@ macOS language.
 - **Diagnostics.** Checks gamdl, ffmpeg (gamdl 3 only), the cookies file and the output folder. Cookies can be
   imported by drag and drop: only Apple cookies are kept, and the file is saved with `600`
   permissions. gamdl can be updated from the app (`pipx upgrade gamdl`).
-- **Download options.** Codec, synced lyrics format, artwork size, `Cover.jpg`, overwrite, and
-  what to fetch from an artist page.
+- **Every `gamdl rip` option, in Settings** (gamdl 4). Codec and fallbacks, lyrics file and
+  embedded formats, artwork size and format, tags to leave out, date format, artist
+  categories, M3U playlists, music video codec, height and container, folder and file name
+  templates, segment concurrency, fail-fast, gamdl's media index and tracebacks. A setting left
+  on "gamdl default" isn't passed, so `~/.gamdl/config.yml` keeps applying.
 
 <p align="center">
   <img src="docs/screenshots/queue.png" width="410" alt="Queue">
@@ -122,9 +125,22 @@ own API client, and hands gamdl one song link per track. Radio stations cannot b
 
 ## Codecs
 
-Gamdl Studio offers the two codecs gamdl can fetch with browser cookies alone:
-**AAC 256 kb/s** (`aac-web`) and **HE-AAC 64 kb/s** (`aac-he-web`). Lossless ALAC and Dolby Atmos
-require gamdl's [wrapper](https://github.com/glomatico/wrapper-v2), which the app does not drive.
+With gamdl 4, every codec gamdl knows can be picked, with up to two fallbacks. gamdl takes the
+first codec a song exists in; it doesn't fall back when Apple refuses a license.
+
+What works with browser cookies alone, measured with gamdl 4.1.2:
+
+| Codec | With cookies | Note |
+|---|---|---|
+| AAC 256 kb/s, HE-AAC 64 kb/s (`aac-web`, `aac-he-web`, `aac`, `aac-he`) | Yes | |
+| Dolby Atmos (`atmos`) | Yes | E-AC-3 5.1 at 768 kb/s, for songs mixed in Atmos |
+| Binaural, spatial downmix (`aac-binaural`, `aac-downmix`, …) | Yes | |
+| Dolby Digital (`ac3`) | Untested | No song tried offered it |
+| ALAC (`alac`, `alac-lossless`, `alac-hires`) | No | Apple refuses the license: it takes gamdl's [wrapper](https://github.com/glomatico/wrapper-v2) |
+
+A song that doesn't exist in the chosen codec fails unless a fallback is set; with Atmos first,
+AAC is a good fallback. To replace songs already downloaded in another codec, turn on
+"Overwrite existing files". gamdl 3 is limited to the first two codecs.
 
 ## Keyboard shortcuts
 
