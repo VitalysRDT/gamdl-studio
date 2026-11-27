@@ -154,7 +154,7 @@ struct Gamdl4OutputParserTests {
     func bridgeProgressComplete() throws {
         let events = parse(#"@gamdl-studio {"e": "progress", "i": 1, "pct": 100.0, "bytes": null, "total": null, "elapsed": 0}"#)
         guard case .progress(let p) = try #require(events.first) else { Issue.record("\(events)"); return }
-        #expect(p == TransferProgress(fraction: 1, size: nil, speed: nil, eta: nil, isComplete: true))
+        #expect(p == TransferProgress(fraction: 1, size: nil, speed: nil, eta: nil, isComplete: true, trackIndex: 1))
     }
 
     @Test("Bridge: a malformed line goes to the raw log")

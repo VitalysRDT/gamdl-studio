@@ -404,6 +404,9 @@ private struct AdvancedSettings: View {
                     .font(.caption).foregroundStyle(.secondary)
             }
             Section("Téléchargement") {
+                Picker("Morceaux en parallèle", selection: $settings.options.concurrentDownloads) {
+                    ForEach(DownloadOptions.parallelTracks, id: \.self) { Text(verbatim: "\($0)").tag($0) }
+                }
                 Picker("Segments en parallèle par morceau", selection: $settings.options.segmentConcurrency) {
                     Text("Par défaut de gamdl").tag(Int?.none)
                     ForEach(DownloadOptions.segmentConcurrencies, id: \.self) { Text(verbatim: "\($0)").tag(Int?.some($0)) }

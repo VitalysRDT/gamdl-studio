@@ -2860,6 +2860,16 @@
         }
       }
     },
+    "Morceaux en parallèle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Parallel Tracks"
+          }
+        }
+      }
+    },
     "Noms des dossiers et des fichiers" : {
       "localizations" : {
         "en" : {

@@ -332,6 +332,8 @@ struct DownloadOptions: Codable, Hashable, Sendable {
     var templates = FileTemplates()
 
     // Advanced
+    /// Tracks gamdl 4 downloads at the same time.
+    var concurrentDownloads = 1
     var segmentConcurrency: Int?
     var failFast = false
     var useDatabase = true
@@ -343,6 +345,7 @@ struct DownloadOptions: Codable, Hashable, Sendable {
 
     static let videoHeights = [480, 720, 1080, 1440, 2160]
     static let segmentConcurrencies = [1, 2, 4, 8, 16, 32]
+    static let parallelTracks = [1, 2, 3, 4]
     static let truncateLengths = [40, 60, 80, 100, 150, 200]
 
     /// First codec. Setting it keeps the fallbacks.
@@ -402,7 +405,7 @@ struct DownloadOptions: Codable, Hashable, Sendable {
         case songCodecPriority, useAlbumDate, lyricsFormat, lyricsMode, embeddedLyricsFormat
         case coverSize, fileCoverSize, coverFormat, saveCover, writeTags, excludedTags, dateTagTemplate
         case artistSelections, savePlaylist, musicVideoCodecPriority, musicVideoContainer, maxVideoHeight
-        case uploadedVideoQuality, overwrite, templates, segmentConcurrency, failFast, useDatabase
+        case uploadedVideoQuality, overwrite, templates, concurrentDownloads, segmentConcurrency, failFast, useDatabase
         case databasePath, saveMetadata, showTracebacks
     }
 
@@ -447,6 +450,7 @@ struct DownloadOptions: Codable, Hashable, Sendable {
         uploadedVideoQuality = value(.uploadedVideoQuality, UploadedVideoQuality.self)
         overwrite = value(.overwrite, Bool.self) ?? d.overwrite
         templates = value(.templates, FileTemplates.self) ?? d.templates
+        concurrentDownloads = value(.concurrentDownloads, Int.self).map { min(max($0, 1), 4) } ?? d.concurrentDownloads
         segmentConcurrency = value(.segmentConcurrency, Int.self)
         failFast = value(.failFast, Bool.self) ?? d.failFast
         useDatabase = value(.useDatabase, Bool.self) ?? d.useDatabase

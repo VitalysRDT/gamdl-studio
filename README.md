@@ -42,7 +42,7 @@ macOS language.
 - **Every `gamdl rip` option, in Settings** (gamdl 4). Codec and fallbacks, lyrics file and
   embedded formats, artwork size and format, tags to leave out, date format, artist
   categories, M3U playlists, music video codec, height and container, folder and file name
-  templates, segment concurrency, fail-fast, gamdl's media index and tracebacks, plus sign-in
+  templates, tracks and segments in parallel, fail-fast, gamdl's media index and tracebacks, plus sign-in
   (cookies or wrapper), storefront, metadata language and DRM. A setting left
   on "gamdl default" isn't passed, so `~/.gamdl/config.yml` keeps applying.
 
@@ -204,7 +204,9 @@ To produce a signed, notarized DMG, see [`scripts/release.sh`](scripts/release.s
   per executable):
   - gamdl 3: `gamdl --cookies-path … --output-path … --song-codec-priority … URL`
   - gamdl 4: `gamdl rip --auth-mode cookies --cookies-path … --output-dir … URL`, plus
-    `--concurrent-downloads 1` so tracks come one at a time, and `--no-progress`.
+    `--concurrent-downloads` (1 by default, up to 4 in Settings → Advanced) and `--no-progress`.
+    With several tracks at once, the bridge reports each outcome with the track's number, so
+    every track ends on its own row, even when two share a title.
 - Apps launched from the Finder do not inherit your shell's `PATH`, so gamdl and ffmpeg are
   located explicitly and passed an explicit `PATH`.
 - gamdl runs with `PYTHONUNBUFFERED=1` so progress arrives in real time, and with stdin closed

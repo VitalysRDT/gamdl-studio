@@ -186,8 +186,8 @@ enum GamdlCommand {
             "--lyrics-file-format", options.lyricsFormat.rawValue,
             "--embedded-cover-size", coverArgument(options.coverSize),
             "--file-cover-size", coverArgument(options.fileCoverSize ?? options.coverSize),
-            // The job follows one track at a time, as gamdl 3 downloaded them.
-            "--concurrent-downloads", "1",
+            // gamdl's default is 2; the app's default stays 1, like gamdl 3.
+            "--concurrent-downloads", String(options.concurrentDownloads),
             // The live display draws nothing in a pipe.
             "--no-progress",
             options.saveCover ? "--save-cover" : "--no-save-cover",
