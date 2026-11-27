@@ -15,7 +15,9 @@ import Foundation
 ///       ✗ Cassé: Unable to fetch stream
 ///
 /// When gamdl runs through `gamdl_bridge.py`, track starts, transfer progress
-/// and failures also arrive as `@gamdl-studio {json}` lines.
+/// and every outcome also arrive as `@gamdl-studio {json}` lines, with the
+/// track's number: with parallel downloads, that number is what ties an
+/// outcome to its row. gamdl's own line for the same outcome is then skipped.
 ///
 /// gamdl 4 lists failures after its summary, so the summary is held back and
 /// emitted by `flush()`, once the process has exited.
@@ -34,6 +36,9 @@ struct Gamdl4OutputParser {
     private var knownTitles: [String] = []
     /// Failures the bridge already reported as they happened.
     private var reportedFailures: Set<String> = []
+    /// Outcomes the bridge reported, per title, whose "✓/↷ Title: …" line
+    /// gamdl prints right after and must not count twice.
+    private var pendingEchoes: [String: Int] = [:]
 
     mutating func feed(_ chunk: String) -> [GamdlEvent] {
         buffer += chunk
@@ -106,7 +111,13 @@ struct Gamdl4OutputParser {
             return [.urlFailed(message: String(localized: "Aucun média téléchargeable à ce lien"))]
         }
         if line.hasPrefix("✓ ") || line.hasPrefix("↷ ") {
-            if let event = trackOutcome(String(line.dropFirst(2))) { return [event] }
+            if let event = trackOutcome(String(line.dropFirst(2))) {
+                if let title = event.trackTitle, let count = pendingEchoes[title], count > 0 {
+                    pendingEchoes[title] = count - 1
+                    return []
+                }
+                return [event]
+            }
             return [.log(LogLine(level: .info, text: String(line.dropFirst(2))))]
         }
         if line.hasPrefix("✗ ") { return [.log(LogLine(level: .error, text: String(line.dropFirst(2))))] }
@@ -205,6 +216,8 @@ struct Gamdl4OutputParser {
         let total: Int64?
         let elapsed: Double?
         let message: String?
+        let status: String?
+        let path: String?
     }
 
     private mutating func bridgeEvent(_ json: String) -> [GamdlEvent] {
@@ -218,11 +231,28 @@ struct Gamdl4OutputParser {
             knownTitles.append(title)
             return [.trackStarted(position, title: title)]
         case "progress":
-            return [.progress(Self.transfer(message))]
+            var progress = Self.transfer(message)
+            progress.trackIndex = message.i
+            return [.progress(progress)]
         case "failed":
             guard let title = message.title else { return [] }
             reportedFailures.insert(title)
             return [.trackFailed(position, title: title)]
+        case "done":
+            guard let title = message.title, let status = message.status else { return [] }
+            let file = message.path.map { URL(filePath: $0) }
+            switch status {
+            case "failed":
+                reportedFailures.insert(title)
+                return [.trackFailed(position, title: title)]
+            case "skipped":
+                pendingEchoes[title, default: 0] += 1
+                let reason = message.message ?? "already exists"
+                return [.trackSkipped(position, title: title, reason: GamdlOutputParser.humanReason(reason), existingFile: file)]
+            default: // downloaded, overwritten, partial
+                pendingEchoes[title, default: 0] += 1
+                return [.trackCompleted(position, title: title, file: file)]
+            }
         default:
             return []
         }

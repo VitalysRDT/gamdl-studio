@@ -43,7 +43,7 @@ suit la langue de macOS.
 - **Toutes les options de `gamdl rip`, dans les Réglages** (gamdl 4). Codec et codecs de secours,
   formats des paroles (fichier et intégrées), taille et format de pochette, tags à ne pas
   écrire, format de date, catégories d'artiste, listes M3U, codec, hauteur et extension des
-  clips, modèles de noms de dossiers et de fichiers, segments en parallèle, arrêt au premier
+  clips, modèles de noms de dossiers et de fichiers, morceaux et segments en parallèle, arrêt au premier
   échec, index des médias de gamdl et traces Python, plus la connexion (cookies ou wrapper),
   le storefront, la langue des métadonnées et le DRM. Un réglage laissé sur « Par défaut de
   gamdl » n'est pas passé : `~/.gamdl/config.yml` continue de s'appliquer.
@@ -212,7 +212,9 @@ Pour produire un DMG signé et notarisé, voir [`scripts/release.sh`](scripts/re
   `gamdl --version`, mise en cache par exécutable) :
   - gamdl 3 : `gamdl --cookies-path … --output-path … --song-codec-priority … URL`
   - gamdl 4 : `gamdl rip --auth-mode cookies --cookies-path … --output-dir … URL`, avec
-    `--concurrent-downloads 1` pour recevoir les morceaux un par un, et `--no-progress`.
+    `--concurrent-downloads` (1 par défaut, jusqu'à 4 dans Réglages → Avancé) et `--no-progress`.
+    Avec plusieurs morceaux à la fois, le pont rapporte chaque issue avec le numéro du morceau :
+    chacun se termine sur sa propre ligne, même si deux portent le même titre.
 - Une app lancée depuis le Finder n'hérite pas du `PATH` du terminal : gamdl et ffmpeg sont
   donc localisés explicitement.
 - gamdl tourne avec `PYTHONUNBUFFERED=1` pour une progression en temps réel, et stdin fermé :

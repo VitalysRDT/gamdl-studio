@@ -206,6 +206,10 @@ private struct TrackTimeline: View {
                                     .frame(width: 24, alignment: .trailing)
                                 Text(track.title).lineLimit(1)
                                 Spacer()
+                                if track.status == .downloading, track.fraction > 0 {
+                                    Text(verbatim: "\(Int(track.fraction * 100)) %")
+                                        .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
+                                }
                                 if case .skipped(let reason) = track.status {
                                     Text(reason).font(.caption).foregroundStyle(.secondary).lineLimit(1)
                                 }

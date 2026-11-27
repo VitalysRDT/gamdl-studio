@@ -16,6 +16,7 @@ interpreter against a stub gamdl package.
 """
 
 import json
+import os
 import sys
 import time
 
@@ -78,11 +79,22 @@ def install_hooks():
         return original_event(self, occurrence, title, download_event, *args, **kwargs)
 
     def finish(self, occurrence, title, status, *args, **kwargs):
-        # gamdl lists failures only after its final summary: report them now.
+        # Every outcome, with the track's number: with several downloads in
+        # parallel, titles alone don't say which row ended (an album can have
+        # two "Intro"). gamdl also lists failures only after its summary.
         try:
-            if status == "failed":
-                message = args[0] if args else kwargs.get("message")
-                emit({"e": "failed", "i": int(occurrence), "title": str(title), "message": message})
+            message = args[0] if args else kwargs.get("message")
+            path = kwargs.get("path")
+            emit(
+                {
+                    "e": "done",
+                    "i": int(occurrence),
+                    "title": str(title),
+                    "status": str(status),
+                    "message": message,
+                    "path": os.fspath(path) if path is not None else None,
+                }
+            )
         except Exception:
             pass
         return original_finish(self, occurrence, title, status, *args, **kwargs)

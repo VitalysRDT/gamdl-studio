@@ -40,6 +40,9 @@ struct TransferProgress: Hashable, Sendable {
     let speed: String?
     let eta: String?
     let isComplete: Bool
+    /// gamdl 4 through the bridge: the track this progress belongs to, when
+    /// several download in parallel.
+    var trackIndex: Int? = nil
 }
 
 /// What the UI can react to in gamdl's output.
@@ -56,6 +59,14 @@ enum GamdlEvent: Hashable, Sendable {
     case urlFailed(message: String)
     case finished(errorCount: Int)
     case log(LogLine)
+
+    /// Title of the track an outcome is about.
+    var trackTitle: String? {
+        switch self {
+        case let .trackCompleted(_, title, _), let .trackSkipped(_, title, _, _), let .trackFailed(_, title): title
+        default: nil
+        }
+    }
 }
 
 /// Turns raw gamdl 3.9 output into events.

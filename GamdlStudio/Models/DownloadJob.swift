@@ -12,6 +12,8 @@ struct JobTrack: Hashable, Identifiable, Sendable {
     var status: Status
     /// File on disk when gamdl skipped the track because it already existed.
     var existingFile: URL? = nil
+    /// Transfer progress, 0…1, when gamdl reports it per track (gamdl 4).
+    var fraction: Double = 0
 }
 
 /// One download (one URL), from enqueueing to result.
@@ -67,6 +69,9 @@ final class DownloadJob: Identifiable {
     private(set) var urlFailures = 0
     private var urlIndex: Int?
     private var urlTotal: Int?
+    /// gamdl 4 reports how every track ends, so a track starting doesn't
+    /// mean the previous one is done: several can download in parallel.
+    var reportsEachTrack = false
 
     static let logLimit = 3000
 
@@ -93,6 +98,11 @@ final class DownloadJob: Identifiable {
         default: break
         }
         guard let total = trackTotal, total > 0 else { return trackFraction }
+        if reportsEachTrack {
+            let finished = tracks.filter { $0.status != .downloading }.count
+            let active = tracks.filter { $0.status == .downloading }.map(\.fraction).reduce(0, +)
+            return min((Double(finished) + active) / Double(total), 1)
+        }
         let finished = Double(max((trackIndex ?? 1) - 1, 0))
         return min((finished + trackFraction) / Double(total), 1)
     }
@@ -129,7 +139,7 @@ final class DownloadJob: Identifiable {
             append(LogLine(level: .info, text: String(localized: "Analyse de \(url)")))
 
         case let .trackStarted(position, title):
-            closeCurrentTrack(as: .done)
+            if !reportsEachTrack { closeCurrentTrack(as: .done) }
             tracks.append(JobTrack(index: multiURL ? urlIndex : position?.index, title: title, status: .downloading))
             updatePosition(position)
             trackFraction = 0
@@ -137,15 +147,22 @@ final class DownloadJob: Identifiable {
             append(LogLine(level: .info, text: String(localized: "Téléchargement de « \(title) »")))
 
         case .progress(let p):
-            // yt-dlp sometimes revises its estimate downward; never go backwards.
-            trackFraction = max(trackFraction, p.fraction)
+            if reportsEachTrack, let index = p.trackIndex,
+               let i = tracks.lastIndex(where: { $0.index == index && $0.status == .downloading }) {
+                tracks[i].fraction = max(tracks[i].fraction, p.fraction)
+                trackFraction = tracks[i].fraction
+            } else {
+                // yt-dlp sometimes revises its estimate downward; never go backwards.
+                trackFraction = max(trackFraction, p.fraction)
+            }
             speed = p.speed ?? speed
             eta = p.isComplete ? nil : (p.eta ?? eta)
             size = p.size ?? size
 
         case let .trackCompleted(position, title, _):
-            if let i = tracks.lastIndex(where: { $0.title == title && $0.status == .downloading }) {
+            if let i = activeTrack(position, title) {
                 tracks[i].status = .done
+                tracks[i].fraction = 1
             } else {
                 closeCurrentTrack(as: .done)
                 tracks.append(JobTrack(index: multiURL ? urlIndex : position?.index, title: title, status: .done))
@@ -155,7 +172,7 @@ final class DownloadJob: Identifiable {
             append(LogLine(level: .info, text: String(localized: "« \(title) » enregistré")))
 
         case let .trackSkipped(position, title, reason, file):
-            if let i = tracks.lastIndex(where: { $0.title == title && $0.status == .downloading }) {
+            if let i = activeTrack(position, title) {
                 tracks[i].status = .skipped(reason)
                 tracks[i].existingFile = file
             } else {
@@ -167,7 +184,7 @@ final class DownloadJob: Identifiable {
             append(LogLine(level: .warning, text: String(localized: "« \(title) » ignoré : \(reason)")))
 
         case let .trackFailed(position, title):
-            if let i = tracks.lastIndex(where: { $0.title == title }) {
+            if let i = activeTrack(position, title) ?? tracks.lastIndex(where: { $0.title == title }) {
                 tracks[i].status = .failed
             } else {
                 tracks.append(JobTrack(index: position?.index, title: title, status: .failed))
@@ -238,8 +255,23 @@ final class DownloadJob: Identifiable {
         append(LogLine(level: .error, text: message))
     }
 
+    /// The downloading row an outcome is about: by track number when gamdl 4
+    /// gives one (titles repeat, and parallel tracks end in any order),
+    /// otherwise the last one with that title.
+    private func activeTrack(_ position: TrackPosition?, _ title: String) -> Int? {
+        if reportsEachTrack, let index = position?.index,
+           let i = tracks.lastIndex(where: { $0.index == index && $0.status == .downloading }) {
+            return i
+        }
+        return tracks.lastIndex(where: { $0.title == title && $0.status == .downloading })
+    }
+
     private func closeCurrentTrack(as status: JobTrack.Status) {
-        if let i = tracks.lastIndex(where: { $0.status == .downloading }) { tracks[i].status = status }
+        if reportsEachTrack {
+            for i in tracks.indices where tracks[i].status == .downloading { tracks[i].status = status }
+        } else if let i = tracks.lastIndex(where: { $0.status == .downloading }) {
+            tracks[i].status = status
+        }
     }
 
     private func append(_ line: LogLine) {

@@ -205,6 +205,7 @@ final class DownloadQueue {
                     job.trackTotal = urls.count
                 }
 
+                job.reportsEachTrack = paths.generation == .v4
                 let parser = ParserBox(generation: paths.generation)
                 let result = try await runner.run(
                     executable: invocation.executable,
