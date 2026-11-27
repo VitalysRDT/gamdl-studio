@@ -240,8 +240,9 @@ struct Gamdl4QueueTests {
         try stubGamdl(sandbox, progress: Self.stubProgress, main: Self.stubMain)
         let python = try sandbox.python(real: try #require(Python.path))
         let bridge = try #require(GamdlCommand.bridgeScript)
-
-        let queue = queue(paths: paths(sandbox, gamdl: URL(filePath: "/never/run/gamdl"), python: python))
+        var wrapperPaths = paths(sandbox, gamdl: URL(filePath: "/never/run/gamdl"), python: python)
+        wrapperPaths.session.authMode = .wrapper
+        let queue = queue(paths: wrapperPaths)
         var finished = false
         queue.onJobFinished = { _ in finished = true }
         let job = queue.enqueue(album, options: DownloadOptions())
@@ -249,6 +250,7 @@ struct Gamdl4QueueTests {
 
         let pythonArgs = (sandbox.read("python-args.txt") ?? "").split(separator: "\n").map(String.init)
         #expect(Array(pythonArgs.prefix(4)) == ["-I", "-u", bridge.path, "rip"])
+        #expect(job.commandLine == GamdlCommand.shellLine(executable: python, arguments: pythonArgs))
         // gamdl's own entry point got the arguments, under its own name.
         let gamdlArgs = (sandbox.read("gamdl-args.txt") ?? "").split(separator: "\n").map(String.init)
         #expect(gamdlArgs.first == "gamdl")

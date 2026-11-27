@@ -195,10 +195,13 @@ final class DownloadQueue {
                     job.note(String(localized: "\(playlist.trackURLs.count) morceaux à télécharger"))
                 }
 
-                let args = GamdlCommand.arguments(for: job.link, urls: job.expandedURLs, options: job.options, paths: paths)
-                // The copyable line is plain gamdl, even when it runs through the bridge.
-                job.markStarted(commandLine: GamdlCommand.shellLine(executable: paths.gamdl, arguments: args))
                 let invocation = GamdlCommand.invocation(for: job.link, urls: job.expandedURLs, options: job.options, paths: paths)
+                // Wrapper jobs need Studio's tag recovery when replayed in Terminal.
+                let display = paths.session.authMode == .wrapper ? invocation : GamdlInvocation(
+                    executable: paths.gamdl,
+                    arguments: GamdlCommand.arguments(for: job.link, urls: job.expandedURLs, options: job.options, paths: paths)
+                )
+                job.markStarted(commandLine: GamdlCommand.shellLine(executable: display.executable, arguments: display.arguments))
                 if paths.generation == .v4, let urls = job.expandedURLs {
                     // gamdl 4 numbers tracks across all URLs but never prints
                     // a total; here it is known up front.
