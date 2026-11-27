@@ -181,8 +181,12 @@ struct CodecNotes: View {
                 WrapperSetupButton(title: "Installer et activer le wrapper…")
                     .buttonStyle(.link)
             }
-            if options.songCodecPriority.contains(where: { $0 == .atmos || $0.family == .spatial && $0 != .ac3 }) {
-                Text("Dolby Atmos et audio spatial : ils passent avec le fichier de cookies, sans wrapper.")
+            if !usesWrapper, options.songCodecPriority.contains(where: { $0.family == .spatial }) {
+                Text("Dolby Atmos et audio spatial : ils sont passés avec le fichier de cookies lors des tests, mais le wrapper reste la voie sûre si Apple refuse une licence.")
+                if !options.songCodecPriority.contains(where: \.needsWrapper) {
+                    WrapperSetupButton(title: "Installer et activer le wrapper…")
+                        .buttonStyle(.link)
+                }
             }
             if options.songCodecPriority.contains(.ac3) || options.songCodecPriority.contains(.alacHiRes) {
                 Text("Dolby Digital (AC-3) et ALAC Hi-Res n'ont pas encore été testés : aucun morceau essayé ne les proposait.")
@@ -350,6 +354,8 @@ private struct SessionSettings: View {
                 .pickerStyle(.radioGroup)
                 if settings.session.authMode == .wrapper {
                     TemplateField(title: "Adresse du wrapper", text: $settings.session.wrapperURL, placeholder: GamdlSession.defaultWrapperURL)
+                } else {
+                    Toggle("Prévenir avant un téléchargement Dolby Atmos ou spatial sans wrapper", isOn: $settings.warnSpatialWithoutWrapper)
                 }
             } header: {
                 Text("Connexion")
