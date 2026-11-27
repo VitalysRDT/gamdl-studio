@@ -6,6 +6,15 @@ struct DownloadView: View {
     @State private var palette = ImagePalette.fallback
     @State private var preview: PreviewState = .idle
     @FocusState private var fieldFocused: Bool
+    @State private var losslessAlert: LosslessAlert?
+    @Environment(\.openWindow) private var openWindow
+
+    /// A download held back because ALAC would fail without a ready wrapper.
+    struct LosslessAlert: Identifiable {
+        let id = UUID()
+        let gate: LosslessGate
+        let all: Bool
+    }
 
     enum PreviewState: Equatable {
         case idle, loading, loaded(MediaPreview), unavailable, failed(String)
@@ -47,6 +56,17 @@ struct DownloadView: View {
         .task(id: link) { await loadPreview() }
         .onAppear { fieldFocused = model.draftURL.isEmpty }
         .navigationTitle("")
+        .alert(Text(verbatim: losslessAlert?.gate.title ?? ""), isPresented: Binding(
+            get: { losslessAlert != nil }, set: { if !$0 { losslessAlert = nil } }
+        ), presenting: losslessAlert) { pending in
+            Button(pending.gate == .wrapperNotActivated ? "Installer et activer le wrapper…" : "Ouvrir l'assistant du wrapper…") {
+                openWindow(id: WrapperSetupView.windowID)
+            }
+            Button("Télécharger quand même") { enqueue(all: pending.all) }
+            Button("Annuler", role: .cancel) {}
+        } message: { pending in
+            Text(pending.gate.message)
+        }
     }
 
     // MARK: - Header and link field
@@ -142,8 +162,7 @@ struct DownloadView: View {
             }
             Spacer()
             Button {
-                model.enqueue(links)
-                model.draftURL = ""
+                requestDownload(all: true)
             } label: {
                 Label("Tout ajouter à la file", systemImage: "arrow.down.circle.fill")
             }
@@ -230,6 +249,39 @@ struct DownloadView: View {
     }
 
     private func startDownload() {
+        guard let link, link.kind.isDownloadable else { return }
+        requestDownload(all: false)
+    }
+
+    /// Queues the download, unless the codec asks for ALAC and the wrapper
+    /// is not set up: then the user is told why it would fail first.
+    private func requestDownload(all: Bool) {
+        let kinds = all ? links.map(\.kind) : link.map { [$0.kind] } ?? []
+        guard kinds.contains(where: { $0 != .musicVideo }), let gate = model.losslessGate else {
+            enqueue(all: all)
+            return
+        }
+        guard case .wrapperNotReady = gate else {
+            losslessAlert = LosslessAlert(gate: gate, all: all)
+            return
+        }
+        // The last check may be stale (wrapper started or signed in since).
+        Task {
+            await model.runDiagnostics()
+            if let gate = model.losslessGate {
+                losslessAlert = LosslessAlert(gate: gate, all: all)
+            } else {
+                enqueue(all: all)
+            }
+        }
+    }
+
+    private func enqueue(all: Bool) {
+        if all {
+            model.enqueue(links)
+            model.draftURL = ""
+            return
+        }
         guard let link, link.kind.isDownloadable else { return }
         var previews: [AppleMusicLink: MediaPreview] = [:]
         if let loadedPreview { previews[link] = loadedPreview }

@@ -147,17 +147,47 @@ AAC is a good fallback. To replace songs already downloaded in another codec, tu
 
 ### ALAC: wrapper mode
 
-ALAC takes gamdl's [wrapper-v2](https://github.com/glomatico/wrapper-v2), a service you host
-yourself: a Linux host with Docker (validated on x86_64, not yet on ARM64) and an Apple Music
-package you supply. Gamdl Studio doesn't install it; it connects to it.
+ALAC takes gamdl's [wrapper-v2](https://github.com/glomatico/wrapper-v2), a service that runs in
+Docker with an Apple Music package you supply (3.6.0-beta, build 1109, `.apk` or `.apkm`).
+Gamdl Studio never downloads that package.
 
-1. In **Settings → Session**, choose **Wrapper** and enter its address (`http://127.0.0.1:8080`
-   by default). Use an IP address or a `.local` name: macOS lets the app reach those over plain
-   http, not other host names. Don't expose the wrapper to the Internet.
-2. **Diagnostics** checks the wrapper's `/info` and `/session` with the same rules as gamdl 4.1.2
-   (version 1.x, protocol, Temari profile) and says what is wrong.
-3. If the wrapper isn't signed in to your Apple Account, **Sign In in Terminal** opens
-   `gamdl auth` in Terminal. gamdl asks for your Apple ID there; Gamdl Studio never sees it.
+**The wrapper installation assistant** (Diagnostics, Settings → Session, or the ALAC notes)
+installs it on this Mac step by step, checks each step, and shows the log:
+
+1. **Docker**: checks `docker`, the Compose and Buildx plugins and the engine. Missing tools are
+   installed with Homebrew in Terminal (`colima docker docker-compose docker-buildx`); a stopped
+   Colima is started (on Apple silicon, a new VM gets `--vm-type vz --vz-rosetta`).
+2. **Source**: clones wrapper-v2 1.0.1 into `~/Library/Application Support/Gamdl Studio/wrapper-v2`.
+   A folder already there is never overwritten.
+3. **Package**: you choose your own `.apk` or `.apkm`.
+4. **Image**: runs `tools/build-docker.sh <package> --arch …`. x86_64 is the only path wrapper-v2
+   validated end to end (emulated on Apple silicon); ARM64 is native but unverified. The image
+   holds Apple's libraries: keep it private.
+5. **Start**: `docker compose up -d`, then waits for the wrapper to answer on `127.0.0.1:8080`.
+6. **Apple Account**: opens `gamdl auth` in Terminal. gamdl asks for your Apple ID there;
+   Gamdl Studio never sees it.
+7. **Activation**: switches Gamdl Studio to wrapper mode on that address.
+
+"Install All" runs the steps in order and stops where you're needed (tools, package, sign-in);
+activation comes after the sign-in, because in wrapper mode every download goes through the
+wrapper. The assistant defaults to x86_64; switching to ARM64 offers a rebuild.
+
+> **Not yet run end to end here.** wrapper-v2 targets a Linux host. On a Mac the assistant uses
+> the Linux VM of Colima or Docker Desktop, a path wrapper-v2 hasn't validated, and this assistant
+> has only been tested against simulated `docker`, `git` and `colima`.
+
+Never run `docker compose down -v`: it erases the session and the device identity.
+
+Choosing ALAC while the wrapper isn't active or ready brings up a warning before the download
+is queued, with a button to the assistant; a dropped link waits in the link field instead of
+going straight to the queue. Dolby Atmos and the binaural or downmix variants don't need the
+wrapper.
+
+A wrapper on another machine also works: in **Settings → Session**, choose **Wrapper** and enter
+its address. Use an IP address or a `.local` name: macOS lets the app reach those over plain
+http, not other host names. Don't expose the wrapper to the Internet. **Diagnostics** checks its
+`/info` and `/session` with the same rules as gamdl 4.1.2 (version 1.x, protocol, Temari
+profile) and says what is wrong.
 
 In wrapper mode the cookies file is only used for personalized playlists. **Settings → Session**
 also sets the storefront, the metadata language, the DRM system and a device file.

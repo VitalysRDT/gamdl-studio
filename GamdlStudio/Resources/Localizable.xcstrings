@@ -50,6 +50,16 @@
         }
       }
     },
+    "« %@ » n'est pas un paquet .apk ou .apkm lisible." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "“%@” isn’t a readable .apk or .apkm package."
+          }
+        }
+      }
+    },
     "%@ %@ %@" : {
       "localizations" : {
         "en" : {
@@ -666,6 +676,16 @@
         }
       }
     },
+    "À installer avec Homebrew : %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "To install with Homebrew: %@."
+          }
+        }
+      }
+    },
     "à l'instant" : {
       "localizations" : {
         "en" : {
@@ -702,6 +722,26 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "AAC Stereo (spatial mix)"
+          }
+        }
+      }
+    },
+    "Activation dans Gamdl Studio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Activation in Gamdl Studio"
+          }
+        }
+      }
+    },
+    "Activer le wrapper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Enable the Wrapper"
           }
         }
       }
@@ -956,12 +996,32 @@
         }
       }
     },
+    "Architecture de l'image" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Image Architecture"
+          }
+        }
+      }
+    },
     "Architecture du wrapper non prise en charge (x86_64 ou arm64-v8a attendue)." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Unsupported wrapper architecture (x86_64 or arm64-v8a expected)."
+          }
+        }
+      }
+    },
+    "Arrêter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Stop"
           }
         }
       }
@@ -1003,6 +1063,26 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Artists"
+          }
+        }
+      }
+    },
+    "Assistant d'installation du wrapper…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Wrapper Setup Assistant…"
+          }
+        }
+      }
+    },
+    "Assistant d'installation…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Setup Assistant…"
           }
         }
       }
@@ -1103,6 +1183,26 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Advanced"
+          }
+        }
+      }
+    },
+    "Avec le seul fichier de cookies, Apple refuse la licence de l'ALAC et le téléchargement échouera. Active le wrapper de gamdl : l'assistant l'installe avec Docker et le configure." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "With only the cookies file, Apple refuses the ALAC license and the download will fail. Enable gamdl’s wrapper: the assistant installs it with Docker and sets it up."
+          }
+        }
+      }
+    },
+    "Avec le seul fichier de cookies, Apple refuse la licence de l'ALAC. wrapper-v2 tourne dans Docker sur ce Mac, avec ton propre paquet Apple Music, et gamdl lui demande les clés. L'assistant installe chaque étape et vérifie le résultat. Le Dolby Atmos et l'audio spatial marchent déjà avec le fichier de cookies (mesuré avec gamdl 4.1.2) : seul l'ALAC a besoin du wrapper." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "With only the cookies file, Apple refuses the ALAC license. wrapper-v2 runs in Docker on this Mac, with your own Apple Music package, and gamdl asks it for the keys. The assistant installs each step and checks the result. Dolby Atmos and Spatial Audio already work with the cookies file (measured with gamdl 4.1.2): only ALAC needs the wrapper."
           }
         }
       }
@@ -1227,6 +1327,16 @@
         }
       }
     },
+    "Choisir le paquet…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Choose Package…"
+          }
+        }
+      }
+    },
     "Choisir…" : {
       "localizations" : {
         "en" : {
@@ -1247,12 +1357,32 @@
         }
       }
     },
+    "Choisis d'abord ton paquet Apple Music." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Choose your Apple Music package first."
+          }
+        }
+      }
+    },
     "Choisis plus bas ce qu'il faut prendre dans la discographie." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Choose below what to take from the discography."
+          }
+        }
+      }
+    },
+    "Choisis ton paquet Apple Music 3.6.0-beta, build 1109 (.apk ou .apkm). Gamdl Studio ne le télécharge pas." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Choose your Apple Music 3.6.0-beta package, build 1109 (.apk or .apkm). Gamdl Studio doesn’t download it."
           }
         }
       }
@@ -1277,6 +1407,16 @@
         }
       }
     },
+    "Code de wrapper-v2" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "wrapper-v2 Source Code"
+          }
+        }
+      }
+    },
     "Code pays à deux lettres (fr, us…) et langue BCP 47 (fr-FR, en-US). Vide : réglage de gamdl." : {
       "localizations" : {
         "en" : {
@@ -1293,6 +1433,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Codec"
+          }
+        }
+      }
+    },
+    "Colima n'a pas démarré (code %d). Le détail est dans le journal." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Colima didn’t start (code %d). The details are in the log."
           }
         }
       }
@@ -1387,6 +1537,16 @@
         }
       }
     },
+    "Connecte le wrapper à ton compte Apple avec « gamdl auth ». Gamdl Studio ne voit jamais ton identifiant." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Sign the wrapper in to your Apple Account with “gamdl auth”. Gamdl Studio never sees your username."
+          }
+        }
+      }
+    },
     "Connecte-le à ton compte Apple avec « gamdl auth » dans le Terminal." : {
       "localizations" : {
         "en" : {
@@ -1427,12 +1587,62 @@
         }
       }
     },
+    "Connexion au compte Apple" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Apple Account Sign-In"
+          }
+        }
+      }
+    },
     "connexion impossible (wrapper arrêté, mauvaise adresse ou réseau coupé)." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "couldn't connect (wrapper stopped, wrong URL or network down)."
+          }
+        }
+      }
+    },
+    "Construction annulée." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Build canceled."
+          }
+        }
+      }
+    },
+    "Construction pour %@. L'image contient des bibliothèques d'Apple : ne la publie pas." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Building for %@. The image contains Apple libraries: don’t publish it."
+          }
+        }
+      }
+    },
+    "Construire" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Build"
+          }
+        }
+      }
+    },
+    "Construit l'image privée avec ton paquet (plusieurs minutes la première fois)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Build the private image with your package (takes several minutes the first time)."
           }
         }
       }
@@ -1537,6 +1747,36 @@
         }
       }
     },
+    "Démarrage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Startup"
+          }
+        }
+      }
+    },
+    "Démarre d'abord le wrapper." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Start the wrapper first."
+          }
+        }
+      }
+    },
+    "Démarrer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Start"
+          }
+        }
+      }
+    },
     "Dépendance manquante (ffmpeg ?)" : {
       "localizations" : {
         "en" : {
@@ -1603,6 +1843,56 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Discography"
+          }
+        }
+      }
+    },
+    "Docker" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Docker"
+          }
+        }
+      }
+    },
+    "docker compose up a échoué (code %d)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "docker compose up failed (code %d)."
+          }
+        }
+      }
+    },
+    "docker est introuvable." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "docker can’t be found."
+          }
+        }
+      }
+    },
+    "Dolby Atmos et audio spatial : ils passent avec le fichier de cookies, sans wrapper." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Dolby Atmos and Spatial Audio work with the cookies file, without the wrapper."
+          }
+        }
+      }
+    },
+    "Dolby Digital (AC-3) et ALAC Hi-Res n'ont pas encore été testés : aucun morceau essayé ne les proposait." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Dolby Digital (AC-3) and ALAC Hi-Res haven’t been tested yet: none of the tracks tried offered them."
           }
         }
       }
@@ -2209,6 +2499,16 @@
         }
       }
     },
+    "gamdl est introuvable : installe-le d'abord (onglet Diagnostic)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl can’t be found: install it first (“Diagnostics” tab)."
+          }
+        }
+      }
+    },
     "gamdl est introuvable. Installe-le avec « pipx install gamdl »." : {
       "localizations" : {
         "en" : {
@@ -2239,6 +2539,16 @@
         }
       }
     },
+    "gamdl passe par le wrapper." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl goes through the wrapper."
+          }
+        }
+      }
+    },
     "gamdl s'est arrêté (code %d)" : {
       "localizations" : {
         "en" : {
@@ -2259,6 +2569,48 @@
         }
       }
     },
+    "Gamdl Studio ne télécharge jamais le paquet Apple Music : fournis le tien (3.6.0-beta, build 1109). L'image construite contient des bibliothèques d'Apple : garde-la privée. Le wrapper écoute seulement sur 127.0.0.1 ; ne l'expose pas sur Internet. Ne lance pas « docker compose down -v » : ça efface la session et l'identité de l'appareil." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Gamdl Studio never downloads the Apple Music package: provide your own (3.6.0-beta, build 1109). The built image contains Apple libraries: keep it private. The wrapper only listens on 127.0.0.1; don’t expose it to the internet. Don’t run “docker compose down -v”: it erases the session and the device identity."
+          }
+        }
+      }
+    },
+    "Gamdl Studio ne télécharge jamais le paquet Apple Music : fournis le tien (3.6.0-beta, build 1109). L'image construite contient des bibliothèques d'Apple : garde-la privée. Le wrapper écoute seulement sur 127.0.0.1 ; ne l'expose pas sur Internet. Ne lance pas « docker compose down -v » : ça efface la session et l'identité de l'appareil. wrapper-v2 vise un hôte Linux : cet assistant passe par la VM Linux de Colima ou de Docker Desktop, un chemin que wrapper-v2 n'a pas validé." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Gamdl Studio never downloads the Apple Music package: provide your own (3.6.0-beta, build 1109). The built image contains Apple libraries: keep it private. The wrapper only listens on 127.0.0.1; don’t expose it to the internet. Don’t run “docker compose down -v”: it erases the session and the device identity. wrapper-v2 targets a Linux host: this assistant goes through the Linux VM of Colima or Docker Desktop, a path wrapper-v2 hasn’t validated."
+          }
+        }
+      }
+    },
+    "Gamdl Studio utilise encore le fichier de cookies : l'ALAC échouera tant que le wrapper n'est pas activé." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Gamdl Studio still uses the cookies file: ALAC will fail until the wrapper is activated."
+          }
+        }
+      }
+    },
+    "Gamdl Studio utilise encore le fichier de cookies : l'ALAC échouera tant que le wrapper n'est pas activé. Active-le une fois le wrapper connecté : en mode wrapper, tout passe par lui, l'AAC compris." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Gamdl Studio still uses the cookies file: ALAC will fail until the wrapper is activated. Activate it once the wrapper is signed in: in wrapper mode, everything goes through it, AAC included."
+          }
+        }
+      }
+    },
     "gamdl, ffmpeg et ta session Apple Music sont opérationnels." : {
       "localizations" : {
         "en" : {
@@ -2275,6 +2627,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "General"
+          }
+        }
+      }
+    },
+    "git est introuvable : installe les outils en ligne de commande d'Xcode (xcode-select --install)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "git can’t be found: install the Xcode Command Line Tools (xcode-select --install)."
           }
         }
       }
@@ -2349,6 +2711,16 @@
         }
       }
     },
+    "Homebrew est introuvable : installe-le depuis brew.sh, puis relance la vérification." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Homebrew can’t be found: install it from brew.sh, then run the check again."
+          }
+        }
+      }
+    },
     "https://music.apple.com/fr/album/…" : {
       "localizations" : {
         "en" : {
@@ -2375,6 +2747,43 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Needs attention"
+          }
+        }
+      }
+    },
+    "Image %@ présente (%@)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Image %1$@ is present (%2$@)."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Image %1$@ présente (%2$@)."
+          }
+        }
+      }
+    },
+    "Image %@ présente." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Image %@ is present."
+          }
+        }
+      }
+    },
+    "Image Docker" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Docker Image"
           }
         }
       }
@@ -2439,6 +2848,16 @@
         }
       }
     },
+    "Installe d'abord Homebrew (brew.sh)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Install Homebrew first (brew.sh)."
+          }
+        }
+      }
+    },
     "Installe l'extension « Get cookies.txt LOCALLY » (Chrome) ou « Export Cookies » (Firefox)." : {
       "localizations" : {
         "en" : {
@@ -2455,6 +2874,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Install it with: %@"
+          }
+        }
+      }
+    },
+    "Installer et activer le wrapper…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Install and Enable the Wrapper…"
           }
         }
       }
@@ -2510,12 +2939,48 @@
         }
       }
     },
+    "L'ALAC demande le wrapper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "ALAC requires the wrapper"
+          }
+        }
+      }
+    },
     "L'ALAC demande le wrapper de gamdl : avec de simples cookies, Apple refuse la licence de déchiffrement." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "ALAC requires gamdl's wrapper: with plain cookies, Apple refuses the decryption license."
+          }
+        }
+      }
+    },
+    "L'image est déjà construite : le paquet n'est plus nécessaire." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The image is already built: the package is no longer needed."
+          }
+        }
+      }
+    },
+    "L'image existante est construite pour %@, pas pour %@ : reconstruis-la avec ton paquet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The existing image is built for %1$@, not %2$@: rebuild it with your package."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "L'image existante est construite pour %1$@, pas pour %2$@ : reconstruis-la avec ton paquet."
           }
         }
       }
@@ -2530,6 +2995,22 @@
         }
       }
     },
+    "La construction a échoué (code %d). Vérifie que le paquet est bien la build 1109 pour %@ ; le détail est dans le journal." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The build failed (code %1$d). Make sure the package is build 1109 for %2$@; the details are in the log."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "La construction a échoué (code %1$d). Vérifie que le paquet est bien la build 1109 pour %2$@ ; le détail est dans le journal."
+          }
+        }
+      }
+    },
     "La playlist est vide." : {
       "localizations" : {
         "en" : {
@@ -2540,12 +3021,48 @@
         }
       }
     },
+    "Lance ton moteur Docker (Docker Desktop, OrbStack ou Colima), puis clique sur « Vérifier »." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Start your Docker engine (Docker Desktop, OrbStack or Colima), then click “Check”."
+          }
+        }
+      }
+    },
     "Langue des métadonnées" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Metadata Language"
+          }
+        }
+      }
+    },
+    "Le clonage de wrapper-v2 a échoué (code %d)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Cloning wrapper-v2 failed (code %d)."
+          }
+        }
+      }
+    },
+    "Le conteneur tourne mais rien ne répond sur %@. Regarde « docker compose logs » dans %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The container is running but nothing is responding at %1$@. Check “docker compose logs” in %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Le conteneur tourne mais rien ne répond sur %1$@. Regarde « docker compose logs » dans %2$@."
           }
         }
       }
@@ -2566,6 +3083,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "The “media-user-token” cookie is missing: the export doesn't come from a signed-in music.apple.com tab."
+          }
+        }
+      }
+    },
+    "Le dossier %@ existe mais ne contient pas wrapper-v2 : déplace-le ou supprime-le, puis réessaie." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The folder %@ exists but doesn’t contain wrapper-v2: move or delete it, then try again."
           }
         }
       }
@@ -2600,6 +3127,86 @@
         }
       }
     },
+    "Le moteur Docker est arrêté : l'assistant peut démarrer Colima." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The Docker engine is stopped: the assistant can start Colima."
+          }
+        }
+      }
+    },
+    "Le moteur Docker ne répond pas : lance Docker Desktop, OrbStack ou Colima." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The Docker engine isn’t responding: start Docker Desktop, OrbStack or Colima."
+          }
+        }
+      }
+    },
+    "Le paquet %@ n'est plus lisible." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The package %@ can no longer be read."
+          }
+        }
+      }
+    },
+    "Le service de gamdl qui débloque l'ALAC" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The gamdl service that unlocks ALAC"
+          }
+        }
+      }
+    },
+    "Le seul chemin validé de bout en bout par wrapper-v2. Sur une puce Apple, Docker l'émule : construction et démarrage plus lents." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The only path wrapper-v2 has validated end to end. On Apple silicon, Docker emulates it: slower build and startup."
+          }
+        }
+      }
+    },
+    "Le Terminal est ouvert : choisis « Wrapper », connecte-toi, puis clique sur « Vérifier »." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Terminal is open: choose “Wrapper”, sign in, then click “Check”."
+          }
+        }
+      }
+    },
+    "Le Terminal installe %@. Reviens ici quand il a fini, puis clique sur « Vérifier »." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Terminal is installing %@. Come back here when it’s done, then click “Check”."
+          }
+        }
+      }
+    },
+    "Le wrapper n'a pas encore été vérifié." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The wrapper hasn’t been checked yet."
+          }
+        }
+      }
+    },
     "le wrapper n'est pas connecté à ton compte Apple. Dans Diagnostic, utilise « Se connecter dans le Terminal »." : {
       "localizations" : {
         "en" : {
@@ -2610,7 +3217,38 @@
         }
       }
     },
+    "Le wrapper n'est pas prêt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The wrapper isn’t ready"
+          }
+        }
+      }
+    },
+    "Le wrapper répond sur %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The wrapper is responding at %@."
+          }
+        }
+      }
+    },
+    "Le wrapper-v2 de gamdl tourne sur un hôte Linux avec Docker (validé en x86_64, pas encore en ARM64) et un paquet Apple Music que tu fournis. Il doit être connecté à ton compte Apple : l'assistant d'installation s'occupe de Docker, de l'image et ouvre « gamdl auth » dans le Terminal. Ne l'expose pas sur Internet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl’s wrapper-v2 runs on a Linux host with Docker (tested on x86_64, not yet on ARM64) and an Apple Music package you provide. It must be signed in to your Apple Account: the setup assistant takes care of Docker and the image, and opens “gamdl auth” in Terminal. Don’t expose it to the internet."
+          }
+        }
+      }
+    },
     "Le wrapper-v2 de gamdl tourne sur un hôte Linux avec Docker (validé en x86_64, pas encore en ARM64) et un paquet Apple Music que tu fournis. Il doit être connecté à ton compte Apple : l'onglet Diagnostic ouvre « gamdl auth » dans le Terminal pour ça. Ne l'expose pas sur Internet." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2880,6 +3518,26 @@
         }
       }
     },
+    "Moteur Docker, Compose et Buildx prêts." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Docker engine, Compose and Buildx are ready."
+          }
+        }
+      }
+    },
+    "Natif sur une puce Apple, mais wrapper-v2 ne l'a pas encore validé avec une vraie connexion Apple." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Native on Apple silicon, but wrapper-v2 hasn’t validated it yet with a real Apple sign-in."
+          }
+        }
+      }
+    },
     "Noms des dossiers et des fichiers" : {
       "localizations" : {
         "en" : {
@@ -2950,6 +3608,16 @@
         }
       }
     },
+    "Ouvrir l'assistant du wrapper…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Open the Wrapper Assistant…"
+          }
+        }
+      }
+    },
     "Ouvrir le dossier" : {
       "localizations" : {
         "en" : {
@@ -2966,6 +3634,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Open music.apple.com"
+          }
+        }
+      }
+    },
+    "Paquet Apple Music" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Apple Music Package"
           }
         }
       }
@@ -3176,6 +3854,26 @@
         }
       }
     },
+    "Préparer Docker" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Set Up Docker"
+          }
+        }
+      }
+    },
+    "Prêt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Ready"
+          }
+        }
+      }
+    },
     "Prêt à télécharger" : {
       "localizations" : {
         "en" : {
@@ -3252,6 +3950,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Shorten Names To"
+          }
+        }
+      }
+    },
+    "Reconstruire" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Rebuild"
           }
         }
       }
@@ -3416,6 +4124,26 @@
         }
       }
     },
+    "Rien ne répond encore sur %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Nothing is responding at %@ yet."
+          }
+        }
+      }
+    },
+    "Rien pour l'instant." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Nothing yet."
+          }
+        }
+      }
+    },
     "S'il n'existe pas" : {
       "localizations" : {
         "en" : {
@@ -3472,6 +4200,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Untitled"
+          }
+        }
+      }
+    },
+    "Sans wrapper prêt, gamdl ne peut rien télécharger dans ce mode." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Without a ready wrapper, gamdl can’t download anything in this mode."
           }
         }
       }
@@ -3696,6 +4434,16 @@
         }
       }
     },
+    "Télécharge d'abord le code de wrapper-v2." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Download the wrapper-v2 source code first."
+          }
+        }
+      }
+    },
     "Téléchargement" : {
       "localizations" : {
         "en" : {
@@ -3752,6 +4500,26 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Download Again"
+          }
+        }
+      }
+    },
+    "Télécharger le code" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Download Source Code"
+          }
+        }
+      }
+    },
+    "Télécharger quand même" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Download Anyway"
           }
         }
       }
@@ -3866,6 +4634,16 @@
         }
       }
     },
+    "Ton paquet Apple Music (build 1109)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Your Apple Music Package (build 1109)"
+          }
+        }
+      }
+    },
     "Top morceaux" : {
       "localizations" : {
         "en" : {
@@ -3922,6 +4700,26 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Cancel All"
+          }
+        }
+      }
+    },
+    "Tout est installé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Everything Installed"
+          }
+        }
+      }
+    },
+    "Tout installer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Install All"
           }
         }
       }
@@ -4182,6 +4980,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Wrapper ready"
+          }
+        }
+      }
+    },
+    "wrapper-v2 %@ sera cloné depuis GitHub." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "wrapper-v2 %@ will be cloned from GitHub."
           }
         }
       }

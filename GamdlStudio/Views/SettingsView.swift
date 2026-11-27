@@ -178,6 +178,14 @@ struct CodecNotes: View {
             if !usesWrapper, options.songCodecPriority.contains(where: \.needsWrapper) {
                 Text("L'ALAC demande le wrapper de gamdl : avec de simples cookies, Apple refuse la licence de déchiffrement.")
                     .foregroundStyle(.orange)
+                WrapperSetupButton(title: "Installer et activer le wrapper…")
+                    .buttonStyle(.link)
+            }
+            if options.songCodecPriority.contains(where: { $0 == .atmos || $0.family == .spatial && $0 != .ac3 }) {
+                Text("Dolby Atmos et audio spatial : ils passent avec le fichier de cookies, sans wrapper.")
+            }
+            if options.songCodecPriority.contains(.ac3) || options.songCodecPriority.contains(.alacHiRes) {
+                Text("Dolby Digital (AC-3) et ALAC Hi-Res n'ont pas encore été testés : aucun morceau essayé ne les proposait.")
             }
             if options.songCodecPriority.count == 1, options.codec.family != .stereo {
                 Text("Un morceau qui n'existe pas dans ce codec échouera : choisis un codec de secours.")
@@ -348,10 +356,14 @@ private struct SessionSettings: View {
             } footer: {
                 VStack(alignment: .leading, spacing: 4) {
                     if settings.session.authMode == .wrapper {
-                        Text("Le wrapper-v2 de gamdl tourne sur un hôte Linux avec Docker (validé en x86_64, pas encore en ARM64) et un paquet Apple Music que tu fournis. Il doit être connecté à ton compte Apple : l'onglet Diagnostic ouvre « gamdl auth » dans le Terminal pour ça. Ne l'expose pas sur Internet.")
-                        Link("wrapper-v2 sur GitHub", destination: URL(string: "https://github.com/glomatico/wrapper-v2")!)
+                        Text("Le wrapper-v2 de gamdl tourne sur un hôte Linux avec Docker (validé en x86_64, pas encore en ARM64) et un paquet Apple Music que tu fournis. Il doit être connecté à ton compte Apple : l'assistant d'installation s'occupe de Docker, de l'image et ouvre « gamdl auth » dans le Terminal. Ne l'expose pas sur Internet.")
+                        HStack {
+                            WrapperSetupButton()
+                            Link("wrapper-v2 sur GitHub", destination: URL(string: "https://github.com/glomatico/wrapper-v2")!)
+                        }
                     } else {
                         Text("Le fichier de cookies suffit pour l'AAC et le Dolby Atmos. L'ALAC demande le wrapper.")
+                        WrapperSetupButton()
                     }
                 }
                 .font(.caption).foregroundStyle(.secondary)

@@ -58,13 +58,13 @@ struct RootView: View {
                 handled = true
                 _ = provider.loadObject(ofClass: URL.self) { url, _ in
                     guard let url else { return }
-                    Task { @MainActor in model.enqueue(AppleMusicLink.extractAll(from: url.absoluteString)) }
+                    Task { @MainActor in model.enqueueDropped(AppleMusicLink.extractAll(from: url.absoluteString)) }
                 }
             } else if provider.canLoadObject(ofClass: String.self) {
                 handled = true
                 _ = provider.loadObject(ofClass: String.self) { text, _ in
                     guard let text else { return }
-                    Task { @MainActor in model.enqueue(AppleMusicLink.extractAll(from: text)) }
+                    Task { @MainActor in model.enqueueDropped(AppleMusicLink.extractAll(from: text)) }
                 }
             }
         }

@@ -20,6 +20,14 @@ struct GamdlStudioApp: App {
         .defaultSize(width: 1240, height: 800)
         .commands { AppCommands(model: model) }
 
+        Window("Installer le wrapper", id: WrapperSetupView.windowID) {
+            WrapperSetupView()
+                .environment(model)
+                .frame(minWidth: 640, minHeight: 620)
+        }
+        .windowResizability(.contentMinSize)
+        .defaultSize(width: 720, height: 760)
+
         Settings {
             SettingsView()
                 .environment(model)
