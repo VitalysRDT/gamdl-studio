@@ -20,11 +20,18 @@ struct DownloadEnvironment: Sendable {
                 guard let gamdl = locator.locate("gamdl", override: settings.gamdlOverride) else {
                     throw DownloadQueueError.gamdlMissing
                 }
-                let cookies = CookieInspector.status(ofFileAt: settings.cookies)
-                guard cookies.isUsable else { throw DownloadQueueError.cookies(cookies) }
-                try FileManager.default.createDirectory(at: settings.output, withIntermediateDirectories: true)
                 let version = await GamdlVersionCache.shared.version(of: gamdl, environment: locator.environment())
                 let generation = GamdlGeneration(version: version)
+                // With the wrapper, gamdl signs in through it: no cookies needed.
+                if !(generation == .v4 && settings.session.authMode == .wrapper) {
+                    let cookies = CookieInspector.status(ofFileAt: settings.cookies)
+                    guard cookies.isUsable else { throw DownloadQueueError.cookies(cookies) }
+                }
+                if generation == .v4, let device = settings.session.expandedDevicePath,
+                   !FileManager.default.fileExists(atPath: device) {
+                    throw GamdlCommandError.deviceFileMissing(device)
+                }
+                try FileManager.default.createDirectory(at: settings.output, withIntermediateDirectories: true)
                 return GamdlPaths(
                     gamdl: gamdl,
                     ffmpeg: locator.locate("ffmpeg"),
@@ -32,12 +39,17 @@ struct DownloadEnvironment: Sendable {
                     output: settings.output,
                     temp: settings.temp,
                     generation: generation,
-                    python: generation == .v4 ? PlaylistResolver.python(forGamdl: gamdl) : nil
+                    python: generation == .v4 ? PlaylistResolver.python(forGamdl: gamdl) : nil,
+                    session: settings.session
                 )
             },
             processEnvironment: locator.environment(),
             resolvePlaylist: { link, paths in
-                try await PlaylistResolver.resolve(link, gamdl: paths.gamdl, cookies: paths.cookies, environment: locator.environment())
+                // The resolver reads the media-user-token from the cookies file.
+                guard CookieInspector.status(ofFileAt: paths.cookies).isUsable else {
+                    throw GamdlCommandError.playlistNeedsCookies
+                }
+                return try await PlaylistResolver.resolve(link, gamdl: paths.gamdl, cookies: paths.cookies, environment: locator.environment())
             }
         )
     }
@@ -168,7 +180,7 @@ final class DownloadQueue {
                 var paths = try await env.paths()
                 // Before anything else: an unsupported option must not turn
                 // into a different download.
-                try GamdlCommand.validate(job.options, for: paths.generation)
+                try GamdlCommand.validate(job.options, session: paths.session, for: paths.generation)
                 // One temporary subfolder per job, so two concurrent gamdl runs
                 // don't clobber each other's partial files.
                 paths.temp = paths.temp.appending(path: job.id.uuidString)

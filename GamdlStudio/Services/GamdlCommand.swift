@@ -11,6 +11,8 @@ struct GamdlPaths: Hashable, Sendable {
     var generation: GamdlGeneration = .v3
     /// gamdl's own Python, to run `gamdl_bridge.py` with (gamdl 4 only).
     var python: URL? = nil
+    /// Sign-in and region settings (gamdl 4 only).
+    var session = GamdlSession()
 }
 
 /// What actually gets launched: gamdl itself, or gamdl 4 through the bridge.
@@ -23,6 +25,11 @@ enum GamdlCommandError: LocalizedError, Equatable {
     case lyricsOnlyUnsupported
     /// A setting that only gamdl 4 understands, while gamdl 3 is installed.
     case needsGamdl4(String)
+    case invalidWrapperURL(String)
+    case playReadyNeedsDevice
+    case deviceFileMissing(String)
+    /// Personalized playlists are read with the cookies file, even in wrapper mode.
+    case playlistNeedsCookies
 
     var errorDescription: String? {
         switch self {
@@ -30,6 +37,14 @@ enum GamdlCommandError: LocalizedError, Equatable {
             String(localized: "gamdl 4 ne sait plus télécharger les paroles seules. Choisis « Avec le son » ou « Aucunes » dans les réglages.")
         case .needsGamdl4(let setting):
             String(localized: "« \(setting) » demande gamdl 4. Mets gamdl à jour depuis l'onglet Diagnostic, ou change ce réglage.")
+        case .invalidWrapperURL(let text):
+            String(localized: "Adresse du wrapper invalide : \(text). Exemple : http://127.0.0.1:8080")
+        case .playReadyNeedsDevice:
+            String(localized: "PlayReady demande un fichier d'appareil .prd : choisis-le dans Réglages → Session.")
+        case .deviceFileMissing(let path):
+            String(localized: "Fichier d'appareil DRM introuvable : \(path)")
+        case .playlistNeedsCookies:
+            String(localized: "Les playlists personnalisées se lisent avec ton fichier de cookies, même en mode wrapper. Importe-le dans l'onglet Diagnostic.")
         }
     }
 }
@@ -48,11 +63,19 @@ enum GamdlCommand {
 
     /// Options gamdl can't honor. Checked before launching, so an
     /// unsupported request never falls back to a plain audio download.
-    static func validate(_ options: DownloadOptions, for generation: GamdlGeneration) throws {
+    static func validate(_ options: DownloadOptions, session: GamdlSession = GamdlSession(), for generation: GamdlGeneration) throws {
         switch generation {
         case .v4:
             if options.lyricsMode == .lyricsOnly { throw GamdlCommandError.lyricsOnlyUnsupported }
+            if session.authMode == .wrapper, WrapperProbe.baseURL(session.wrapperURL) == nil {
+                throw GamdlCommandError.invalidWrapperURL(session.wrapperURL)
+            }
+            // gamdl would prompt for the file, which needs a terminal.
+            if session.drmBackend == .playready, session.expandedDevicePath == nil {
+                throw GamdlCommandError.playReadyNeedsDevice
+            }
         case .v3:
+            if session.authMode == .wrapper { throw GamdlCommandError.needsGamdl4(AuthMode.wrapper.label) }
             // These change what gets downloaded; gamdl 3 would silently
             // download something else. gamdl 4's other settings are ignored.
             if let codec = options.songCodecPriority.first(where: { !$0.isWeb }) {
@@ -76,11 +99,6 @@ enum GamdlCommand {
         "--song-codec": "a one-codec --song-codec-priority says the same, and gamdl ignores the priority once it is set",
         "--music-video-codec": "same as --song-codec, for videos",
         "--media-user-token": "would show in the process list, the log and the copied command; the cookies file carries the same token",
-        "--wrapper-url": "not yet: wrapper mode comes next",
-        "--storefront": "not yet: session settings come with wrapper mode",
-        "--language": "not yet: session settings come with wrapper mode",
-        "--drm-backend": "not yet: session settings come with wrapper mode",
-        "--device-path": "not yet: session settings come with wrapper mode",
     ]
 
     /// gamdl 4 runs through `gamdl_bridge.py` when its Python is known, so the
@@ -149,12 +167,19 @@ enum GamdlCommand {
     /// ~/.gamdl/config.yml can't contradict the UI. The rest is passed only
     /// once set: until then gamdl's own configuration applies.
     private static func arguments4(for link: AppleMusicLink, urls: [String]?, options: DownloadOptions, paths: GamdlPaths) -> [String] {
-        var args = [
-            "rip",
-            // Without an explicit mode, gamdl 4 opens its setup wizard, which
-            // needs a terminal.
-            "--auth-mode", "cookies",
-            "--cookies-path", paths.cookies.path,
+        // Without an explicit mode, gamdl 4 opens its setup wizard, which
+        // needs a terminal.
+        var args = ["rip", "--auth-mode", paths.session.authMode.rawValue]
+        switch paths.session.authMode {
+        case .cookies: args += ["--cookies-path", paths.cookies.path]
+        case .wrapper: args += ["--wrapper-url", paths.session.wrapperURL.trimmed]
+        }
+        let storefront = paths.session.storefront.trimmed.lowercased()
+        if !storefront.isEmpty { args += ["--storefront", storefront] }
+        if !paths.session.language.trimmed.isEmpty { args += ["--language", paths.session.language.trimmed] }
+        if let backend = paths.session.drmBackend { args += ["--drm-backend", backend.rawValue] }
+        if let device = paths.session.expandedDevicePath { args += ["--device-path", device] }
+        args += [
             "--output-dir", paths.output.path,
             "--temp-path", paths.temp.path,
             "--song-codec-priority", options.songCodecPriority.map(\.rawValue).joined(separator: ","),

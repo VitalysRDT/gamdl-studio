@@ -31,6 +31,17 @@ private let paths = GamdlPaths(
     cookies: URL(filePath: "/u/cookies.txt"), output: URL(filePath: "/u/Music/Gamdl Studio"),
     temp: URL(filePath: "/tmp/g"), generation: .v4
 )
+/// Wrapper mode with every session setting set.
+private var wrapperPaths: GamdlPaths {
+    var p = paths
+    p.session.authMode = .wrapper
+    p.session.wrapperURL = "http://10.0.0.2:8080"
+    p.session.storefront = "FR"
+    p.session.language = "fr-FR"
+    p.session.drmBackend = .playready
+    p.session.devicePath = "/u/device.prd"
+    return p
+}
 private let album = AppleMusicLink(string: "https://music.apple.com/fr/album/x/1")!
 private let artist = AppleMusicLink(string: "https://music.apple.com/fr/artist/x/9")!
 
@@ -91,8 +102,8 @@ struct Gamdl4OptionCoverageTests {
         let codecs = try #require(rip.option("--song-codec")).choices
         let videoCodecs = try #require(rip.option("--music-video-codec")).choices
         for options in [DownloadOptions(), everything] {
-            for link in [album, artist] {
-                let args = GamdlCommand.arguments(for: link, options: options, paths: paths)
+            for (link, p) in [(album, paths), (artist, paths), (album, wrapperPaths)] {
+                let args = GamdlCommand.arguments(for: link, options: options, paths: p)
                 for (i, arg) in args.enumerated() where arg.hasPrefix("--") {
                     let option = try #require(rip.option(arg), "\(arg) isn't a gamdl 4.1.2 rip option")
                     if !option.isFlag {
@@ -114,7 +125,7 @@ struct Gamdl4OptionCoverageTests {
     func everyOptionCovered() throws {
         let rip = try RipOptions.load()
         let emitted = [DownloadOptions(), everything].flatMap { o in
-            [album, artist].flatMap { flags(in: GamdlCommand.arguments(for: $0, options: o, paths: paths)) }
+            [(album, paths), (artist, paths), (album, wrapperPaths)].flatMap { flags(in: GamdlCommand.arguments(for: $0.0, options: o, paths: $0.1)) }
         }
         let reachable = Set(emitted)
         for option in rip.options {

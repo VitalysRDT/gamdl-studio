@@ -44,7 +44,8 @@ suit la langue de macOS.
   formats des paroles (fichier et intégrées), taille et format de pochette, tags à ne pas
   écrire, format de date, catégories d'artiste, listes M3U, codec, hauteur et extension des
   clips, modèles de noms de dossiers et de fichiers, segments en parallèle, arrêt au premier
-  échec, index des médias de gamdl et traces Python. Un réglage laissé sur « Par défaut de
+  échec, index des médias de gamdl et traces Python, plus la connexion (cookies ou wrapper),
+  le storefront, la langue des métadonnées et le DRM. Un réglage laissé sur « Par défaut de
   gamdl » n'est pas passé : `~/.gamdl/config.yml` continue de s'appliquer.
 
 <p align="center">
@@ -140,12 +141,30 @@ Ce qui marche avec de simples cookies navigateur, mesuré avec gamdl 4.1.2 :
 | Dolby Atmos (`atmos`) | Oui | E-AC-3 5.1 à 768 kb/s, pour les morceaux mixés en Atmos |
 | Binaural, mixage spatial en stéréo (`aac-binaural`, `aac-downmix`, …) | Oui | |
 | Dolby Digital (`ac3`) | Non testé | Aucun morceau essayé ne le proposait |
-| ALAC (`alac`, `alac-lossless`, `alac-hires`) | Non | Apple refuse la licence : il faut le [wrapper](https://github.com/glomatico/wrapper-v2) de gamdl |
+| ALAC (`alac`, `alac-lossless`, `alac-hires`) | Non | Apple refuse la licence : passe en mode wrapper, ci-dessous |
 
 Un morceau qui n'existe pas dans le codec choisi échoue, sauf si un codec de secours est
 défini : avec l'Atmos en premier, l'AAC fait un bon secours. Pour remplacer des morceaux déjà
 téléchargés dans un autre codec, active « Réécrire les fichiers existants ». gamdl 3 se limite
 aux deux premiers codecs.
+
+### ALAC : le mode wrapper
+
+L'ALAC passe par le [wrapper-v2](https://github.com/glomatico/wrapper-v2) de gamdl, un service
+que tu héberges toi-même : un hôte Linux avec Docker (validé en x86_64, pas encore en ARM64) et
+un paquet Apple Music que tu fournis. Gamdl Studio ne l'installe pas, il s'y connecte.
+
+1. Dans **Réglages → Session**, choisis **Wrapper** et indique son adresse
+   (`http://127.0.0.1:8080` par défaut). N'expose pas le wrapper sur Internet.
+2. **Diagnostic** interroge `/info` et `/session` du wrapper avec les mêmes règles que gamdl 4.1.2
+   (version 1.x, protocole, profil Temari) et dit ce qui ne va pas.
+3. Si le wrapper n'est pas connecté à ton compte Apple, **Se connecter dans le Terminal** ouvre
+   `gamdl auth` dans le Terminal. gamdl y demande ton identifiant Apple ; Gamdl Studio ne le voit
+   jamais.
+
+En mode wrapper, le fichier de cookies ne sert plus qu'aux playlists personnalisées.
+**Réglages → Session** règle aussi le storefront, la langue des métadonnées, le système DRM et un
+fichier d'appareil.
 
 ## Raccourcis clavier
 

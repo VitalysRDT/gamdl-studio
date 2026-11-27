@@ -726,6 +726,36 @@
         }
       }
     },
+    "Adresse du wrapper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Wrapper URL"
+          }
+        }
+      }
+    },
+    "Adresse du wrapper invalide : %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Invalid wrapper URL: %@"
+          }
+        }
+      }
+    },
+    "Adresse du wrapper invalide : %@. Exemple : http://127.0.0.1:8080" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Invalid wrapper URL: %@. Example: http://127.0.0.1:8080"
+          }
+        }
+      }
+    },
     "Afficher" : {
       "localizations" : {
         "en" : {
@@ -922,6 +952,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Apple Music responded with %lld."
+          }
+        }
+      }
+    },
+    "Architecture du wrapper non prise en charge (x86_64 ou arm64-v8a attendue)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Unsupported wrapper architecture (x86_64 or arm64-v8a expected)."
           }
         }
       }
@@ -1127,6 +1167,26 @@
         }
       }
     },
+    "Ce wrapper ne fournit pas les contextes Temari dont gamdl a besoin." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "This wrapper doesn't provide the Temari contexts gamdl needs."
+          }
+        }
+      }
+    },
+    "Celui du compte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Account Default"
+          }
+        }
+      }
+    },
     "Ces réglages ne s'appliquent qu'avec gamdl 4." : {
       "localizations" : {
         "en" : {
@@ -1177,6 +1237,16 @@
         }
       }
     },
+    "Choisis « Wrapper » dans l'assistant, puis connecte-toi avec ton compte Apple. Gamdl Studio ne voit jamais ton identifiant ni ton mot de passe." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Choose “Wrapper” in the Terminal prompt, then sign in with your Apple Account. Gamdl Studio never sees your username or password."
+          }
+        }
+      }
+    },
     "Choisis plus bas ce qu'il faut prendre dans la discographie." : {
       "localizations" : {
         "en" : {
@@ -1203,6 +1273,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Music Videos"
+          }
+        }
+      }
+    },
+    "Code pays à deux lettres (fr, us…) et langue BCP 47 (fr-FR, en-US). Vide : réglage de gamdl." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Two-letter country code (fr, us…) and BCP 47 language (fr-FR, en-US). Leave empty to use gamdl's setting."
           }
         }
       }
@@ -1307,12 +1387,52 @@
         }
       }
     },
+    "Connecte-le à ton compte Apple avec « gamdl auth » dans le Terminal." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Sign it in to your Apple Account with “gamdl auth” in Terminal."
+          }
+        }
+      }
+    },
+    "Connexion" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Connection"
+          }
+        }
+      }
+    },
+    "Connexion à Apple Music" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Apple Music Connection"
+          }
+        }
+      }
+    },
     "Connexion à Apple Music…" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Connecting to Apple Music…"
+          }
+        }
+      }
+    },
+    "connexion impossible (wrapper arrêté, mauvaise adresse ou réseau coupé)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "couldn't connect (wrapper stopped, wrong URL or network down)."
           }
         }
       }
@@ -1383,6 +1503,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Use the album release date for tracks"
+          }
+        }
+      }
+    },
+    "Déchiffrement" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Decryption"
           }
         }
       }
@@ -1889,6 +2019,26 @@
         }
       }
     },
+    "Fichier d'appareil" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Device File"
+          }
+        }
+      }
+    },
+    "Fichier d'appareil DRM introuvable : %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "DRM device file not found: %@"
+          }
+        }
+      }
+    },
     "Fichier de cookies" : {
       "localizations" : {
         "en" : {
@@ -2009,6 +2159,16 @@
         }
       }
     },
+    "gamdl 4 demande wrapper-v2 1.x (version annoncée : %@)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl 4 requires wrapper-v2 1.x (reported version: %@)."
+          }
+        }
+      }
+    },
     "gamdl 4 n'utilise plus ffmpeg." : {
       "localizations" : {
         "en" : {
@@ -2025,6 +2185,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "gamdl 4 can no longer download lyrics only. Choose “With Audio” or “None” in Settings."
+          }
+        }
+      }
+    },
+    "gamdl embarque un appareil Widevine. PlayReady demande ton propre fichier .prd, un appareil Widevine L1 ou PlayReady SL3000 permet les clips au-delà de 1080p." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl comes with a Widevine device. PlayReady requires your own .prd file, and a Widevine L1 or PlayReady SL3000 device unlocks music videos above 1080p."
           }
         }
       }
@@ -2289,6 +2459,16 @@
         }
       }
     },
+    "Installer le wrapper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Install the Wrapper"
+          }
+        }
+      }
+    },
     "Introuvable" : {
       "localizations" : {
         "en" : {
@@ -2360,6 +2540,16 @@
         }
       }
     },
+    "Langue des métadonnées" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Metadata Language"
+          }
+        }
+      }
+    },
     "Le cookie « media-user-token » a expiré le %@." : {
       "localizations" : {
         "en" : {
@@ -2390,12 +2580,42 @@
         }
       }
     },
+    "Le fichier de cookies suffit pour l'AAC et le Dolby Atmos. L'ALAC demande le wrapper." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The cookies file is enough for AAC and Dolby Atmos. ALAC requires the wrapper."
+          }
+        }
+      }
+    },
     "Le flux que lit l'app Musique" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "The stream the Music app plays"
+          }
+        }
+      }
+    },
+    "le wrapper n'est pas connecté à ton compte Apple. Dans Diagnostic, utilise « Se connecter dans le Terminal »." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "the wrapper isn't signed in to your Apple Account. In Diagnostics, use “Sign In in Terminal”."
+          }
+        }
+      }
+    },
+    "Le wrapper-v2 de gamdl tourne sur un hôte Linux avec Docker (validé en x86_64, pas encore en ARM64) et un paquet Apple Music que tu fournis. Il doit être connecté à ton compte Apple : l'onglet Diagnostic ouvre « gamdl auth » dans le Terminal pour ça. Ne l'expose pas sur Internet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "gamdl's wrapper-v2 runs on a Linux host with Docker (tested on x86_64, not yet on ARM64) and an Apple Music package you provide. It must be signed in to your Apple Account: the Diagnostics tab opens “gamdl auth” in Terminal for that. Don't expose it to the internet."
           }
         }
       }
@@ -2426,6 +2646,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Reading folder…"
+          }
+        }
+      }
+    },
+    "Les playlists personnalisées se lisent avec ton fichier de cookies, même en mode wrapper. Importe-le dans l'onglet Diagnostic." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Personalized playlists are read with your cookies file, even in wrapper mode. Import it in the Diagnostics tab."
           }
         }
       }
@@ -2636,6 +2866,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Folder and File Names"
+          }
+        }
+      }
+    },
+    "Non vérifié" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Not checked"
           }
         }
       }
@@ -2856,6 +3096,16 @@
         }
       }
     },
+    "PlayReady demande un fichier d'appareil .prd : choisis-le dans Réglages → Session." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "PlayReady requires a .prd device file: choose it in Settings → Session."
+          }
+        }
+      }
+    },
     "Pochette" : {
       "localizations" : {
         "en" : {
@@ -2916,12 +3166,32 @@
         }
       }
     },
+    "Profil Temari inattendu pour %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Unexpected Temari profile for %@."
+          }
+        }
+      }
+    },
     "Proposer les liens copiés dans le presse-papiers" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Suggest links copied to the clipboard"
+          }
+        }
+      }
+    },
+    "Protocole du wrapper non pris en charge par gamdl." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Wrapper protocol not supported by gamdl."
           }
         }
       }
@@ -3006,6 +3276,16 @@
         }
       }
     },
+    "Région" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Region"
+          }
+        }
+      }
+    },
     "Réglages" : {
       "localizations" : {
         "en" : {
@@ -3022,6 +3302,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Rescan the folder (⌘R)"
+          }
+        }
+      }
+    },
+    "Réponse illisible du wrapper." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "The wrapper's response can't be read."
           }
         }
       }
@@ -3092,6 +3382,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Nothing in Progress"
+          }
+        }
+      }
+    },
+    "Rien ne répond à %@. Le wrapper tourne-t-il ?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Nothing is responding at %@. Is the wrapper running?"
           }
         }
       }
@@ -3176,6 +3476,16 @@
         }
       }
     },
+    "Se connecter dans le Terminal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Sign In in Terminal"
+          }
+        }
+      }
+    },
     "Segments en parallèle par morceau" : {
       "localizations" : {
         "en" : {
@@ -3192,6 +3502,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Will be created on the first download"
+          }
+        }
+      }
+    },
+    "Session" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Session"
           }
         }
       }
@@ -3286,6 +3606,16 @@
         }
       }
     },
+    "Storefront" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Storefront"
+          }
+        }
+      }
+    },
     "sur %lld" : {
       "localizations" : {
         "en" : {
@@ -3302,6 +3632,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "On the music.apple.com tab, export the cookies in Netscape format."
+          }
+        }
+      }
+    },
+    "Système DRM" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "DRM System"
           }
         }
       }
@@ -3646,6 +3986,16 @@
         }
       }
     },
+    "Utiliser l'appareil intégré à gamdl" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Use gamdl's Built-In Device"
+          }
+        }
+      }
+    },
     "Vérification…" : {
       "localizations" : {
         "en" : {
@@ -3662,6 +4012,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Checked %@"
+          }
+        }
+      }
+    },
+    "Vérifier" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Check"
           }
         }
       }
@@ -3742,6 +4102,76 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "View"
+          }
+        }
+      }
+    },
+    "Wrapper" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Wrapper"
+          }
+        }
+      }
+    },
+    "Wrapper (pour l'ALAC)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Wrapper (for ALAC)"
+          }
+        }
+      }
+    },
+    "Wrapper incompatible avec gamdl" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Wrapper incompatible with gamdl"
+          }
+        }
+      }
+    },
+    "Wrapper injoignable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Wrapper unreachable"
+          }
+        }
+      }
+    },
+    "Wrapper non connecté" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Wrapper not signed in"
+          }
+        }
+      }
+    },
+    "Wrapper prêt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Wrapper ready"
+          }
+        }
+      }
+    },
+    "wrapper-v2 sur GitHub" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "wrapper-v2 on GitHub"
           }
         }
       }

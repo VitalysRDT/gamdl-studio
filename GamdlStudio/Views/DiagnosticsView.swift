@@ -29,6 +29,7 @@ struct DiagnosticsView: View {
                             }
                             toolCard(report.ffmpeg, symbol: "film.stack", help: "brew install ffmpeg", optional: !report.needsFFmpeg) { EmptyView() }
                         }
+                        if report.usesWrapper { wrapperCard(report) }
                         cookiesCard(report.cookies)
                         outputCard(report)
                     } else {
@@ -193,6 +194,41 @@ struct DiagnosticsView: View {
             .animation(.snappy, value: dropTargeted)
     }
 
+    private func wrapperCard(_ report: DiagnosticReport) -> some View {
+        let status = report.wrapper
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "lock.shield.fill").font(.title2).foregroundStyle(.brandGradient)
+                Text("Wrapper").font(.title3.bold())
+                Spacer()
+                statusDot(status?.isReady == true)
+            }
+            Text(status?.title ?? String(localized: "Non vérifié")).font(.headline)
+            if let status { Text(status.message).foregroundStyle(.secondary).textSelection(.enabled) }
+            Text(report.session.wrapperURL).font(.caption.monospaced()).foregroundStyle(.tertiary).textSelection(.enabled)
+            HStack {
+                if status == .loggedOut, let gamdl = report.gamdl.path {
+                    Button {
+                        do { try TerminalLauncher.openAuth(gamdl: gamdl) } catch { importError = error.localizedDescription }
+                    } label: { Label("Se connecter dans le Terminal", systemImage: "terminal") }
+                    .buttonStyle(.glassProminent)
+                }
+                Button { Task { await model.runDiagnostics() } } label: { Label("Vérifier", systemImage: "arrow.clockwise") }
+                    .buttonStyle(.glass)
+                Link(destination: URL(string: "https://github.com/glomatico/wrapper-v2")!) {
+                    Label("Installer le wrapper", systemImage: "arrow.up.right.square")
+                }
+                .buttonStyle(.borderless)
+            }
+            if status == .loggedOut {
+                Text("Choisis « Wrapper » dans l'assistant, puis connecte-toi avec ton compte Apple. Gamdl Studio ne voit jamais ton identifiant ni ton mot de passe.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .glassCard()
+    }
+
     private func outputCard(_ report: DiagnosticReport) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
@@ -302,3 +338,4 @@ private struct UpgradeSheet: View {
         }
     }
 }
+

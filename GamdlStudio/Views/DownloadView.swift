@@ -402,7 +402,7 @@ private struct OptionsPanel: View {
                         }
                         .labelsHidden()
                         .frame(maxWidth: 260)
-                        CodecNotes(options: settings.options)
+                        CodecNotes(options: settings.options, usesWrapper: settings.session.authMode == .wrapper)
                     }
                 }
                 GridRow {
