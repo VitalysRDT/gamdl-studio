@@ -3,6 +3,10 @@ import Testing
 @testable import GamdlStudio
 
 /// Fixtures:
+/// - `gamdl-4.1.2-single-track.txt` and `gamdl-4.1.2-already-downloaded.txt`
+///   are real runs of gamdl 4.1.2 through `gamdl_bridge.py`, with the app's
+///   exact arguments and a signed-in session: one song downloaded, then the
+///   same song again into the same folder. Paths anonymized.
 /// - `gamdl-4.1.2-session-error.txt` is real gamdl 4.1.2 output (`gamdl rip`
 ///   with the app's arguments and a cookies file without a media-user-token),
 ///   with the home folder anonymized.
@@ -224,6 +228,33 @@ struct Gamdl4ReplayTests {
         #expect(job.failedCount == 1)
         #expect(job.tracks.allSatisfy { $0.index == nil })
         #expect(job.tracks.first?.title == "I Love the Nightlife (Disco 'Round)")
+    }
+
+    @Test("Real gamdl 4.1.2 download through the bridge (regression)")
+    func realDownload() throws {
+        let job = replay(try Fixture.text("gamdl-4.1.2-single-track.txt"), exitCode: 0)
+        #expect(job.state == .completed(errors: 0))
+        #expect(job.gamdlVersion == "4.1.2")
+        #expect(job.tracks.map(\.index) == [1])
+        #expect(job.tracks.map(\.status) == [.done])
+        #expect(job.tracks.first?.title == "I Love the Nightlife (Disco 'Round)")
+        // Size and speed come from the bridge's progress lines.
+        #expect(job.size == Formatters.bytes(13_207_478))
+        #expect(job.speed != nil)
+        #expect(job.trackFraction == 1)
+        #expect(job.log.contains { $0.level == .plain && $0.text == "Created database at /Users/me/.gamdl/media.sqlite3" })
+        #expect(!job.log.contains { $0.text.contains(Gamdl4OutputParser.marker) })
+    }
+
+    @Test("Real gamdl 4.1.2 run on a song already in the folder (regression)")
+    func realAlreadyDownloaded() throws {
+        let job = replay(try Fixture.text("gamdl-4.1.2-already-downloaded.txt"), exitCode: 0)
+        #expect(job.state == .completed(errors: 0))
+        #expect(job.downloadedCount == 0)
+        #expect(job.skippedCount == 1)
+        #expect(job.tracks.first?.status == .skipped("Déjà dans la bibliothèque"))
+        #expect(job.tracks.first?.existingFile == URL(filePath: "/Users/me/Music/Gamdl Studio/Compilations/Alicia Bridges_ The Collection/01 I Love the Nightlife (Disco 'Round).m4a"))
+        #expect(job.existingFolders.map(\.lastPathComponent) == ["Alicia Bridges_ The Collection"])
     }
 
     @Test("Real gamdl 4.1.2 output: rejected cookies fail the job with gamdl's reason")

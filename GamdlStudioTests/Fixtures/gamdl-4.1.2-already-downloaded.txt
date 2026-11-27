@@ -1,0 +1,6 @@
+Gamdl 4.1.2
+
+✓ Authenticated
+@gamdl-studio {"e": "track", "i": 1, "title": "I Love the Nightlife (Disco 'Round)"}
+↷ I Love the Nightlife (Disco 'Round): skipped → /Users/me/Music/Gamdl Studio/Compilations/Alicia Bridges_ The Collection/01 I Love the Nightlife (Disco 'Round).m4a
+Finished: 0 downloaded, 0 overwritten, 1 skipped, 0 failed, 0 finalization failures (1 discovered)
