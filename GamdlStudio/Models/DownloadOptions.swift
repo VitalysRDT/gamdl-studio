@@ -354,6 +354,16 @@ struct DownloadOptions: Codable, Hashable, Sendable {
         set { songCodecPriority = [newValue] + songCodecPriority.dropFirst().filter { $0 != newValue } }
     }
 
+    /// The options shown for one link and frozen into its job. An automatic
+    /// substitution never changes the user's saved order for other links.
+    func selectingAvailableCodecs(_ available: [SongCodec]?) -> Self {
+        guard let available, let first = available.first else { return self }
+        var result = self
+        let preferred = songCodecPriority.filter(available.contains)
+        result.songCodecPriority = preferred.isEmpty ? [first] : preferred
+        return result
+    }
+
     /// First artist category, for gamdl 3 (one choice only).
     var artistSelection: ArtistSelection {
         get { artistSelections.first ?? .mainAlbums }

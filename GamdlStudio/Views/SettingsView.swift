@@ -154,13 +154,17 @@ private struct AudioSettings: View {
 /// with an `if` inside the ForEach hid the tags from the Picker, which then
 /// wrote another codec into the settings on first display.
 struct CodecMenuItems<Tag: Hashable>: View {
+    var codecs = SongCodec.allCases
     let tag: (SongCodec) -> Tag
 
     var body: some View {
         ForEach(SongCodec.Family.allCases, id: \.self) { family in
-            Section(family.label) {
-                ForEach(family.codecs) { codec in
-                    Text(codec.label).tag(tag(codec))
+            let items = codecs.filter { $0.family == family }
+            if !items.isEmpty {
+                Section(family.label) {
+                    ForEach(items) { codec in
+                        Text(codec.label).tag(tag(codec))
+                    }
                 }
             }
         }

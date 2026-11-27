@@ -265,6 +265,22 @@ struct Gamdl4AllOptionsCommandTests {
 
 @Suite("DownloadOptions")
 struct DownloadOptionsTests {
+    @Test("The job uses the visible codec and only its available fallbacks")
+    func availableCodecs() throws {
+        var defaults = DownloadOptions()
+        defaults.songCodecPriority = [.atmos, .alac, .aacWeb]
+        let filtered = defaults.selectingAvailableCodecs([.aacWeb, .aacHeWeb, .alac])
+        #expect(filtered.songCodecPriority == [.alac, .aacWeb])
+        let stereo = defaults.selectingAvailableCodecs([.aacWeb, .aacHeWeb])
+        let command = GamdlCommand.arguments(for: album, options: stereo, paths: paths)
+        let index = try #require(command.firstIndex(of: "--song-codec-priority"))
+        #expect(command[index + 1] == "aac-web")
+        #expect(defaults.selectingAvailableCodecs([.aacHe]).codec == .aacHe)
+        #expect(defaults.selectingAvailableCodecs(nil) == defaults)
+        #expect(defaults.songCodecPriority == [.atmos, .alac, .aacWeb])
+        #expect(Bundle.main.url(forResource: "available_codecs", withExtension: "py") != nil)
+    }
+
     @Test("Settings saved by 1.x (single codec and artist category) still load")
     func legacyJSON() throws {
         // What DownloadOptions encoded to before this change, byte for byte.

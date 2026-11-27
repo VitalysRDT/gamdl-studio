@@ -636,13 +636,16 @@ struct BuildProgressTests {
         let defaults = try #require(UserDefaults(suiteName: "gamdlstudio.tests.\(UUID().uuidString)"))
         let model = AppModel(settings: AppSettings(defaults: defaults))
         model.settings.options.songCodecPriority = [.aacWeb]
-        #expect(model.wrapperAction == nil)
+        #expect(model.wrapperAction() == nil)
         model.settings.options.songCodecPriority = [.alac]
-        #expect(model.wrapperAction == .install)
+        #expect(model.wrapperAction() == .install)
         model.localWrapper = .ready(version: "1.0.1", architecture: "x86_64")
-        #expect(model.wrapperAction == .activate)
+        #expect(model.wrapperAction() == .activate)
         model.settings.options.songCodecPriority = [.atmos]
-        #expect(model.wrapperAction == .activate)
+        #expect(model.wrapperAction() == .activate)
+        var stereo = DownloadOptions()
+        stereo.songCodecPriority = [.aacWeb]
+        #expect(model.wrapperAction(for: stereo) == nil)
     }
 }
 

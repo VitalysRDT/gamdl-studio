@@ -5,6 +5,8 @@ struct DownloadView: View {
     @Environment(AppModel.self) private var model
     @State private var palette = ImagePalette.fallback
     @State private var preview: PreviewState = .idle
+    @State private var checkedCodecs: SongCodecLookup?
+    @State private var catalogCodecs: [SongCodec]?
     @FocusState private var fieldFocused: Bool
     @State private var wrapperAlert: WrapperAlert?
     @Environment(\.openWindow) private var openWindow
@@ -22,6 +24,22 @@ struct DownloadView: View {
 
     private var links: [AppleMusicLink] { AppleMusicLink.extractAll(from: model.draftURL) }
     private var link: AppleMusicLink? { links.first }
+    private var singleLink: AppleMusicLink? { links.count == 1 ? link : nil }
+    private var codecLookup: SongCodecLookup? {
+        SongCodecLookup(link: singleLink, settings: SettingsSnapshot(model.settings),
+                        wrapperReady: model.report?.wrapper?.isReady == true)
+    }
+    private var checkingCodecs: Bool { codecLookup != nil && checkedCodecs != codecLookup }
+    private var availableCodecs: [SongCodec]? {
+        guard let lookup = codecLookup, checkedCodecs == lookup else { return nil }
+        return catalogCodecs?.filter { !$0.needsWrapper || model.settings.session.authMode == .wrapper }
+    }
+    private var options: DownloadOptions { model.settings.options.selectingAvailableCodecs(availableCodecs) }
+    private var canStart: Bool {
+        guard link?.kind.isDownloadable == true else { return false }
+        if options.lyricsMode == .lyricsOnly { return true }
+        return !checkingCodecs && !(singleLink?.kind == .song && availableCodecs?.isEmpty == true)
+    }
 
     private var loadedPreview: MediaPreview? {
         if case .loaded(let p) = preview { return p }
@@ -40,7 +58,10 @@ struct DownloadView: View {
                     if let suggestion = model.clipboardSuggestion { clipboardBanner(suggestion) }
                     if links.count > 1 { multiLinkBanner }
                     content
-                    if link != nil, links.count == 1 { OptionsPanel(kind: link?.kind ?? .album) }
+                    if let singleLink {
+                        OptionsPanel(kind: singleLink.kind, codecs: availableCodecs,
+                                     checking: checkingCodecs, options: options)
+                    }
                     if link != nil, links.count == 1 { downloadButton }
                     RecentStrip()
                 }
@@ -53,7 +74,19 @@ struct DownloadView: View {
             .scrollIndicators(.hidden)
         }
         .readPalette(from: loadedPreview?.artworkURL, into: $palette)
-        .task(id: link) { await loadPreview() }
+        .task(id: singleLink) { await loadPreview() }
+        .task(id: codecLookup) {
+            let request = codecLookup
+            checkedCodecs = nil
+            catalogCodecs = nil
+            guard let request else { return }
+            try? await Task.sleep(for: .milliseconds(300))
+            guard !Task.isCancelled else { return }
+            let codecs = await request.fetch()
+            guard !Task.isCancelled, codecLookup == request else { return }
+            catalogCodecs = codecs
+            checkedCodecs = request
+        }
         .onAppear { fieldFocused = model.draftURL.isEmpty }
         .navigationTitle("")
         .alert(Text(verbatim: wrapperAlert?.gate.title ?? ""), isPresented: Binding(
@@ -210,6 +243,7 @@ struct DownloadView: View {
         guard !Task.isCancelled else { return }
         do {
             if let p = try await model.preview(for: link) {
+                guard !Task.isCancelled else { return }
                 withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) { preview = .loaded(p) }
             } else {
                 preview = .unavailable
@@ -235,7 +269,7 @@ struct DownloadView: View {
             .tint(.brand)
             .controlSize(.extraLarge)
             .keyboardShortcut(.return, modifiers: .command)
-            .disabled(link?.kind.isDownloadable != true)
+            .disabled(!canStart)
 
             if !ready, let problems = model.report?.problems, !problems.isEmpty {
                 Button {
@@ -257,7 +291,7 @@ struct DownloadView: View {
     }
 
     private func startDownload() {
-        guard let link, link.kind.isDownloadable else { return }
+        guard canStart else { return }
         requestDownload(all: false)
     }
 
@@ -265,7 +299,7 @@ struct DownloadView: View {
     /// is not set up: then the user is told why it would fail first.
     private func requestDownload(all: Bool) {
         let kinds = all ? links.map(\.kind) : link.map { [$0.kind] } ?? []
-        guard kinds.contains(where: { $0 != .musicVideo }), let gate = model.wrapperGate else {
+        guard kinds.contains(where: { $0 != .musicVideo }), let gate = model.wrapperGate(for: options) else {
             enqueue(all: all)
             return
         }
@@ -274,9 +308,11 @@ struct DownloadView: View {
             return
         }
         // The last check may be stale (wrapper started or signed in since).
+        let requestedLinks = links
         Task {
             await model.runDiagnostics()
-            if let gate = model.wrapperGate {
+            guard requestedLinks == links, canStart else { return }
+            if let gate = model.wrapperGate(for: options) {
                 wrapperAlert = WrapperAlert(gate: gate, all: all)
             } else {
                 enqueue(all: all)
@@ -290,10 +326,10 @@ struct DownloadView: View {
             model.draftURL = ""
             return
         }
-        guard let link, link.kind.isDownloadable else { return }
+        guard let link, canStart else { return }
         var previews: [AppleMusicLink: MediaPreview] = [:]
         if let loadedPreview { previews[link] = loadedPreview }
-        model.enqueue([link], previews: previews)
+        model.enqueue([link], previews: previews, options: options)
         withAnimation(.spring(response: 0.5)) {
             model.draftURL = ""
             preview = .idle
@@ -448,21 +484,40 @@ private struct KindHints: View {
 private struct OptionsPanel: View {
     @Environment(AppModel.self) private var model
     let kind: AppleMusicLink.Kind
+    let codecs: [SongCodec]?
+    let checking: Bool
+    let options: DownloadOptions
 
     var body: some View {
         @Bindable var settings = model.settings
         VStack(alignment: .leading, spacing: 16) {
             Text("Réglages").sectionLabel()
             Grid(alignment: .leading, horizontalSpacing: 18, verticalSpacing: 14) {
-                GridRow {
-                    Text("Qualité").foregroundStyle(.secondary)
-                    VStack(alignment: .leading, spacing: 6) {
-                        Picker("", selection: $settings.options.codec) {
-                            CodecMenuItems { $0 }
+                if [.song, .album, .playlist, .artist].contains(kind) {
+                    GridRow {
+                        Text("Qualité").foregroundStyle(.secondary)
+                        VStack(alignment: .leading, spacing: 6) {
+                            if checking {
+                                ProgressView("Recherche des codecs disponibles…").controlSize(.small)
+                            } else if let codecs, !codecs.isEmpty {
+                                Picker("Qualité", selection: Binding(get: { options.codec }, set: { settings.options.codec = $0 })) {
+                                    CodecMenuItems(codecs: codecs) { $0 }
+                                }
+                                .labelsHidden()
+                                .frame(maxWidth: 260)
+                                Text(options.codec.detail).font(.caption).foregroundStyle(.secondary)
+                                if kind != .song {
+                                    Text("Formats communs aux morceaux disponibles.").font(.caption).foregroundStyle(.secondary)
+                                }
+                                WrapperActionButton(options: options)
+                            } else if kind == .artist || (kind != .song && codecs != nil) {
+                                Text("Qualité par piste selon les priorités des réglages.").foregroundStyle(.secondary)
+                            } else if codecs != nil {
+                                Text("Aucun codec confirmé pour ce morceau avec cette configuration.").foregroundStyle(.secondary)
+                            } else {
+                                Text("Aucun codec confirmé. Les priorités des réglages s’appliquent.").foregroundStyle(.secondary)
+                            }
                         }
-                        .labelsHidden()
-                        .frame(maxWidth: 260)
-                        CodecNotes(options: settings.options, usesWrapper: settings.session.authMode == .wrapper)
                     }
                 }
                 GridRow {
