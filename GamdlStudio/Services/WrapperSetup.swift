@@ -172,6 +172,8 @@ struct WrapperSetupSnapshot: Hashable, Sendable {
     var imageBuilt = false
     /// The ABI the existing image was built for, when Docker said.
     var imageArchitecture: WrapperArchitecture?
+    /// The running Compose service uses the image currently tagged wrapper-v2:local.
+    var containerUsesBuiltImage = false
     /// The ABI chosen in the assistant.
     var architecture: WrapperArchitecture = .x86_64
     var hostMachine = "x86_64"
@@ -197,7 +199,7 @@ enum WrapperRecipe {
     }
 
     static let composeUpArguments = ["compose", "up", "-d"]
-    static let imageInspectArguments = ["image", "inspect", "--format", "{{.Architecture}}", image]
+    static let imageInspectArguments = ["image", "inspect", "--format", "{{.Architecture}} {{.Id}}", image]
 
     /// Resources the wrapper's Android runtime needs to answer in time.
     static let minimumCPU = 4, minimumMemoryGiB = 4
@@ -311,6 +313,10 @@ enum WrapperRecipe {
         switch s.status {
         case .unreachable:
             out[.start] = .todo(String(localized: "Rien ne répond encore sur \(healthURL)."))
+        case .ready(_, let runningABI) where s.sourceReady && s.imageArchitecture != nil && s.imageArchitecture?.rawValue != runningABI:
+            out[.start] = .todo(String(localized: "Le wrapper sur \(healthURL) annonce \(runningABI). Démarre le conteneur de l’image vérifiée et vérifie le port utilisé."))
+        case _ where s.sourceReady && s.imageBuilt && !s.containerUsesBuiltImage:
+            out[.start] = .todo(String(localized: "Démarre le service Compose avec l’image Docker qui vient d’être vérifiée."))
         default:
             out[.start] = .done(String(localized: "Le wrapper répond sur \(healthURL)."))
         }
@@ -380,9 +386,12 @@ final class WrapperSetup {
     private(set) var running: WrapperSetupStep?
     private(set) var isRefreshing = false
     private(set) var log = ""
+    private var selectedArchitecture: WrapperArchitecture?
     var architecture: WrapperArchitecture {
-        didSet {
-            snapshot.architecture = architecture
+        get { selectedArchitecture ?? snapshot.architecture }
+        set {
+            selectedArchitecture = newValue
+            snapshot.architecture = newValue
             states = Self.merge(WrapperRecipe.evaluate(snapshot), keeping: states)
         }
     }
@@ -397,8 +406,6 @@ final class WrapperSetup {
 
     init(environment: WrapperSetupEnvironment = .live()) {
         self.environment = environment
-        // The only ABI wrapper-v2 validated end to end, even if emulated here.
-        architecture = .x86_64
     }
 
     var isBusy: Bool { running != nil }
@@ -418,14 +425,26 @@ final class WrapperSetup {
         s.sourceReady = WrapperRecipe.sourceIsComplete(at: environment.root)
         s.sourcePath = environment.root.path
         s.package = package
-        s.architecture = architecture
         s.hostMachine = environment.hostMachine
         if s.docker.daemon, let docker = s.docker.docker {
             let inspect = await capture(docker, WrapperRecipe.imageInspectArguments)
             s.imageBuilt = inspect.exitCode == 0
-            s.imageArchitecture = s.imageBuilt ? WrapperArchitecture(dockerArchitecture: inspect.output) : nil
+            let fields = inspect.output.split(whereSeparator: \.isWhitespace)
+            if s.imageBuilt, fields.count == 2 {
+                s.imageArchitecture = WrapperArchitecture(dockerArchitecture: String(fields[0]))
+                if s.sourceReady {
+                    let service = await capture(docker, ["compose", "ps", "--status", "running", "-q", "wrapper"], directory: environment.root)
+                    if service.exitCode == 0, !service.output.trimmed.isEmpty {
+                        let running = await capture(docker, ["inspect", "--type", "container", "--format", "{{.Image}}", service.output.trimmed])
+                        s.containerUsesBuiltImage = running.exitCode == 0 && running.output.trimmed == fields[1]
+                    }
+                }
+            }
         }
         s.status = await environment.probe(WrapperRecipe.healthURL)
+        // Reopening the assistant should keep the installed ABI. A manual
+        // choice still takes precedence, including while a refresh is running.
+        s.architecture = selectedArchitecture ?? s.imageArchitecture ?? architecture
         s.session = session
         snapshot = s
         states = Self.merge(WrapperRecipe.evaluate(s), keeping: states)
@@ -667,13 +686,14 @@ final class WrapperSetup {
     }
 
     /// Runs a short, unlogged command and returns its output.
-    private func capture(_ executable: URL, _ arguments: [String]) async -> (output: String, exitCode: Int32) {
+    private func capture(_ executable: URL, _ arguments: [String], directory: URL? = nil) async -> (output: String, exitCode: Int32) {
         let collected = OutputCollector()
         let runner = ProcessRunner()
         let watchdog = Task { try await Task.sleep(for: .seconds(20)); runner.cancel() }
         defer { watchdog.cancel() }
         guard let result = try? await runner.run(executable: executable, arguments: arguments,
-                                                 environment: environment.processEnvironment, onOutput: { collected.append($0) })
+                                                 environment: environment.processEnvironment, currentDirectory: directory,
+                                                 onOutput: { collected.append($0) })
         else { return ("", -1) }
         return (collected.value, result.exitCode)
     }
