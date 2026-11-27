@@ -106,6 +106,35 @@ enum WrapperStepState: Hashable, Sendable {
 }
 
 /// What `docker`, its plugins and Colima answered.
+/// The settings of Colima's default VM, read from `~/.colima/default/colima.yaml`.
+struct ColimaSettings: Hashable, Sendable {
+    var vmType: String?
+    var rosetta: Bool?
+    var cpu: Int?
+    var memory: Int?
+
+    /// Reads the top-level keys only (`rosetta: true`, `cpu: 2`…).
+    static func parse(_ yaml: String) -> ColimaSettings {
+        var s = ColimaSettings()
+        for raw in yaml.components(separatedBy: .newlines) {
+            guard let first = raw.first, first != " ", first != "#", first != "\t",
+                  let colon = raw.firstIndex(of: ":") else { continue }
+            let key = raw[..<colon].trimmingCharacters(in: .whitespaces)
+            var value = raw[raw.index(after: colon)...].trimmingCharacters(in: .whitespaces)
+            if let hash = value.firstIndex(of: "#") { value = value[..<hash].trimmingCharacters(in: .whitespaces) }
+            value = value.trimmingCharacters(in: CharacterSet(charactersIn: "\"'"))
+            switch key {
+            case "vmType": s.vmType = value.isEmpty ? nil : value
+            case "rosetta": s.rosetta = value == "true" ? true : value == "false" ? false : nil
+            case "cpu": s.cpu = Int(value)
+            case "memory": s.memory = Int(value)
+            default: break
+            }
+        }
+        return s
+    }
+}
+
 struct DockerProbe: Hashable, Sendable {
     var docker: URL?
     var compose = false
@@ -113,6 +142,12 @@ struct DockerProbe: Hashable, Sendable {
     var daemon = false
     var colima: URL?
     var brew: URL?
+    /// `docker context show`: "colima" when Colima is the engine in use.
+    var context: String?
+    /// Colima's VM settings, when it has one.
+    var colimaSettings: ColimaSettings?
+
+    var usesColima: Bool { context?.hasPrefix("colima") == true }
 
     /// Homebrew formulae still to install for the wrapper to build and run.
     var missingFormulae: [String] {
@@ -139,6 +174,7 @@ struct WrapperSetupSnapshot: Hashable, Sendable {
     var imageArchitecture: WrapperArchitecture?
     /// The ABI chosen in the assistant.
     var architecture: WrapperArchitecture = .x86_64
+    var hostMachine = "x86_64"
     var status: WrapperStatus = .unreachable("")
     var session = GamdlSession()
 }
@@ -163,12 +199,27 @@ enum WrapperRecipe {
     static let composeUpArguments = ["compose", "up", "-d"]
     static let imageInspectArguments = ["image", "inspect", "--format", "{{.Architecture}}", image]
 
-    /// `colima start`. A first start on a puce Apple uses the macOS
-    /// virtualization framework with Rosetta, so x86_64 images also run.
-    /// An existing VM keeps the settings it was created with.
-    static func colimaStartArguments(hostMachine: String, firstRun: Bool) -> [String] {
-        guard firstRun, WrapperArchitecture.native(machine: hostMachine) == .arm64 else { return ["start"] }
-        return ["start", "--vm-type", "vz", "--vz-rosetta"]
+    /// Resources the wrapper's Android runtime needs to answer in time.
+    static let minimumCPU = 4, minimumMemoryGiB = 4
+
+    /// `colima start`. For an x86_64 image on Apple silicon, the VM runs on
+    /// the macOS virtualization framework with Rosetta: without it, Docker
+    /// falls back to QEMU emulation and the wrapper's worker times out
+    /// (`worker_timeout`, seen on a 2-CPU VM on 2026-11-27). Rosetta can be
+    /// turned on for an existing `vz` VM at start; a QEMU VM can't switch.
+    static func colimaStartArguments(hostMachine: String, architecture: WrapperArchitecture, settings: ColimaSettings?) -> [String] {
+        guard WrapperArchitecture.native(machine: hostMachine) == .arm64, architecture == .x86_64 else { return ["start"] }
+        if let vmType = settings?.vmType, vmType != "vz" { return ["start"] }
+        return ["start", "--vm-type", "vz", "--vz-rosetta",
+                "--cpu", String(max(settings?.cpu ?? 0, minimumCPU)),
+                "--memory", String(max(settings?.memory ?? 0, minimumMemoryGiB))]
+    }
+
+    /// Colima is the engine, the image is x86_64 on Apple silicon, and the VM
+    /// runs without Rosetta.
+    static func colimaNeedsRosetta(_ s: WrapperSetupSnapshot) -> Bool {
+        WrapperArchitecture.native(machine: s.hostMachine) == .arm64 && s.architecture == .x86_64
+            && s.docker.usesColima && s.docker.colimaSettings?.rosetta != true
     }
 
     /// The command pasted in Terminal when tools are missing. The compose and
@@ -227,6 +278,10 @@ enum WrapperRecipe {
             out[.docker] = .todo(s.docker.colima != nil
                 ? String(localized: "Le moteur Docker est arrêté : l'assistant peut démarrer Colima.")
                 : String(localized: "Le moteur Docker ne répond pas : lance Docker Desktop, OrbStack ou Colima."))
+        } else if colimaNeedsRosetta(s) {
+            out[.docker] = .todo(s.docker.colimaSettings?.vmType.map { $0 != "vz" } == true
+                ? String(localized: "Colima tourne sans Rosetta, sur une VM QEMU qui ne peut pas l'activer : l'image x86_64 y est émulée trop lentement et le moteur du wrapper expire. Recrée la VM (colima delete), puis relance l'assistant ; l'image sera à reconstruire.")
+                : String(localized: "Colima tourne sans Rosetta : l'image x86_64 y est émulée trop lentement et le moteur du wrapper expire. L'assistant peut redémarrer Colima avec Rosetta (\(WrapperRecipe.minimumCPU) cœurs, \(WrapperRecipe.minimumMemoryGiB) Go)."))
         } else {
             out[.docker] = .done(String(localized: "Moteur Docker, Compose et Buildx prêts."))
         }
@@ -364,6 +419,7 @@ final class WrapperSetup {
         s.sourcePath = environment.root.path
         s.package = package
         s.architecture = architecture
+        s.hostMachine = environment.hostMachine
         if s.docker.daemon, let docker = s.docker.docker {
             let inspect = await capture(docker, WrapperRecipe.imageInspectArguments)
             s.imageBuilt = inspect.exitCode == 0
@@ -398,6 +454,10 @@ final class WrapperSetup {
         probe.compose = await execute(docker, ["compose", "version"], logged: false).exitCode == 0
         probe.buildx = await execute(docker, ["buildx", "version"], logged: false).exitCode == 0
         probe.daemon = await execute(docker, ["info", "--format", "{{.ServerVersion}}"], logged: false, timeout: .seconds(15)).exitCode == 0
+        let context = await capture(docker, ["context", "show"])
+        probe.context = context.exitCode == 0 ? context.output.trimmingCharacters(in: .whitespacesAndNewlines) : nil
+        let config = environment.colimaHome.appending(path: "default/colima.yaml")
+        probe.colimaSettings = (try? String(contentsOf: config, encoding: .utf8)).map(ColimaSettings.parse)
         return probe
     }
 
@@ -478,12 +538,26 @@ final class WrapperSetup {
                 return .failed(error.localizedDescription)
             }
         }
-        if probe.daemon { return nil }
+        var current = snapshot
+        current.docker = probe
+        current.architecture = architecture
+        current.hostMachine = environment.hostMachine
+        let needsRosetta = WrapperRecipe.colimaNeedsRosetta(current)
+        if probe.daemon && !needsRosetta { return nil }
         guard let colima = probe.colima else {
             return .todo(String(localized: "Lance ton moteur Docker (Docker Desktop, OrbStack ou Colima), puis clique sur « Vérifier »."))
         }
-        let firstRun = !FileManager.default.fileExists(atPath: environment.colimaHome.appending(path: "default").path)
-        let result = await execute(colima, WrapperRecipe.colimaStartArguments(hostMachine: environment.hostMachine, firstRun: firstRun), timeout: .seconds(600))
+        let start = WrapperRecipe.colimaStartArguments(hostMachine: environment.hostMachine, architecture: architecture, settings: probe.colimaSettings)
+        if needsRosetta && !start.contains("--vz-rosetta") {
+            return .failed(WrapperRecipe.evaluate(current)[.docker]?.message ?? "")
+        }
+        if probe.daemon {
+            // Rosetta is only applied when the VM starts. The wrapper
+            // container restarts with Docker (restart: unless-stopped).
+            let stop = await execute(colima, ["stop"], timeout: .seconds(300))
+            if stop.exitCode != 0 { return .failed(String(localized: "Colima ne s'est pas arrêté (code \(stop.exitCode)). Le détail est dans le journal.")) }
+        }
+        let result = await execute(colima, start, timeout: .seconds(600))
         if result.exitCode != 0 { return .failed(String(localized: "Colima n'a pas démarré (code \(result.exitCode)). Le détail est dans le journal.")) }
         return nil
     }

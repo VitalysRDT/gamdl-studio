@@ -53,11 +53,66 @@ struct WrapperRecipeTests {
         #expect(!WrapperArchitecture.hostMachine.isEmpty)
     }
 
-    @Test("A first Colima start on Apple silicon gets vz and Rosetta; an existing VM keeps its settings")
+    @Test("x86_64 on Apple silicon starts Colima with vz, Rosetta and at least 4 CPUs / 4 GB")
     func colima() {
-        #expect(WrapperRecipe.colimaStartArguments(hostMachine: "arm64", firstRun: true) == ["start", "--vm-type", "vz", "--vz-rosetta"])
-        #expect(WrapperRecipe.colimaStartArguments(hostMachine: "arm64", firstRun: false) == ["start"])
-        #expect(WrapperRecipe.colimaStartArguments(hostMachine: "x86_64", firstRun: true) == ["start"])
+        let full = ["start", "--vm-type", "vz", "--vz-rosetta", "--cpu", "4", "--memory", "4"]
+        #expect(WrapperRecipe.colimaStartArguments(hostMachine: "arm64", architecture: .x86_64, settings: nil) == full)
+        // The VM that failed on 2026-11-27: vz, no Rosetta, 2 CPUs, 2 GB.
+        let old = ColimaSettings(vmType: "vz", rosetta: false, cpu: 2, memory: 2)
+        #expect(WrapperRecipe.colimaStartArguments(hostMachine: "arm64", architecture: .x86_64, settings: old) == full)
+        let big = ColimaSettings(vmType: "vz", rosetta: false, cpu: 8, memory: 16)
+        #expect(WrapperRecipe.colimaStartArguments(hostMachine: "arm64", architecture: .x86_64, settings: big)
+                == ["start", "--vm-type", "vz", "--vz-rosetta", "--cpu", "8", "--memory", "16"])
+        // A QEMU VM can't switch to vz: plain start, the step explains the rest.
+        #expect(WrapperRecipe.colimaStartArguments(hostMachine: "arm64", architecture: .x86_64, settings: ColimaSettings(vmType: "qemu")) == ["start"])
+        #expect(WrapperRecipe.colimaStartArguments(hostMachine: "arm64", architecture: .arm64, settings: nil) == ["start"])
+        #expect(WrapperRecipe.colimaStartArguments(hostMachine: "x86_64", architecture: .x86_64, settings: nil) == ["start"])
+    }
+
+    @Test("Reads Colima's VM settings from colima.yaml (top-level keys only)")
+    func colimaYAML() {
+        let yaml = """
+        # Number of CPUs to be allocated to the virtual machine.
+        cpu: 2
+        memory: 2
+        arch: aarch64
+        vmType: vz
+        # Utilise rosetta for amd64 emulation (requires m1 mac and vmType `vz`)
+        rosetta: false
+        docker:
+          rosetta: true
+        """
+        #expect(ColimaSettings.parse(yaml) == ColimaSettings(vmType: "vz", rosetta: false, cpu: 2, memory: 2))
+        #expect(ColimaSettings.parse("rosetta: true # on\nvmType: \"qemu\"\n") == ColimaSettings(vmType: "qemu", rosetta: true))
+    }
+
+    @Test("Colima without Rosetta blocks the Docker step for an x86_64 image on Apple silicon only")
+    func rosettaState() {
+        var s = WrapperSetupSnapshot()
+        s.hostMachine = "arm64"
+        s.architecture = .x86_64
+        s.docker = DockerProbe(docker: URL(filePath: "/d"), compose: true, buildx: true, daemon: true,
+                               colima: URL(filePath: "/c"), context: "colima",
+                               colimaSettings: ColimaSettings(vmType: "vz", rosetta: false, cpu: 2, memory: 2))
+        #expect(WrapperRecipe.colimaNeedsRosetta(s))
+        guard case .todo(let message) = WrapperRecipe.evaluate(s)[.docker] else { Issue.record("expected todo"); return }
+        #expect(message.contains("Rosetta"))
+
+        s.docker.colimaSettings?.vmType = "qemu"
+        #expect(WrapperRecipe.evaluate(s)[.docker]?.message.contains("colima delete") == true)
+
+        var ok = s
+        ok.docker.colimaSettings = ColimaSettings(vmType: "vz", rosetta: true)
+        #expect(WrapperRecipe.evaluate(ok)[.docker]?.isDone == true)
+        var arm = s
+        arm.architecture = .arm64
+        #expect(!WrapperRecipe.colimaNeedsRosetta(arm))
+        var desktop = s
+        desktop.docker.context = "desktop-linux"
+        #expect(!WrapperRecipe.colimaNeedsRosetta(desktop), "Docker Desktop has its own Rosetta setting")
+        var intel = s
+        intel.hostMachine = "x86_64"
+        #expect(!WrapperRecipe.colimaNeedsRosetta(intel))
     }
 
     @Test("Only .apk and .apkm are accepted as the package")
@@ -260,6 +315,7 @@ private final class FakeToolchain {
             echo "docker $*" >> '\(log)'
             case "$1 $2" in
               "compose version"|"buildx version") exit 0 ;;
+              "context show") echo "${FAKE_CONTEXT:-default}" ;;
               "compose up") touch '\(st)/up'; exit 0 ;;
               "info --format") [ -f '\(st)/daemon' ] ;;
               "image inspect") [ -f '\(st)/image' ] && cat '\(st)/image' ;;
@@ -349,7 +405,7 @@ struct WrapperSetupIntegrationTests {
         #expect(setup.state(.source).isDone)
         #expect(!setup.state(.package).isDone)
         #expect(setup.nextStep == .package)
-        #expect(fake.callLog.contains("colima start\n"))
+        #expect(fake.callLog.contains("colima start\n"), "an Intel host gets a plain start")
         #expect(fake.callLog.contains("git clone --depth 1 --branch 1.0.1 https://github.com/glomatico/wrapper-v2.git \(fake.wrapperDir.path)"))
         #expect(!fake.callLog.contains("build "))
 
@@ -547,5 +603,50 @@ struct BuildProgressTests {
         #expect(model.wrapperAction == .activate)
         model.settings.options.songCodecPriority = [.atmos]
         #expect(model.wrapperAction == .activate)
+    }
+}
+
+@Suite("Colima without Rosetta (integration)", .serialized)
+@MainActor
+struct ColimaRosettaIntegrationTests {
+    @Test("A running Colima VM without Rosetta is stopped and restarted with it")
+    func restartsWithRosetta() async throws {
+        let root = FileManager.default.temporaryDirectory.appending(path: "colima-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: root) }
+        let bin = root.appending(path: "bin"), home = root.appending(path: "colima-home")
+        let config = home.appending(path: "default/colima.yaml")
+        try FileManager.default.createDirectory(at: bin, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: config.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try "cpu: 2\nmemory: 2\nvmType: vz\nrosetta: false\n".write(to: config, atomically: true, encoding: .utf8)
+        let log = root.appending(path: "calls.log")
+        func script(_ name: String, _ body: String) throws {
+            let url = bin.appending(path: name)
+            try ("#!/bin/sh\n" + body + "\n").write(to: url, atomically: true, encoding: .utf8)
+            try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: url.path)
+        }
+        try script("docker", """
+        case "$1 $2" in
+          "context show") echo colima ;;
+          *) exit 0 ;;
+        esac
+        """)
+        try script("colima", """
+        echo "colima $*" >> '\(log.path)'
+        [ "$1" = start ] && printf 'cpu: 4\\nmemory: 4\\nvmType: vz\\nrosetta: true\\n' > '\(config.path)'
+        exit 0
+        """)
+        let env = WrapperSetupEnvironment(
+            tools: ToolLocator(searchDirectories: [bin, URL(filePath: "/usr/bin"), URL(filePath: "/bin")]),
+            root: root.appending(path: "wrapper-v2"), hostMachine: "arm64", colimaHome: home,
+            probe: { _ in .unreachable("x") }, openTerminal: { _, _ in })
+        let setup = WrapperSetup(environment: env)
+        let settings = AppSettings(defaults: try #require(UserDefaults(suiteName: "gamdlstudio.tests.\(UUID().uuidString)")))
+
+        await setup.refresh(session: settings.session)
+        #expect(setup.state(.docker).message.contains("Rosetta"))
+        #expect(await setup.perform(.docker, settings: settings))
+        let calls = try String(contentsOf: log, encoding: .utf8)
+        #expect(calls == "colima stop\ncolima start --vm-type vz --vz-rosetta --cpu 4 --memory 4\n")
+        #expect(setup.state(.docker).isDone)
     }
 }

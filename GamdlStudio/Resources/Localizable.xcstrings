@@ -1447,6 +1447,42 @@
         }
       }
     },
+    "Colima ne s'est pas arrêté (code %d). Le détail est dans le journal." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Colima didn’t stop (code %d). The details are in the log."
+          }
+        }
+      }
+    },
+    "Colima tourne sans Rosetta : l'image x86_64 y est émulée trop lentement et le moteur du wrapper expire. L'assistant peut redémarrer Colima avec Rosetta (%lld cœurs, %lld Go)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Colima is running without Rosetta: the x86_64 image is emulated too slowly there and the wrapper’s engine times out. The assistant can restart Colima with Rosetta (%1$lld CPU cores, %2$lld GB)."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Colima tourne sans Rosetta : l'image x86_64 y est émulée trop lentement et le moteur du wrapper expire. L'assistant peut redémarrer Colima avec Rosetta (%1$lld cœurs, %2$lld Go)."
+          }
+        }
+      }
+    },
+    "Colima tourne sans Rosetta, sur une VM QEMU qui ne peut pas l'activer : l'image x86_64 y est émulée trop lentement et le moteur du wrapper expire. Recrée la VM (colima delete), puis relance l'assistant ; l'image sera à reconstruire." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Colima is running without Rosetta, on a QEMU VM that can’t enable it: the x86_64 image is emulated too slowly there and the wrapper’s engine times out. Recreate the VM (colima delete), then run the assistant again; the image will need to be rebuilt."
+          }
+        }
+      }
+    },
     "Colle un lien Apple Music : morceau, album, playlist ou artiste." : {
       "localizations" : {
         "en" : {
