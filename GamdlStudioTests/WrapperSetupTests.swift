@@ -191,6 +191,20 @@ struct WrapperRecipeTests {
         s.status = .incompatible("old")
         #expect(WrapperRecipe.evaluate(s)[.signIn] == .failed("old"))
     }
+
+    @Test("Another wrapper answering at the same URL cannot confirm the local ARM64 service")
+    func wrongEndpoint() {
+        var s = WrapperSetupSnapshot()
+        s.sourceReady = true
+        s.imageBuilt = true
+        s.architecture = .arm64
+        s.imageArchitecture = .arm64
+        s.containerUsesBuiltImage = true
+        s.status = .ready(version: "1.0.1", architecture: "x86_64")
+        let state = WrapperRecipe.evaluate(s)[.start]
+        #expect(state?.isDone == false)
+        #expect(state?.message.contains("x86_64") == true)
+    }
 }
 
 @Suite("Wrapper gate: ALAC, Dolby Atmos, spatial")
@@ -316,7 +330,9 @@ private final class FakeToolchain {
             case "$1 $2" in
               "compose version"|"buildx version") exit 0 ;;
               "context show") echo "${FAKE_CONTEXT:-default}" ;;
-              "compose up") touch '\(st)/up'; exit 0 ;;
+              "compose up") touch '\(st)/up'; if [ -f '\(st)/image' ]; then cp '\(st)/image' '\(st)/up'; fi ;;
+              "compose ps") [ -f '\(st)/up' ] && echo running-wrapper ;;
+              "inspect --type") awk '{print $2}' '\(st)/up' ;;
               "info --format") [ -f '\(st)/daemon' ] ;;
               "image inspect") [ -f '\(st)/image' ] && cat '\(st)/image' ;;
               *) exit 3 ;;
@@ -341,7 +357,7 @@ private final class FakeToolchain {
         printf '#8 [runtime 2/2] COPY --from=builder /out /app\n'
 
         command -v sha256sum >/dev/null || { echo "no sha256sum on PATH"; exit 9; }
-        \(buildFails ? "exit 4" : "echo amd64 > '\(st)/image'")
+        \(buildFails ? "exit 4" : "echo \"$3 sha256:$3\" > '\(st)/image'")
         EOS
         """)
     }
@@ -364,9 +380,12 @@ private final class FakeToolchain {
             colimaHome: root.appending(path: "colima-home"),
             probe: { _ in
                 let fm = FileManager.default
-                guard fm.fileExists(atPath: state.appending(path: "up").path) else { return .unreachable("nothing") }
+                let up = state.appending(path: "up")
+                guard let image = try? String(contentsOf: up, encoding: .utf8) else { return .unreachable("nothing") }
+                let runningABI = image.split(whereSeparator: \.isWhitespace).first
+                    .flatMap { WrapperArchitecture(dockerArchitecture: String($0)) }
                 return fm.fileExists(atPath: state.appending(path: "auth").path)
-                    ? .ready(version: "1.0.1", architecture: "x86_64") : .loggedOut
+                    ? .ready(version: "1.0.1", architecture: runningABI?.rawValue ?? "unknown") : .loggedOut
             },
             startTimeout: .seconds(3),
             pollInterval: .milliseconds(50),
@@ -448,6 +467,27 @@ struct WrapperSetupIntegrationTests {
         #expect(!setup.state(.build).isDone)
         #expect(setup.state(.build).message.contains("x86_64"))
         #expect(setup.log.contains("$ git clone"))
+    }
+
+    @Test("A rebuilt image must replace the running service, even when it still answers",
+          arguments: ["arm64", "amd64"])
+    func staleContainer(newArchitecture: String) async throws {
+        let fake = try FakeToolchain()
+        let setup = WrapperSetup(environment: fake.environment(terminal: TerminalRecorder()))
+        let settings = try freshSettings()
+        #expect(await setup.perform(.source, settings: settings))
+        try Data().write(to: fake.state.appending(path: "daemon"))
+        try Data().write(to: fake.state.appending(path: "auth"))
+        try Data("amd64 sha256:previous".utf8).write(to: fake.state.appending(path: "up"))
+        try Data("\(newArchitecture) sha256:new".utf8).write(to: fake.state.appending(path: "image"))
+
+        await setup.refresh(session: settings.session)
+        #expect(setup.architecture == WrapperArchitecture(dockerArchitecture: newArchitecture))
+        #expect(setup.state(.build).isDone)
+        #expect(setup.nextStep == .start)
+        await setup.installAll(settings: settings)
+        #expect(setup.isComplete)
+        #expect(fake.callLog.contains("docker compose up -d"))
     }
 
     @Test("Missing Docker tools open Terminal with the brew command and stop there")

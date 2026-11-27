@@ -1813,6 +1813,16 @@
         }
       }
     },
+    "Démarre le service Compose avec l’image Docker qui vient d’être vérifiée." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start the Compose service with the Docker image verified above."
+          }
+        }
+      }
+    },
     "Démarrer" : {
       "localizations" : {
         "en" : {
@@ -3326,6 +3336,16 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "The wrapper is responding at %@."
+          }
+        }
+      }
+    },
+    "Le wrapper sur %@ annonce %@. Démarre le conteneur de l’image vérifiée et vérifie le port utilisé." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The wrapper at %1$@ reports %2$@. Start the container for the verified image and check which service is listening on that port."
           }
         }
       }
