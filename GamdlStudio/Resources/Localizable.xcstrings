@@ -2750,6 +2750,16 @@
         }
       }
     },
+    "macOS refuse le http non chiffré vers %@ : indique l'adresse IP du wrapper ou un nom en .local." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "macOS refuses unencrypted http to %@: use the wrapper's IP address or a .local name."
+          }
+        }
+      }
+    },
     "Masquer le journal" : {
       "localizations" : {
         "en" : {

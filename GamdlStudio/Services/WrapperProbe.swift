@@ -96,6 +96,9 @@ enum WrapperProbe {
             let info = try await get("info")
             let state = (try? await get("session")) ?? Data()
             return status(info: info, session: state)
+        } catch let error as URLError where error.code == .appTransportSecurityRequiresSecureConnection {
+            // macOS only allows plain http to local names and IP addresses.
+            return .unreachable(String(localized: "macOS refuse le http non chiffré vers \(base.host() ?? base.absoluteString) : indique l'adresse IP du wrapper ou un nom en .local."))
         } catch {
             return .unreachable(String(localized: "Rien ne répond à \(base.absoluteString). Le wrapper tourne-t-il ?"))
         }
