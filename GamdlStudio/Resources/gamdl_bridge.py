@@ -106,15 +106,39 @@ def install_hooks():
     return True
 
 
-def install_auth_recovery():
-    """Let gamdl 4.1.2's wizard offer a fresh login after a failed restore."""
+def is_gamdl_4_1_2():
     from importlib.metadata import PackageNotFoundError, version
 
     try:
-        installed = version("gamdl")
+        return version("gamdl") == "4.1.2"
     except PackageNotFoundError:
+        return False
+
+
+def install_tag_recovery():
+    """Use the song's web metadata if wrapper-v2 fails to supply its tags."""
+    if not is_gamdl_4_1_2():
         return
-    if installed != "4.1.2":
+    from gamdl.api.exceptions import GamdlApiResponseError
+    from gamdl.download.tag_resolver import TagResolver
+
+    original = TagResolver._song_tags
+
+    async def song_tags(self, song, *, source):
+        try:
+            return await original(self, song, source=source)
+        except GamdlApiResponseError as exc:
+            if source != "wrapper" or exc.service != "wrapper" or exc.status_code != 502:
+                raise
+        # Keep the same song, authenticated Apple Music API and album-date settings.
+        return await original(self, song, source="web")
+
+    TagResolver._song_tags = song_tags
+
+
+def install_auth_recovery():
+    """Let gamdl 4.1.2's wizard offer a fresh login after a failed restore."""
+    if not is_gamdl_4_1_2():
         return
     from gamdl.api import wrapper
 
@@ -185,6 +209,8 @@ def main():
         install_auth_recovery()
     else:
         install_hooks()
+        if sys.argv[1:2] == ["rip"]:
+            install_tag_recovery()
     entry = gamdl_entry_point()
     sys.argv = ["gamdl"] + sys.argv[1:]
     return entry()
